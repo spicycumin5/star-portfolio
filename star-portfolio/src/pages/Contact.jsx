@@ -1,0 +1,107 @@
+import { useState } from 'react'
+import styles from './Contact.module.css'
+
+const SOCIAL_LINKS = [
+  { label: 'Instagram', href: '#' },
+  { label: 'Spotify', href: '#' },
+  { label: 'GitHub', href: '#' },
+  { label: 'Bandcamp', href: '#' },
+]
+
+export default function Contact() {
+  const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [sent, setSent] = useState(false)
+
+  function handleChange(e) {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    // TODO: wire up to your email service (EmailJS, Formspree, etc.)
+    console.log('Form submitted:', form)
+    setSent(true)
+  }
+
+  return (
+    <div className={styles.page}>
+      <div className={styles.inner}>
+        <p className={styles.eyebrow}>✦ Say hello</p>
+        <h2 className={styles.heading}>
+          Let's make<br />
+          something <em>luminous</em>
+        </h2>
+        <p className={styles.sub}>
+          Whether it's a collaboration, a commission, or just a hello —<br />
+          I'd love to hear from you.
+        </p>
+
+        {sent ? (
+          <div className={styles.thanks}>
+            <p className={styles.thanksStar}>✦</p>
+            <p className={styles.thanksHeading}>Message received.</p>
+            <p className={styles.thanksSub}>I'll be in touch soon.</p>
+            <button className={styles.resetBtn} onClick={() => { setSent(false); setForm({ name: '', email: '', message: '' }) }}>
+              Send another
+            </button>
+          </div>
+        ) : (
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="name">Your name</label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Jane Doe"
+                  value={form.name}
+                  onChange={handleChange}
+                  required
+                  className={styles.input}
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="email">Email</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="hello@example.com"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                  className={styles.input}
+                />
+              </div>
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="message">Message</label>
+              <textarea
+                id="message"
+                name="message"
+                placeholder="Tell me what you're thinking…"
+                value={form.message}
+                onChange={handleChange}
+                required
+                className={styles.textarea}
+                rows={5}
+              />
+            </div>
+            <button type="submit" className={styles.submit}>
+              Send message →
+            </button>
+          </form>
+        )}
+
+        <div className={styles.socialRow}>
+          {SOCIAL_LINKS.map((s) => (
+            <a key={s.label} href={s.href} className={styles.socialLink} target="_blank" rel="noreferrer">
+              {s.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}

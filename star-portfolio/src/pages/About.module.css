@@ -1,0 +1,158 @@
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: 9rem 3rem 6rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeUp 0.6s forwards;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: start;
+}
+
+/* ── Left ── */
+.left {}
+
+.eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+
+.heading {
+  font-family: var(--ff-serif);
+  font-weight: 300;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  line-height: 1.1;
+  margin-bottom: 2rem;
+}
+
+.heading em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.body {
+  font-family: var(--ff-serif);
+  font-size: 1.1rem;
+  line-height: 1.9;
+  color: var(--muted);
+  font-weight: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.cvLink {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 0.5px solid var(--gold-dim);
+  padding: 0.75rem 1.5rem;
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.cvLink:hover {
+  background: var(--gold-glow);
+}
+
+/* ── Right ── */
+.right {
+  padding-top: 2rem;
+}
+
+.disciplines {
+  list-style: none;
+  margin-bottom: 3rem;
+}
+
+.discipline {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  border-bottom: 0.5px solid var(--rim);
+  transition: border-color 0.3s;
+}
+
+.discipline:first-child {
+  border-top: 0.5px solid var(--rim);
+}
+
+.discipline:hover {
+  border-color: var(--gold-dim);
+}
+
+.star {
+  color: var(--gold);
+  font-size: 0.55rem;
+  margin-top: 0.35rem;
+  flex-shrink: 0;
+}
+
+.disciplineLabel {
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+}
+
+.disciplineDetail {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Credits ── */
+.creditsHeading {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+}
+
+.credit {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.7rem 0;
+  border-bottom: 0.5px solid var(--rim);
+}
+
+.creditYear {
+  font-size: 0.75rem;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+  width: 2.5rem;
+}
+
+.creditText {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 800px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .page {
+    padding: 7rem 1.5rem 4rem;
+  }
+}

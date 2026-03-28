@@ -1,0 +1,127 @@
+.page {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6rem 2rem 4rem;
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.3s forwards;
+}
+
+.heading {
+  font-family: var(--ff-serif);
+  font-weight: 300;
+  font-size: clamp(3.5rem, 8vw, 6.5rem);
+  line-height: 1.05;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.5s forwards;
+}
+
+.heading em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.sub {
+  font-size: 1rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  max-width: 400px;
+  line-height: 1.8;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.7s forwards;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--gold);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: fadeUp 1s 0.9s forwards;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 0.5px;
+  background: var(--gold-dim);
+}
+
+/* ── Gallery ── */
+.gallery {
+  padding: 0 3rem 6rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.filterBar {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 3.5rem;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.4rem;
+  border: 0.5px solid var(--rim);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 2rem;
+  transition: all 0.3s;
+}
+
+.filterBtn:hover {
+  border-color: var(--gold-dim);
+  color: var(--text);
+}
+
+.filterActive {
+  background: var(--gold-glow);
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .gallery {
+    padding: 0 1.5rem 4rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

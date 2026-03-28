@@ -1,0 +1,88 @@
+import { useParams, useNavigate } from 'react-router-dom'
+import { WORKS } from '../data/works'
+import styles from './WorkDetail.module.css'
+
+export default function WorkDetail() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const work = WORKS.find((w) => w.id === Number(id))
+
+  if (!work) {
+    return (
+      <div className={styles.notFound}>
+        <p>Piece not found.</p>
+        <button className={styles.back} onClick={() => navigate('/')}>
+          ← Back to work
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className={styles.page}>
+      <button className={styles.back} onClick={() => navigate(-1)}>
+        ← Back to work
+      </button>
+
+      <p className={styles.category}>{work.category}</p>
+      <h1 className={styles.title}>{work.title}</h1>
+      <p className={styles.meta}>{work.year}</p>
+
+      {work.tags && (
+        <div className={styles.tags}>
+          {work.tags.map((tag) => (
+            <span key={tag} className={styles.tag}>{tag}</span>
+          ))}
+        </div>
+      )}
+
+      <div className={styles.divider} />
+
+      {/* Thumbnail / image placeholder */}
+      <div className={styles.thumb} style={{ background: work.bg }}>
+        <span className={styles.emoji}>{work.emoji}</span>
+        <p className={styles.thumbHint}>Replace with image</p>
+      </div>
+
+      {/* Body copy */}
+      <div className={styles.body}>
+        {work.body.split('\n\n').map((para, i) => (
+          <p key={i}>{para}</p>
+        ))}
+      </div>
+
+      {/* External link */}
+      {work.link && (
+        <a
+          href={work.link}
+          target="_blank"
+          rel="noreferrer"
+          className={styles.externalLink}
+        >
+          {work.linkLabel || 'View project'} ↗
+        </a>
+      )}
+
+      {/* Next / prev navigation */}
+      <div className={styles.workNav}>
+        {WORKS.find((w) => w.id === work.id - 1) && (
+          <button
+            className={styles.navBtn}
+            onClick={() => navigate(`/work/${work.id - 1}`)}
+          >
+            ← {WORKS.find((w) => w.id === work.id - 1).title}
+          </button>
+        )}
+        <span />
+        {WORKS.find((w) => w.id === work.id + 1) && (
+          <button
+            className={styles.navBtn}
+            onClick={() => navigate(`/work/${work.id + 1}`)}
+          >
+            {WORKS.find((w) => w.id === work.id + 1).title} →
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
