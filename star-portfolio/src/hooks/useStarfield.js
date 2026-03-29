@@ -22,7 +22,7 @@ export function useStarfield(canvasRef) {
         x: Math.random() * W,
         y: Math.random() * H,
         r: Math.random() * 1.3 + 0.2,
-        speed: Math.random() * 0.015 + 0.003,
+        speed: Math.random() * 0.004 + 0.001,
         phase: Math.random() * Math.PI * 2,
         gold: Math.random() < 0.08,
       }))
@@ -34,7 +34,7 @@ export function useStarfield(canvasRef) {
       ctx.clearRect(0, 0, W, H)
       for (const s of stars) {
         const twinkle = (Math.sin(t * s.speed + s.phase) + 1) / 2
-        const alpha = 0.15 + twinkle * 0.65
+        const alpha = 0.55 + twinkle * 0.35
         ctx.beginPath()
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2)
         ctx.fillStyle = s.gold

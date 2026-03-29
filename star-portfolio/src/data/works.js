@@ -19,13 +19,14 @@ export const WORKS = [
   {
     id: 1,
     category: 'music',
-    emoji: '🎵',
+    image: '/images/today.png',
+    emoji: ' :) ',
     bg: '#1a1330',
-    title: 'Dusk Transmissions',
-    year: '2024',
-    desc: 'An ambient EP exploring the threshold between day and night.',
-    tags: ['ambient', 'electronic', 'EP'],
-    body: `Dusk Transmissions is a five-track ambient EP composed over six months of late evenings. Each track represents a specific quality of dusk light — the way color drains slowly, how silence deepens.
+    title: 'To:Day',
+    year: '2023',
+    desc: "KYUMIN's second EP — an adolescent exploration of the day-to-day",
+    tags: ['pop', 'electronic', 'ballad', 'bedroom'],
+    body: `To:Day is a five-track pop EP produced in 2022.' 
 
 Recorded with field recordings, synthesizers, and treated guitar. Mastered for spatial listening; headphones recommended.`,
     link: '#',

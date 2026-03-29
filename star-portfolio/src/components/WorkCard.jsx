@@ -15,7 +15,10 @@ export default function WorkCard({ work, index }) {
       aria-label={`View ${work.title}`}
     >
       <div className={styles.thumb} style={{ background: work.bg }}>
-        <span className={styles.emoji}>{work.emoji}</span>
+        {work.image
+          ? <img src={work.image} alt={work.title} className={styles.image} />
+          : <span className={styles.emoji}>{work.emoji}</span>
+        }
       </div>
       <div className={styles.body}>
         <p className={styles.category}>{work.category}</p>
