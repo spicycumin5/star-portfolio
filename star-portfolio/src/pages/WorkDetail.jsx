@@ -53,10 +53,11 @@ export default function WorkDetail() {
 
       {/* Thumbnail / image */}
       <div className={styles.thumbFrame}>
-        <div
-          className={styles.thumb}
-          style={{ background: work.image ? 'transparent' : work.bg }}
-        >
+        <div className={styles.thumb} style={{ '--accent': work.bg }}>
+          <span className={`${styles.thumbDot} ${styles.thumbDot1}`} aria-hidden="true" />
+          <span className={`${styles.thumbDot} ${styles.thumbDot2}`} aria-hidden="true" />
+          <span className={`${styles.thumbDot} ${styles.thumbDot3}`} aria-hidden="true" />
+          <span className={`${styles.thumbDot} ${styles.thumbDot4}`} aria-hidden="true" />
           {work.image
           ? (<img src={work.image} alt={work.title} className={styles.image} />)
           : (
