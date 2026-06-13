@@ -8,6 +8,8 @@ export default function WorkDetail() {
   const navigate = useNavigate()
   const work = WORKS.find((w) => w.id === Number(id))
   const [openTrack, setOpenTrack] = useState(null)
+  const prevWork = work && WORKS.find((w) => w.id === work.id - 1)
+  const nextWork = work && WORKS.find((w) => w.id === work.id + 1)
 
   if (!work) {
     return (
@@ -22,11 +24,17 @@ export default function WorkDetail() {
 
   return (
     <div className={styles.page}>
+      <span className={`${styles.deco} ${styles.deco1}`} aria-hidden="true">✦</span>
+      <span className={`${styles.deco} ${styles.deco2}`} aria-hidden="true">✦</span>
+
       <button className={styles.back} onClick={() => navigate('/')}>
         ← Back to work
       </button>
 
-      <p className={styles.category}>{work.category}</p>
+      <p className={styles.category}>
+        <span className={styles.categorySpark} aria-hidden="true">✦</span>
+        {work.category}
+      </p>
       <h1 className={styles.title}>{work.title}</h1>
       <p className={styles.meta}>{work.year}</p>
 
@@ -38,21 +46,26 @@ export default function WorkDetail() {
         </div>
       )}
 
-      <div className={styles.divider} />
+      <div className={styles.divider}>
+        <span className={styles.dividerLine} />
+        <span className={styles.dividerStar} aria-hidden="true">✦</span>
+      </div>
 
       {/* Thumbnail / image */}
-      <div
-        className={styles.thumb}
-        style={{ background: work.image ? 'transparent' : work.bg }}
-      >
-        {work.image 
-        ? (<img src={work.image} alt={work.title} className={styles.image} />) 
-        : (
-          <>
-            <span className={styles.emoji}>{work.emoji}</span>
-            <p className={styles.thumbHint}>Replace with image</p>
-          </>
-        )}
+      <div className={styles.thumbFrame}>
+        <div
+          className={styles.thumb}
+          style={{ background: work.image ? 'transparent' : work.bg }}
+        >
+          {work.image
+          ? (<img src={work.image} alt={work.title} className={styles.image} />)
+          : (
+            <>
+              <span className={styles.emoji}>{work.emoji}</span>
+              <p className={styles.thumbHint}>Replace with image</p>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Body copy */}
@@ -116,23 +129,30 @@ export default function WorkDetail() {
 
       {/* Next / prev navigation */}
       <div className={styles.workNav}>
-        {WORKS.find((w) => w.id === work.id - 1) && (
+        {prevWork ? (
           <button
             className={styles.navBtn}
-            onClick={() => navigate(`/work/${work.id - 1}`)}
+            onClick={() => navigate(`/work/${prevWork.id}`)}
           >
-            ← {WORKS.find((w) => w.id === work.id - 1).title}
+            <span className={styles.navArrow} aria-hidden="true">✦</span>
+            <span className={styles.navText}>
+              <span className={styles.navLabel}>Previous</span>
+              <span className={styles.navTitle}>{prevWork.title}</span>
+            </span>
           </button>
-        )}
-        <span />
-        {WORKS.find((w) => w.id === work.id + 1) && (
+        ) : <span />}
+        {nextWork ? (
           <button
-            className={styles.navBtn}
-            onClick={() => navigate(`/work/${work.id + 1}`)}
+            className={`${styles.navBtn} ${styles.navNext}`}
+            onClick={() => navigate(`/work/${nextWork.id}`)}
           >
-            {WORKS.find((w) => w.id === work.id + 1).title} →
+            <span className={styles.navText}>
+              <span className={styles.navLabel}>Next</span>
+              <span className={styles.navTitle}>{nextWork.title}</span>
+            </span>
+            <span className={styles.navArrow} aria-hidden="true">✦</span>
           </button>
-        )}
+        ) : <span />}
       </div>
     </div>
   )
