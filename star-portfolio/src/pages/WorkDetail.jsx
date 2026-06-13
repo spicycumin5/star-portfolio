@@ -38,10 +38,19 @@ export default function WorkDetail() {
 
       <div className={styles.divider} />
 
-      {/* Thumbnail / image placeholder */}
-      <div className={styles.thumb} style={{ background: work.bg }}>
-        <span className={styles.emoji}>{work.emoji}</span>
-        <p className={styles.thumbHint}>Replace with image</p>
+      {/* Thumbnail / image */}
+      <div
+        className={styles.thumb}
+        style={{ background: work.image ? 'transparent' : work.bg }}
+      >
+        {work.image 
+        ? (<img src={work.image} alt={work.title} className={styles.image} />) 
+        : (
+          <>
+            <span className={styles.emoji}>{work.emoji}</span>
+            <p className={styles.thumbHint}>Replace with image</p>
+          </>
+        )}
       </div>
 
       {/* Body copy */}

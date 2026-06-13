@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import WorkCard from '../components/WorkCard'
+import ConstellationView from '../components/ConstellationView'
 import { WORKS, CATEGORIES } from '../data/works'
 import styles from './Home.module.css'
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('all')
+  const [view, setView] = useState('grid')
 
   const filtered =
     activeFilter === 'all'
@@ -42,12 +44,32 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Grid */}
-        <div className={styles.grid}>
-          {filtered.map((work, i) => (
-            <WorkCard key={work.id} work={work} index={i} />
-          ))}
+        {/* View toggle */}
+        <div className={styles.viewToggle}>
+          <button
+            className={`${styles.viewBtn} ${view === 'grid' ? styles.viewActive : ''}`}
+            onClick={() => setView('grid')}
+          >
+            Grid
+          </button>
+          <button
+            className={`${styles.viewBtn} ${view === 'constellation' ? styles.viewActive : ''}`}
+            onClick={() => setView('constellation')}
+          >
+            Constellation
+          </button>
         </div>
+
+        {/* Grid or constellation */}
+        {view === 'grid' ? (
+          <div className={styles.grid}>
+            {filtered.map((work, i) => (
+              <WorkCard key={work.id} work={work} index={i} />
+            ))}
+          </div>
+        ) : (
+          <ConstellationView works={WORKS} activeFilter={activeFilter} />
+        )}
       </section>
     </div>
   )

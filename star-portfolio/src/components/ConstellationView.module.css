@@ -1,0 +1,82 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border: 0.5px solid var(--rim);
+  border-radius: 3px;
+  background: rgba(20, 22, 40, 0.3);
+  overflow: hidden;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.line {
+  stroke: var(--gold-dim);
+  stroke-width: 0.3;
+  fill: none;
+  opacity: 0.6;
+  transition: opacity 0.4s, stroke 0.3s;
+}
+
+.lineActive {
+  stroke: var(--gold);
+  opacity: 1;
+}
+
+.starGroup {
+  cursor: pointer;
+  outline: none;
+  transition: opacity 0.4s;
+}
+
+.star {
+  fill: var(--text);
+  transition: fill 0.2s;
+}
+
+.starGroup:hover .star,
+.starGroup:focus-visible .star {
+  fill: var(--gold);
+}
+
+.glow {
+  fill: var(--gold-glow);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.starGroup:hover .glow,
+.starGroup:focus-visible .glow {
+  opacity: 1;
+}
+
+.label {
+  font-family: var(--ff-serif);
+  font-size: 3px;
+  fill: var(--text);
+  text-anchor: middle;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, fill 0.2s;
+}
+
+.starGroup:hover .label,
+.starGroup:focus-visible .label {
+  opacity: 1;
+  fill: var(--gold);
+}
+
+.dimmed {
+  opacity: 0.18;
+}
+
+@media (max-width: 600px) {
+  .wrapper {
+    aspect-ratio: 1 / 1;
+  }
+}

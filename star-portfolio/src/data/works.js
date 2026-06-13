@@ -26,54 +26,60 @@ export const WORKS = [
     year: '2023',
     desc: "KYUMIN's second EP — an adolescent exploration of the day-to-day",
     tags: ['pop', 'electronic', 'ballad', 'bedroom'],
-    body: `To:Day is a five-track pop EP produced in 2022.' 
+    body: `To:Day is a five-track pop EP produced in 2022.
 
 Recorded with field recordings, synthesizers, and treated guitar. Mastered for spatial listening; headphones recommended.`,
-    link: '#',
+    link: 'https://open.spotify.com/album/1Hn5BrcclmasBLt7oID1zz?si=A4kXq7MQRgqtLDGMd3FhcQ',
     linkLabel: 'Listen on Spotify',
   },
+
   {
     id: 2,
-    category: 'art',
+    category: 'music',
+    image: '/images/beloved.jpg',
     emoji: '🎨',
     bg: '#0d1a1d',
-    title: 'Cartography of Elsewhere',
+    title: 'Beloved',
     year: '2024',
-    desc: 'Ink and gouache pieces mapping imagined geographies.',
-    tags: ['ink', 'gouache', 'series'],
-    body: `A series of twelve works on paper, each depicting a landscape from no known map. The project began as a meditation on longing — the feeling of missing a place you've never been.
-
-Ink outlines dissolve into washes of gouache; borders are deliberately ambiguous. Each piece is 18" × 24", framed.`,
+    desc: 'A collaboration with Claire Chow',
+    tags: ['worship', 'piano', 'strings'],
+    body: 'Beloved is a worship song co-written with Claire Chow. The track features piano, strings, and a soft ambient wash that builds gradually beneath the vocals — written as a quiet, intimate offering of gratitude.',
+    link: 'https://open.spotify.com/track/749HmPIhyynPYkLGJpI6Sv?si=c8c4aa0f58d047b7',
+    linkLabel: 'Listen on Spotify',
+    
   },
+
   {
     id: 3,
-    category: 'writing',
+    category: 'video',
+    image: '/images/sundays.jpg',
     emoji: '✒️',
     bg: '#13100a',
-    title: 'Between the Coordinates',
+    title: 'Sundays',
     year: '2023',
-    desc: 'A collection of prose poems about navigation and memory.',
-    tags: ['poetry', 'prose', 'collection'],
-    body: `Fourteen prose poems arranged as a journey. The speaker moves through physical and emotional terrain — airports, childhood homes, bodies of water — trying to locate something that keeps moving.
+    desc: 'A vlog of Sundays spent in church community, exploring themes of christ-centeredness, fun, and belonging',
+    tags: ['video', 'vlog', 'b-roll'],
+    body: `Sundays is a short video diary following a season of Sunday mornings spent with a church community. The footage moves between quiet moments before and after the service — conversation, shared meals, walks between buildings — and the parts of the day that don't make it into a typical highlight reel.
 
-The work was shortlisted for the [Prize Name] in 2023.`,
-    link: '#',
-    linkLabel: 'Read an excerpt',
+At its core, it's about belonging: what it feels like to be known by a group of people who keep showing up, week after week, centered on the same thing.`,
+    link: 'https://youtu.be/_ZKW52p5v8g',
+    linkLabel: 'Watch on Youtube',
   },
   {
     id: 4,
-    category: 'code',
-    emoji: '⟨/⟩',
-    bg: '#0a1520',
-    title: 'Starfield Engine',
+    category: 'music',
+    emoji: '🎤',
+    bg: '#1a1330',
+    title: 'Love Wins All - Cover',
     year: '2024',
-    desc: 'A generative visual tool for creating animated star systems.',
-    tags: ['WebGL', 'generative', 'open source'],
-    body: `An interactive browser-based engine for generating procedural starfields. Users control density, drift speed, parallax depth, and color temperature.
+    desc: 'A cover of "Love Wins All" by IU',
+    tags: ['video', 'music', 'cover'],
+    body: `Love Wins All is a cover of the IU song of the same name, recorded as a tribute to one of the artists who shaped KYUMIN's ear for melody and arrangement.
 
-Built with vanilla JS and WebGL. Open source on GitHub. Used by several small game studios for atmospheric backgrounds.`,
-    link: '#',
-    linkLabel: 'View on GitHub',
+The vocal and instrumentation lean close to the original's spare, emotional arrangement — a deliberate choice to let the song's melody carry the performance.`,
+    // TODO: add a real YouTube/Spotify link once available, e.g.
+    // link: 'https://...',
+    // linkLabel: 'Watch on YouTube',
   },
   {
     id: 5,
@@ -129,4 +135,4 @@ The shapes are driven by frequency data, so each voice, instrument, or environme
   },
 ]
 
-export const CATEGORIES = ['all', 'music', 'art', 'writing', 'code']
+export const CATEGORIES = ['all', 'video', 'music', 'art', 'writing', 'code']

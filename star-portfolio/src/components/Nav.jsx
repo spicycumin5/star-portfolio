@@ -5,7 +5,7 @@ export default function Nav() {
   return (
     <nav className={styles.nav}>
       <NavLink to="/" className={styles.logo}>
-        ✦ <span>Your Name</span>
+        ✦ <span>KYUMIN</span>
       </NavLink>
       <ul className={styles.links}>
         <li>
