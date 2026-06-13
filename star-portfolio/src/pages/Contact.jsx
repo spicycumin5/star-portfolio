@@ -2,10 +2,11 @@ import { useState } from 'react'
 import styles from './Contact.module.css'
 
 const SOCIAL_LINKS = [
-  { label: 'Instagram', href: '#' },
-  { label: 'Spotify', href: '#' },
-  { label: 'GitHub', href: '#' },
-  { label: 'Bandcamp', href: '#' },
+  { label: 'Instagram', href: 'https://www.instagram.com/spicy_cumin/' },
+  { label: 'Spotify', href: 'https://open.spotify.com/artist/0eXb6b1Yb9KjcVmcfNeEqj?si=Upc_z7qoRD61ELM6VprfWw' },
+  { label: 'GitHub', href: 'https://github.com/spicycumin5' },
+  { label: 'Substack', href: 'https://substack.com/@kyuminhan?r=5zk61m&utm_campaign=profile&utm_medium=profile-page' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/kyumin5/' },
 ]
 
 export default function Contact() {

@@ -31,7 +31,7 @@ export default function About() {
 
           {/* CV / Resume link */}
           <a href="#" className={styles.cvLink}>
-            Download CV ↗
+            Download Resume ↗
           </a>
         </div>
 
@@ -39,11 +39,10 @@ export default function About() {
         <div className={styles.right}>
           <ul className={styles.disciplines}>
             {[
-              { label: 'Music & Sound', detail: 'Composition, production, sound design' },
-              { label: 'Visual Art', detail: 'Painting, illustration, mixed media' },
-              { label: 'Writing & Poetry', detail: 'Essays, fiction, prose poetry' },
-              { label: 'Software & Code', detail: 'Web, generative tools, open source' },
-              { label: 'Collaboration', detail: 'Direction, creative consultation' },
+              { label: 'Music & Sound', detail: 'Composition, Production, Songwriting' },
+              { label: 'Visual Art', detail: 'Painting, Illustration, Mixed media' },
+              { label: 'Writing & Reflection', detail: 'Essays, Blogs, Poetry' },
+              { label: 'Software & Code', detail: 'Web, Projects, Development' },
             ].map((d) => (
               <li key={d.label} className={styles.discipline}>
                 <span className={styles.star}>✦</span>
@@ -59,11 +58,10 @@ export default function About() {
           <div className={styles.credits}>
             <p className={styles.creditsHeading}>Selected</p>
             {[
-              { year: '2024', text: 'Dusk Transmissions EP released' },
-              { year: '2024', text: 'Cartography of Elsewhere — Group show, [Gallery]' },
-              { year: '2023', text: 'Between the Coordinates shortlisted, [Prize]' },
-              { year: '2023', text: 'Signal & Noise LP released' },
-              { year: '2022', text: 'Luminiferous — Solo exhibition, [Gallery]' },
+              { year: '2026', text: ['Album soon'] },
+              { year: '2025', text: 'Beloved single released' },
+              { year: '2024', text: 'To:Day EP released' },
+              { year: '2022', text: 'To:Morrow EP released' },
             ].map((c, i) => (
               <div key={i} className={styles.credit}>
                 <span className={styles.creditYear}>{c.year}</span>

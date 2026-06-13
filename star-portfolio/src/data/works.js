@@ -132,13 +132,13 @@ The works aim not to depict light but to enact it — to make the canvas itself 
     category: 'writing',
     emoji: '✒️',
     bg: '#13100a',
-    title: 'The Quiet Atlas',
+    title: 'An Argument For Art',
     year: '2022',
-    desc: 'Long-form essays on place, attention, and slowness.',
-    tags: ['essays', 'nonfiction', 'place'],
-    body: `A collection of five long-form essays. Each essay takes a single location as its subject — a mountain pass, a seaside library, a desert town — and attempts to describe it with total fidelity.
-
-The project is as much about the limits of language as about geography.`,
+    desc: 'A philisophical argument responding to the question, "What is art?"',
+    tags: ['essays', 'aesthetics'],
+    body: `"An Argument For Art" is an essay tackling the task of defining art.`,
+    link: 'https://docs.google.com/document/d/14tgC1o3rCUr5cTyCvMYzp2JoQ5D__coOr9TFqmb3HKE/edit?usp=sharing',
+    linkLabel: 'Read Here',
   },
   {
     id: 8,
