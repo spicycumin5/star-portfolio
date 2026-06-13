@@ -85,38 +85,47 @@
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 3.5rem;
   flex-wrap: wrap;
 }
 
 .viewToggle {
   display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 2.5rem;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .viewBtn {
-  font-size: 0.7rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  padding: 0.4rem 1.1rem;
-  border: 0.5px solid var(--rim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  border: none;
   background: transparent;
-  color: var(--muted);
+  color: var(--faint);
   cursor: pointer;
-  border-radius: 2rem;
-  transition: all 0.3s;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.viewBtn svg {
+  width: 100%;
+  height: 100%;
 }
 
 .viewBtn:hover {
-  border-color: var(--gold-dim);
-  color: var(--text);
+  color: var(--muted);
+  transform: scale(1.1);
 }
 
 .viewActive {
-  background: var(--gold-glow);
-  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+.viewActive:hover {
   color: var(--gold);
 }
 
@@ -146,8 +155,17 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+  gap: 2.5rem 2rem;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    padding: 5rem 2rem 3.5rem;
+  }
+  .gallery {
+    padding: 0 2rem 5rem;
+  }
 }
 
 @media (max-width: 600px) {

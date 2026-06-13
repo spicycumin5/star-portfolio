@@ -6,7 +6,7 @@ import styles from './Home.module.css'
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('all')
-  const [view, setView] = useState('grid')
+  const [view, setView] = useState('constellation')
 
   const filtered =
     activeFilter === 'all'
@@ -31,6 +31,35 @@ export default function Home() {
 
       {/* Gallery */}
       <section className={styles.gallery}>
+        {/* View toggle */}
+        <div className={styles.viewToggle}>
+          <button
+            className={`${styles.viewBtn} ${view === 'grid' ? styles.viewActive : ''}`}
+            onClick={() => setView('grid')}
+            aria-label="Grid view"
+            aria-pressed={view === 'grid'}
+            title="Grid view"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <rect x="3" y="3" width="8" height="8" rx="1" />
+              <rect x="13" y="3" width="8" height="8" rx="1" />
+              <rect x="3" y="13" width="8" height="8" rx="1" />
+              <rect x="13" y="13" width="8" height="8" rx="1" />
+            </svg>
+          </button>
+          <button
+            className={`${styles.viewBtn} ${view === 'constellation' ? styles.viewActive : ''}`}
+            onClick={() => setView('constellation')}
+            aria-label="Constellation view"
+            aria-pressed={view === 'constellation'}
+            title="Constellation view"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2 L14.5 9.5 L22 12 L14.5 14.5 L12 22 L9.5 14.5 L2 12 L9.5 9.5 Z" />
+            </svg>
+          </button>
+        </div>
+
         {/* Filter bar */}
         <div className={styles.filterBar}>
           {CATEGORIES.map((cat) => (
@@ -42,22 +71,6 @@ export default function Home() {
               {cat}
             </button>
           ))}
-        </div>
-
-        {/* View toggle */}
-        <div className={styles.viewToggle}>
-          <button
-            className={`${styles.viewBtn} ${view === 'grid' ? styles.viewActive : ''}`}
-            onClick={() => setView('grid')}
-          >
-            Grid
-          </button>
-          <button
-            className={`${styles.viewBtn} ${view === 'constellation' ? styles.viewActive : ''}`}
-            onClick={() => setView('constellation')}
-          >
-            Constellation
-          </button>
         </div>
 
         {/* Grid or constellation */}

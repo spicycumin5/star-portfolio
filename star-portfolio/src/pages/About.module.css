@@ -157,6 +157,16 @@
   line-height: 1.5;
 }
 
+@media (max-width: 900px) {
+  .grid {
+    gap: 3rem;
+  }
+
+  .page {
+    padding: 8rem 2rem 5rem;
+  }
+}
+
 @media (max-width: 800px) {
   .grid {
     grid-template-columns: 1fr;

@@ -189,6 +189,12 @@
   color: var(--gold);
 }
 
+@media (max-width: 900px) {
+  .page {
+    padding: 6rem 2rem 5rem;
+  }
+}
+
 @media (max-width: 600px) {
   .page {
     padding: 6rem 1.5rem 4rem;
