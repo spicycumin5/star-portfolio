@@ -77,9 +77,8 @@ At its core, it's about belonging: what it feels like to be known by a group of 
     body: `Love Wins All is a cover of the IU song of the same name, recorded as a tribute to one of the artists who shaped KYUMIN's ear for melody and arrangement.
 
 The vocal and instrumentation lean close to the original's spare, emotional arrangement — a deliberate choice to let the song's melody carry the performance.`,
-    // TODO: add a real YouTube/Spotify link once available, e.g.
-    // link: 'https://...',
-    // linkLabel: 'Watch on YouTube',
+    link: 'https://youtu.be/ZV4Re9Z5eWc?si=T6Hm-IG04d5t_dsj',
+    linkLabel: 'Watch on YouTube',
   },
   {
     id: 5,
