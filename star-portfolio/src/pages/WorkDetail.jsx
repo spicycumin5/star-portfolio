@@ -22,7 +22,7 @@ export default function WorkDetail() {
 
   return (
     <div className={styles.page}>
-      <button className={styles.back} onClick={() => navigate(-1)}>
+      <button className={styles.back} onClick={() => navigate('/')}>
         ← Back to work
       </button>
 

@@ -38,11 +38,21 @@ Recorded with field recordings, synthesizers, and treated guitar. Mastered for s
     // each title/desc, and add a `link`/`linkLabel` (e.g. the individual
     // Spotify track URL) for songs you'd like listeners to jump to.
     tracks: [
-      { title: 'Track 1', desc: 'Add a short description of this track.' },
-      { title: 'Track 2', desc: 'Add a short description of this track.' },
-      { title: 'Track 3', desc: 'Add a short description of this track.' },
-      { title: 'Track 4', desc: 'Add a short description of this track.' },
-      { title: 'Track 5', desc: 'Add a short description of this track.' },
+      { title: 'Intro: Room', 
+        desc: 'The introduction to the EP, symbolizing the escape from my room. A bittersweet recognition that there truly is a whole world beyond its doors.',
+        link: 'https://open.spotify.com/track/1cxcQjDNRql8P0Hv2rPzor?si=e6f994e961c14757' },
+      { title: 'Memories', 
+        desc: 'A j-rock song, declaring that there is no need for memories - beyond the regrets, what one does now is what truly matters.',
+        link: 'https://open.spotify.com/track/1lGp3DUpicTdbzbsLAzwTF?si=305665b4e2cd4da0' },
+      { title: 'You!', 
+        desc: 'A bashful, naive love song to a certain someone', 
+        link: 'https://open.spotify.com/track/58BZi71E8guZNb0ZjjjsX2?si=ffa23ea4aee5431c' },
+      { title: 'Star Pt.2', 
+        desc: 'The second part to a song series exploring the cosmic wonder of stars',
+        link: 'https://open.spotify.com/track/0jkZn93coAIgmRwofsc5cN?si=0837f2406e564833' },
+      { title: 'Wind', 
+        desc: 'To the passing of my grandfather, a reflection on the gentle ruthlessness of time',
+        link: 'https://open.spotify.com/track/3bn9ArDq38CC8ZH2knOP57?si=4fbee9ba829c4147' },
     ],
   },
 
