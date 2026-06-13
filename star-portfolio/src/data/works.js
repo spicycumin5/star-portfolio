@@ -13,6 +13,9 @@
 //    body     long description shown on the detail page
 //    link     external URL (optional — e.g. SoundCloud, GitHub)
 //    linkLabel text for the external link button (optional)
+//    tracks   optional array of { title, desc, link, linkLabel } —
+//             renders an expandable tracklist on the detail page,
+//             letting visitors click into individual songs/pieces.
 // ─────────────────────────────────────────────────────────────
 
 export const WORKS = [
@@ -31,6 +34,16 @@ export const WORKS = [
 Recorded with field recordings, synthesizers, and treated guitar. Mastered for spatial listening; headphones recommended.`,
     link: 'https://open.spotify.com/album/1Hn5BrcclmasBLt7oID1zz?si=A4kXq7MQRgqtLDGMd3FhcQ',
     linkLabel: 'Listen on Spotify',
+    // TODO: replace these placeholders with the real tracklist — update
+    // each title/desc, and add a `link`/`linkLabel` (e.g. the individual
+    // Spotify track URL) for songs you'd like listeners to jump to.
+    tracks: [
+      { title: 'Track 1', desc: 'Add a short description of this track.' },
+      { title: 'Track 2', desc: 'Add a short description of this track.' },
+      { title: 'Track 3', desc: 'Add a short description of this track.' },
+      { title: 'Track 4', desc: 'Add a short description of this track.' },
+      { title: 'Track 5', desc: 'Add a short description of this track.' },
+    ],
   },
 
   {

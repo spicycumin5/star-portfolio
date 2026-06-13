@@ -161,6 +161,116 @@
   background: var(--gold-glow);
 }
 
+/* ── Tracklist ── */
+
+.tracklist {
+  margin-bottom: 3.5rem;
+}
+
+.tracklistHeading {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.track {
+  border-bottom: 0.5px solid var(--rim);
+}
+
+.track:first-of-type {
+  border-top: 0.5px solid var(--rim);
+}
+
+.trackHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 0;
+  border: none;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.3s;
+}
+
+.trackHeader:hover {
+  color: var(--gold);
+}
+
+.trackTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--ff-serif);
+  font-size: 1.05rem;
+}
+
+.trackSpark {
+  display: inline-block;
+  color: var(--gold-dim);
+  font-size: 0.7rem;
+  transition: color 0.3s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.trackOpen .trackSpark,
+.trackHeader:hover .trackSpark {
+  color: var(--gold);
+  transform: scale(1.2) rotate(15deg);
+}
+
+.trackToggle {
+  flex-shrink: 0;
+  width: 1.2rem;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.trackBody {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+
+.trackOpen .trackBody {
+  grid-template-rows: 1fr;
+}
+
+.trackBodyInner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.trackDesc {
+  font-family: var(--ff-serif);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--muted);
+  padding-bottom: 1rem;
+}
+
+.trackLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  padding-bottom: 1.2rem;
+  transition: opacity 0.3s;
+}
+
+.trackLink:hover {
+  opacity: 0.7;
+}
+
 .workNav {
   display: flex;
   justify-content: space-between;

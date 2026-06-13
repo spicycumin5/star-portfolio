@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { WORKS } from '../data/works'
 import styles from './WorkDetail.module.css'
@@ -6,6 +7,7 @@ export default function WorkDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const work = WORKS.find((w) => w.id === Number(id))
+  const [openTrack, setOpenTrack] = useState(null)
 
   if (!work) {
     return (
@@ -70,6 +72,46 @@ export default function WorkDetail() {
         >
           {work.linkLabel || 'View project'} ↗
         </a>
+      )}
+
+      {/* Tracklist */}
+      {work.tracks && (
+        <div className={styles.tracklist}>
+          <p className={styles.tracklistHeading}>Tracklist</p>
+          {work.tracks.map((track, i) => {
+            const isOpen = openTrack === i
+            return (
+              <div key={i} className={`${styles.track} ${isOpen ? styles.trackOpen : ''}`}>
+                <button
+                  className={styles.trackHeader}
+                  onClick={() => setOpenTrack(isOpen ? null : i)}
+                  aria-expanded={isOpen}
+                >
+                  <span className={styles.trackTitle}>
+                    <span className={styles.trackSpark}>✦</span>
+                    {track.title}
+                  </span>
+                  <span className={styles.trackToggle}>{isOpen ? '−' : '+'}</span>
+                </button>
+                <div className={styles.trackBody}>
+                  <div className={styles.trackBodyInner}>
+                    {track.desc && <p className={styles.trackDesc}>{track.desc}</p>}
+                    {track.link && (
+                      <a
+                        href={track.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={styles.trackLink}
+                      >
+                        {track.linkLabel || 'Listen'} ↗
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       )}
 
       {/* Next / prev navigation */}
