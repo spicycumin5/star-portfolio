@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { WORKS } from '../data/works'
+import CodeLinkCard from '../components/CodeLinkCard'
+import { getVideoEmbedUrl } from '../utils/embeds'
 import styles from './WorkDetail.module.css'
 
 export default function WorkDetail() {
@@ -8,8 +10,13 @@ export default function WorkDetail() {
   const navigate = useNavigate()
   const work = WORKS.find((w) => w.id === Number(id))
   const [openTrack, setOpenTrack] = useState(null)
+  const [artAspect, setArtAspect] = useState(null)
   const prevWork = work && WORKS.find((w) => w.id === work.id - 1)
   const nextWork = work && WORKS.find((w) => w.id === work.id + 1)
+
+  useEffect(() => {
+    setArtAspect(null)
+  }, [work?.id])
 
   if (!work) {
     return (
@@ -21,6 +28,115 @@ export default function WorkDetail() {
       </div>
     )
   }
+
+  const embedUrl = getVideoEmbedUrl(work.link)
+  const isArt = work.category === 'art'
+  const isMusic = work.category === 'music'
+
+  const thumbContent = (
+    <div className={styles.thumbFrame}>
+      {embedUrl ? (
+        <div className={styles.videoFrame}>
+          <iframe
+            src={embedUrl}
+            title={work.title}
+            className={styles.videoIframe}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      ) : work.category === 'code' ? (
+        <CodeLinkCard work={work} />
+      ) : (
+        <div
+          className={styles.thumb}
+          style={{
+            '--accent': work.bg,
+            ...(isArt && artAspect ? { aspectRatio: artAspect, height: 'auto' } : {}),
+            ...(isMusic ? { aspectRatio: '1 / 1', height: 'auto' } : {}),
+          }}
+        >
+          <span className={`${styles.thumbDot} ${styles.thumbDot1}`} aria-hidden="true" />
+          <span className={`${styles.thumbDot} ${styles.thumbDot2}`} aria-hidden="true" />
+          <span className={`${styles.thumbDot} ${styles.thumbDot3}`} aria-hidden="true" />
+          <span className={`${styles.thumbDot} ${styles.thumbDot4}`} aria-hidden="true" />
+          {work.image
+          ? (
+            <img
+              src={work.image}
+              alt={work.title}
+              className={styles.image}
+              onLoad={isArt ? (e) => setArtAspect(e.target.naturalWidth / e.target.naturalHeight) : undefined}
+            />
+          )
+          : (
+            <>
+              <span className={styles.emoji}>{work.emoji}</span>
+              <p className={styles.thumbHint}>Replace with image</p>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  )
+
+  const bodyContent = (
+    <div className={styles.body}>
+      {work.body.split('\n\n').map((para, i) => (
+        <p key={i}>{para}</p>
+      ))}
+    </div>
+  )
+
+  const linkContent = work.link && (
+    <a
+      href={work.link}
+      target="_blank"
+      rel="noreferrer"
+      className={styles.externalLink}
+    >
+      {work.linkLabel || 'View project'} ↗
+    </a>
+  )
+
+  const tracklistContent = work.tracks && (
+    <div className={styles.tracklist}>
+      <p className={styles.tracklistHeading}>Tracklist</p>
+      {work.tracks.map((track, i) => {
+        const isOpen = openTrack === i
+        return (
+          <div key={i} className={`${styles.track} ${isOpen ? styles.trackOpen : ''}`}>
+            <button
+              className={styles.trackHeader}
+              onClick={() => setOpenTrack(isOpen ? null : i)}
+              aria-expanded={isOpen}
+            >
+              <span className={styles.trackTitle}>
+                <span className={styles.trackSpark}>✦</span>
+                {track.title}
+              </span>
+              <span className={styles.trackToggle}>{isOpen ? '−' : '+'}</span>
+            </button>
+            <div className={styles.trackBody}>
+              <div className={styles.trackBodyInner}>
+                {track.desc && <p className={styles.trackDesc}>{track.desc}</p>}
+                {track.link && (
+                  <a
+                    href={track.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.trackLink}
+                  >
+                    {track.linkLabel || 'Listen'} ↗
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
 
   return (
     <div className={styles.page}>
@@ -51,81 +167,23 @@ export default function WorkDetail() {
         <span className={styles.dividerStar} aria-hidden="true">✦</span>
       </div>
 
-      {/* Thumbnail / image */}
-      <div className={styles.thumbFrame}>
-        <div className={styles.thumb} style={{ '--accent': work.bg }}>
-          <span className={`${styles.thumbDot} ${styles.thumbDot1}`} aria-hidden="true" />
-          <span className={`${styles.thumbDot} ${styles.thumbDot2}`} aria-hidden="true" />
-          <span className={`${styles.thumbDot} ${styles.thumbDot3}`} aria-hidden="true" />
-          <span className={`${styles.thumbDot} ${styles.thumbDot4}`} aria-hidden="true" />
-          {work.image
-          ? (<img src={work.image} alt={work.title} className={styles.image} />)
-          : (
-            <>
-              <span className={styles.emoji}>{work.emoji}</span>
-              <p className={styles.thumbHint}>Replace with image</p>
-            </>
-          )}
+      {/* Thumbnail / image / embed, with body + tracklist alongside for music */}
+      {isMusic ? (
+        <div className={styles.musicLayout}>
+          {thumbContent}
+          <div className={styles.musicDetails}>
+            {bodyContent}
+            {linkContent}
+            {tracklistContent}
+          </div>
         </div>
-      </div>
-
-      {/* Body copy */}
-      <div className={styles.body}>
-        {work.body.split('\n\n').map((para, i) => (
-          <p key={i}>{para}</p>
-        ))}
-      </div>
-
-      {/* External link */}
-      {work.link && (
-        <a
-          href={work.link}
-          target="_blank"
-          rel="noreferrer"
-          className={styles.externalLink}
-        >
-          {work.linkLabel || 'View project'} ↗
-        </a>
-      )}
-
-      {/* Tracklist */}
-      {work.tracks && (
-        <div className={styles.tracklist}>
-          <p className={styles.tracklistHeading}>Tracklist</p>
-          {work.tracks.map((track, i) => {
-            const isOpen = openTrack === i
-            return (
-              <div key={i} className={`${styles.track} ${isOpen ? styles.trackOpen : ''}`}>
-                <button
-                  className={styles.trackHeader}
-                  onClick={() => setOpenTrack(isOpen ? null : i)}
-                  aria-expanded={isOpen}
-                >
-                  <span className={styles.trackTitle}>
-                    <span className={styles.trackSpark}>✦</span>
-                    {track.title}
-                  </span>
-                  <span className={styles.trackToggle}>{isOpen ? '−' : '+'}</span>
-                </button>
-                <div className={styles.trackBody}>
-                  <div className={styles.trackBodyInner}>
-                    {track.desc && <p className={styles.trackDesc}>{track.desc}</p>}
-                    {track.link && (
-                      <a
-                        href={track.link}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={styles.trackLink}
-                      >
-                        {track.linkLabel || 'Listen'} ↗
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+      ) : (
+        <>
+          {thumbContent}
+          {bodyContent}
+          {linkContent}
+          {tracklistContent}
+        </>
       )}
 
       {/* Next / prev navigation */}

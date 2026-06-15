@@ -1,8 +1,17 @@
 import { useState } from 'react'
 import WorkCard from '../components/WorkCard'
 import ConstellationView from '../components/ConstellationView'
-import { WORKS, CATEGORIES } from '../data/works'
+import { WORKS } from '../data/works'
 import styles from './Home.module.css'
+
+const DISCIPLINES = [
+  { label: 'All', category: 'all' },
+  { label: 'Music', category: 'music' },
+  { label: 'Art', category: 'art' },
+  { label: 'Video', category: 'video' },
+  { label: 'Write', category: 'writing' },
+  { label: 'Code', category: 'code' },
+]
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('all')
@@ -60,15 +69,17 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Filter bar */}
+        {/* Discipline selection */}
+        <p className={styles.filterLabel}>Choose a constellation</p>
         <div className={styles.filterBar}>
-          {CATEGORIES.map((cat) => (
+          {DISCIPLINES.map((d) => (
             <button
-              key={cat}
-              className={`${styles.filterBtn} ${activeFilter === cat ? styles.filterActive : ''}`}
-              onClick={() => setActiveFilter(cat)}
+              key={d.category}
+              className={`${styles.filterBtn} ${activeFilter === d.category ? styles.filterActive : ''}`}
+              onClick={() => setActiveFilter(d.category)}
+              aria-pressed={activeFilter === d.category}
             >
-              {cat}
+              {d.label}
             </button>
           ))}
         </div>

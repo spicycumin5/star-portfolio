@@ -9,8 +9,9 @@ export function useStarfield(canvasRef) {
     let stars = []
     let shootingStars = []
     let nextShootAt = 0
-    let mouseX = null
-    let mouseY = null
+    let targetScroll = window.scrollY
+    let currentScroll = targetScroll
+    let scrollVelocity = 0
 
     function resize() {
       canvas.width = window.innerWidth
@@ -29,12 +30,12 @@ export function useStarfield(canvasRef) {
         speed: Math.random() * 0.004 + 0.001,
         phase: Math.random() * Math.PI * 2,
         gold: Math.random() < 0.08,
+        depth: Math.random(),
       }))
     }
 
-    function onMouseMove(e) {
-      mouseX = e.clientX
-      mouseY = e.clientY
+    function onScroll() {
+      targetScroll = window.scrollY
     }
 
     function spawnShootingStar(W, H) {
@@ -96,27 +97,43 @@ export function useStarfield(canvasRef) {
       const H = canvas.height
       ctx.clearRect(0, 0, W, H)
 
-      const hasMouse = mouseX !== null && mouseY !== null
-      const nx = hasMouse ? (mouseX / W) * 2 - 1 : 0
-      const ny = hasMouse ? (mouseY / H) * 2 - 1 : 0
-      const maxShift = 6
+      const prevScroll = currentScroll
+      currentScroll += (targetScroll - currentScroll) * 0.07
+      scrollVelocity = currentScroll - prevScroll
+
+      const PARALLAX_STRENGTH = 0.12
+      const trailBoost = Math.min(Math.abs(scrollVelocity) * 0.5, 6)
 
       for (const s of stars) {
         const twinkle = (Math.sin(t * s.speed + s.phase) + 1) / 2
         const alpha = 0.55 + twinkle * 0.35
-        let dx = 0
-        let dy = 0
-        if (hasMouse) {
-          const depthFactor = s.r / 1.5
-          dx = -nx * depthFactor * maxShift
-          dy = -ny * depthFactor * maxShift
-        }
+
+        // Nearer (larger) stars drift faster, giving a sense of travelling
+        // through a vast field of depth as the page scrolls.
+        const offset = currentScroll * s.depth * PARALLAX_STRENGTH
+        const y = ((s.y - offset) % H + H) % H
+
         ctx.beginPath()
-        ctx.arc(s.x + dx, s.y + dy, s.r, 0, Math.PI * 2)
+        ctx.arc(s.x, y, s.r, 0, Math.PI * 2)
         ctx.fillStyle = s.gold
           ? `rgba(201,168,76,${alpha * 0.9})`
           : `rgba(232,226,212,${alpha})`
         ctx.fill()
+
+        if (trailBoost > 1) {
+          const trailLen = trailBoost * (0.3 + s.depth)
+          const dir = scrollVelocity > 0 ? 1 : -1
+          const grad = ctx.createLinearGradient(s.x, y, s.x, y - dir * trailLen)
+          const color = s.gold ? '201,168,76' : '232,226,212'
+          grad.addColorStop(0, `rgba(${color},${alpha * 0.5})`)
+          grad.addColorStop(1, `rgba(${color},0)`)
+          ctx.strokeStyle = grad
+          ctx.lineWidth = s.r
+          ctx.beginPath()
+          ctx.moveTo(s.x, y)
+          ctx.lineTo(s.x, y - dir * trailLen)
+          ctx.stroke()
+        }
       }
 
       drawShootingStars(W, H, t)
@@ -125,7 +142,7 @@ export function useStarfield(canvasRef) {
     }
 
     window.addEventListener('resize', resize)
-    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('scroll', onScroll, { passive: true })
     resize()
     nextShootAt = performance.now() + Math.random() * 6000 + 4000
     animId = requestAnimationFrame(draw)
@@ -133,7 +150,7 @@ export function useStarfield(canvasRef) {
     return () => {
       cancelAnimationFrame(animId)
       window.removeEventListener('resize', resize)
-      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('scroll', onScroll)
     }
   }, [canvasRef])
 }

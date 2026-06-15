@@ -81,6 +81,15 @@
   margin: 0 auto;
 }
 
+.filterLabel {
+  text-align: center;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+
 .filterBar {
   display: flex;
   justify-content: center;

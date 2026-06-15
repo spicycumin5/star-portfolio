@@ -87,6 +87,9 @@ export default function ConstellationView({ works, activeFilter }) {
   const isDimmed = (category) =>
     activeFilter !== 'all' && category !== activeFilter
 
+  const isHighlighted = (category) =>
+    activeFilter !== 'all' && category === activeFilter
+
   function handleSelect(work) {
     if (burstingId) return
     setBurstingId(work.id)
@@ -110,8 +113,8 @@ export default function ConstellationView({ works, activeFilter }) {
               y2={to.y}
               vectorEffect="non-scaling-stroke"
               className={`${styles.line} ${isDimmed(category) ? styles.dimmed : ''} ${
-                hoveredCategory === category ? styles.lineActive : ''
-              }`}
+                isHighlighted(category) ? styles.lineHighlighted : ''
+              } ${hoveredCategory === category ? styles.lineActive : ''}`}
             />
           ))}
         </g>

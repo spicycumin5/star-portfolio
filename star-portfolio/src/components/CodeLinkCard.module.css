@@ -1,0 +1,88 @@
+.card {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 2.5rem;
+  border-radius: 6px;
+  border: 0.5px solid var(--gold-dim);
+  background: radial-gradient(ellipse at 50% 45%, var(--accent, var(--surface)) 0%, var(--midnight) 78%);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon {
+  flex-shrink: 0;
+  font-size: 2rem;
+  font-family: var(--ff-serif);
+  color: var(--gold);
+}
+
+.title {
+  font-family: var(--ff-serif);
+  font-size: 1.4rem;
+  color: var(--text);
+}
+
+.repoPath {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-family: monospace;
+}
+
+.description {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 48ch;
+}
+
+.stats {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.link {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  padding: 0.8rem 1.8rem;
+  border: 0.5px solid var(--gold-dim);
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.link:hover {
+  background: var(--gold-glow);
+  box-shadow: 0 0 24px var(--gold-glow);
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 1.75rem;
+  }
+}

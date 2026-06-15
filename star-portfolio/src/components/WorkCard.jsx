@@ -14,7 +14,10 @@ export default function WorkCard({ work, index }) {
       onKeyDown={(e) => e.key === 'Enter' && navigate(`/work/${work.id}`)}
       aria-label={`View ${work.title}`}
     >
-      <div className={styles.thumb} style={{ background: work.bg }}>
+      <div
+        className={`${styles.thumb} ${work.category === 'music' ? styles.thumbSquare : ''}`}
+        style={{ background: work.bg }}
+      >
         {work.image
           ? <img src={work.image} alt={work.title} className={styles.image} />
           : <span className={styles.emoji}>{work.emoji}</span>

@@ -22,6 +22,10 @@
   border-radius: 2px;
 }
 
+.thumbSquare {
+  aspect-ratio: 1 / 1;
+}
+
 .thumb::after {
   content: '';
   position: absolute;

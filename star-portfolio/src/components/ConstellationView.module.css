@@ -28,6 +28,24 @@
   animation: flow 1.4s linear infinite;
 }
 
+.lineHighlighted {
+  stroke: var(--gold);
+  stroke-width: 0.32;
+  opacity: 0.8;
+  animation: lineGlow 2.6s ease-in-out infinite;
+}
+
+@keyframes lineGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 0 var(--gold-glow));
+    opacity: 0.7;
+  }
+  50% {
+    filter: drop-shadow(0 0 1.5px var(--gold));
+    opacity: 1;
+  }
+}
+
 @keyframes flow {
   to {
     stroke-dashoffset: -7.2;
