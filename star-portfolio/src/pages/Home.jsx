@@ -26,14 +26,14 @@ export default function Home() {
     <div className={styles.page}>
       {/* Hero */}
       <section className={styles.hero}>
-        <p className={styles.eyebrow}>✦ Portfolio</p>
+        <p className={styles.eyebrow}>✦ Kyumin Han ✦</p>
         <h1 className={styles.heading}>
           Work born from<br />
           <em>many skies</em>
         </h1>
         <p className={styles.sub}>
-          Music, art, writing, and code —<br />
-          each piece a constellation of its own.
+          Music, art, video, writing, and code <br />
+          each a piece of a greater constellation.
         </p>
         <div className={styles.divider}>Scroll to explore</div>
       </section>
