@@ -8,24 +8,23 @@ export default function About() {
         <div className={styles.left}>
           <p className={styles.eyebrow}>✦ About</p>
           <h2 className={styles.heading}>
-            A creator who<br />
-            navigates by <em>starlight</em>
+            <br />
+            <em>About Me</em>
           </h2>
           <div className={styles.body}>
             <p>
-              I move between disciplines the way light moves through the dark —
-              drawn to wherever something beautiful wants to emerge. My work spans
-              music, visual art, writing, and software, each one informing the
-              others in ways I'm still discovering.
+              Hello! My name is Kyumin Han, and I'm a growing developer working 
+              at the intersection of music, visual arts, writing, and code. 
+              
             </p>
             <p>
-              Based in [Your City]. Open to collaborations that feel like
-              constellations: distinct points of light, connected into something
-              larger.
+              I'm currently based in the Bay Area and I'm seeking out opportunities that will allow me to
+              continue exploring all that I've yet to discover while learning new skills along the way.
             </p>
             <p>
-              This portfolio is a living map of where I've been and where I'm
-              going. Every piece is a star I've added to the sky.
+              This portfolio is a map of where I've been and where I'm
+              going! 
+              Thank you for visiting, I hope you have a wonderful day!
             </p>
           </div>
 
@@ -37,10 +36,14 @@ export default function About() {
 
         {/* Right column */}
         <div className={styles.right}>
+          <div className={styles.portrait}>
+            <img src="/images/seaside-headshot.jpg" alt="Portrait of Kyumin Han" />
+          </div>
+
           <ul className={styles.disciplines}>
             {[
               { label: 'Music & Sound', detail: 'Composition, Production, Songwriting' },
-              { label: 'Visual Art', detail: 'Painting, Illustration, Mixed media' },
+              { label: 'Visual Art & Videography', detail: 'Painting, Illustration, Mixed media' },
               { label: 'Writing & Reflection', detail: 'Essays, Blogs, Poetry' },
               { label: 'Software & Code', detail: 'Web, Projects, Development' },
             ].map((d) => (
@@ -56,7 +59,7 @@ export default function About() {
 
           {/* Selected exhibitions / releases / credits */}
           <div className={styles.credits}>
-            <p className={styles.creditsHeading}>Selected</p>
+            <p className={styles.creditsHeading}>Release History</p>
             {[
               { year: '2026', text: ['Album soon'] },
               { year: '2025', text: 'Beloved single released' },

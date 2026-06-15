@@ -27,21 +27,18 @@ export default function Contact() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <p className={styles.eyebrow}>✦ Say hello</p>
+        <p className={styles.eyebrow}>✦ Contact</p>
         <h2 className={styles.heading}>
-          Let's make<br />
-          something <em>luminous</em>
+          Let's connect!
         </h2>
         <p className={styles.sub}>
-          Whether it's a collaboration, a commission, or just a hello —<br />
-          I'd love to hear from you.
         </p>
 
         {sent ? (
           <div className={styles.thanks}>
             <p className={styles.thanksStar}>✦</p>
             <p className={styles.thanksHeading}>Message received.</p>
-            <p className={styles.thanksSub}>I'll be in touch soon.</p>
+            <p className={styles.thanksSub}>Thank you for reaching out!</p>
             <button className={styles.resetBtn} onClick={() => { setSent(false); setForm({ name: '', email: '', message: '' }) }}>
               Send another
             </button>
@@ -55,7 +52,7 @@ export default function Contact() {
                   id="name"
                   name="name"
                   type="text"
-                  placeholder="Jane Doe"
+                  placeholder="Your Name"
                   value={form.name}
                   onChange={handleChange}
                   required
@@ -81,7 +78,7 @@ export default function Contact() {
               <textarea
                 id="message"
                 name="message"
-                placeholder="Tell me what you're thinking…"
+                placeholder="Your message…"
                 value={form.message}
                 onChange={handleChange}
                 required

@@ -101,9 +101,7 @@ Recorded with field recordings, synthesizers, and treated guitar. Mastered for s
     year: '2024',
     desc: 'A cover of "Love Wins All" by IU',
     tags: ['video', 'music', 'cover'],
-    body: `Love Wins All is a cover of the IU song of the same name, recorded as a tribute to one of the artists who shaped KYUMIN's ear for melody and arrangement.
-
-The vocal and instrumentation lean close to the original's spare, emotional arrangement — a deliberate choice to let the song's melody carry the performance.`,
+    body: `Love Wins All is a cover of the IU song, recorded because I was sad I couldn't go to her concert during the Golden Hour tour.`,
     link: 'https://youtu.be/ZV4Re9Z5eWc?si=T6Hm-IG04d5t_dsj',
     linkLabel: 'Watch on YouTube',
   },
@@ -112,24 +110,22 @@ The vocal and instrumentation lean close to the original's spare, emotional arra
     category: 'music',
     emoji: '🎵',
     bg: '#1a1330',
-    title: 'Signal & Noise',
+    title: 'placeholder',
     year: '2023',
-    desc: 'Electronic compositions built from found sound and synthesis.',
-    tags: ['electronic', 'found sound', 'album'],
-    body: `Signal & Noise is a 40-minute album that blurs the line between composition and documentation. Source material includes recordings from train stations, hospital waiting rooms, and thunderstorms, woven into rhythmic structures.`,
+    desc: 'placeholder',
+    tags: ['electronic', '', 'album'],
+    body: `placeholder`,
   },
   {
     id: 6,
     category: 'art',
     emoji: '🎨',
     bg: '#0d1a1d',
-    title: 'Luminiferous',
+    title: 'placeholder',
     year: '2023',
-    desc: 'Oil paintings examining how light behaves near water.',
-    tags: ['oil', 'painting', 'light'],
-    body: `A series of eight large-format oil paintings. Each piece focuses on a different phenomenon: reflection, refraction, caustics, diffusion.
-
-The works aim not to depict light but to enact it — to make the canvas itself seem to generate illumination.`,
+    desc: 'placeholder',
+    tags: ['visual arts', 'digital', 'installation'],
+    body: 'placeholder',
   },
   {
     id: 7,
@@ -235,7 +231,7 @@ The works aim not to depict light but to enact it — to make the canvas itself 
     link: 'https://kyumin.substack.com/p/on-the-topic-of-endings?r=5zk61m',
     linkLabel: 'Read Here',
   },
-  {
+    {
     id: 15,
     category: 'art',
     image: '/images/22/dec.22.jpg',
@@ -245,7 +241,7 @@ The works aim not to depict light but to enact it — to make the canvas itself 
     year: '2022',
     desc: 'A year in pieces — one work made (almost) every month of 2022.',
     tags: ['monthly series', 'visual diary'],
-    body: `Eleven months survive from 2022 — January's piece never got made, but the rest of the year did. Scroll through to see how it unfolded, one month at a time.`,
+    body: `This year I began this monthly tradition of drawing a piece inspired by the moments and lessons of the month.`, 
     // TODO: add a short description for each piece below.
     months: [
       { month: 'January', image: null, desc: '' },
@@ -272,7 +268,7 @@ The works aim not to depict light but to enact it — to make the canvas itself 
     year: '2023',
     desc: 'A year in pieces — one work made every month of 2023.',
     tags: ['monthly series', 'visual diary'],
-    body: `Twelve months, twelve attempts to make something — a small ritual carried through 2023. Scroll through to see how the year unfolded, one piece at a time.`,
+    body: `The 2023 calendar in pieces.`,
     // TODO: add a short description for each piece below.
     months: [
       { month: 'January', image: '/images/23/jan.23.jpg', desc: '' },
@@ -299,7 +295,7 @@ The works aim not to depict light but to enact it — to make the canvas itself 
     year: '2024',
     desc: 'A year in pieces — one work made every month of 2024.',
     tags: ['monthly series', 'visual diary'],
-    body: `Twelve months, twelve attempts to make something — a small ritual carried through 2024. Scroll through to see how the year unfolded, one piece at a time.`,
+    body: `2024 in pieces.`,
     // TODO: add a short description for each piece below.
     months: [
       { month: 'January', image: '/images/24/jan.24.jpg', desc: '' },
@@ -326,7 +322,7 @@ The works aim not to depict light but to enact it — to make the canvas itself 
     year: '2025',
     desc: 'A year in pieces — one work made every month of 2025.',
     tags: ['monthly series', 'visual diary'],
-    body: `Twelve months, twelve attempts to make something — a small ritual carried through 2025. Scroll through to see how the year unfolded, one piece at a time.`,
+    body: `2025 in pieces.`,
     // TODO: add a short description for each piece below.
     months: [
       { month: 'January', image: '/images/25/jan.25.JPG', desc: '' },
