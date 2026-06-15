@@ -82,9 +82,8 @@ Recorded with field recordings, synthesizers, and treated guitar. Mastered for s
     year: '2023',
     desc: 'A vlog of Sundays spent in church community, exploring themes of christ-centeredness, fun, and belonging',
     tags: ['video', 'vlog', 'b-roll'],
-    body: `Sundays is a short video diary following a season of Sunday mornings spent with a church community. The footage moves between quiet moments before and after the service — conversation, shared meals, walks between buildings — and the parts of the day that don't make it into a typical highlight reel.
-
-At its core, it's about belonging: what it feels like to be known by a group of people who keep showing up, week after week, centered on the same thing.`,
+    body: `Sundays is a short video diary following a season of Sunday mornings spent with a church community. The footage moves through the mundane: conversations, shared meals, walks between buildings — and the parts of the day that made me fall in love with the church.  
+    At its core, it's about belonging: what it feels like to be known by a group of people who keep showing up, week after week, centered on the same thing.`,
     link: 'https://youtu.be/_ZKW52p5v8g',
     linkLabel: 'Watch on Youtube',
   },
@@ -145,15 +144,26 @@ The works aim not to depict light but to enact it — to make the canvas itself 
     category: 'code',
     emoji: '⟨/⟩',
     bg: '#0a1520',
-    title: 'Resonance',
-    year: '2023',
-    desc: 'A web app that visualizes audio as living geometry.',
-    tags: ['Web Audio API', 'Canvas', 'visualization'],
-    body: `Resonance is a real-time audio visualization tool. It captures microphone input and renders it as breathing geometric forms using the Web Audio API and Canvas.
-
-The shapes are driven by frequency data, so each voice, instrument, or environment produces a unique visual signature.`,
-    link: '#',
-    linkLabel: 'Try it live',
+    title: 'Spaces',
+    year: '2026',
+    desc: 'Wonder what the sky looked like during a special moment in your life? Spaces is a web app that shows you the night sky from any place and time. ',
+    tags: ['TypeScript', 'React', 'Next.js'],
+    body: `Built with React and Next.js, Spaces uses an open-source astronomy library to render accurate star maps. Users can input any date, time, and location to see a personalized night sky... a constellation of the moments that matter to them.`,
+    link: 'https://spaces-kyu.vercel.app/',
+    linkLabel: 'Try it here',
+  },
+  {
+    id: 9,
+    category: 'code',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'VolleyVision',
+    year: '2026',
+    desc: 'Hackathon hosted by StatsPerform, build with Evan Inrig and Jason Press',
+    tags: ['TypeScript', 'React', 'Next.js'],
+    body: `VolleyVision is an ai-powered tool designed to provide detailed analytics and visualizations for volleyball games. It allows users to analyze player movements, ball trajectories, and game statistics of pre-recorded volleyball footage`,
+    link: 'https://volleyvision-kyu.vercel.app/',
+    linkLabel: 'Try it here',
   },
 ]
 
