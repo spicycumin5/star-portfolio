@@ -32,6 +32,7 @@ export default function WorkDetail() {
   const embedUrl = getVideoEmbedUrl(work.link)
   const isArt = work.category === 'art'
   const isMusic = work.category === 'music'
+  const hasMonths = Array.isArray(work.months)
 
   const thumbContent = (
     <div className={styles.thumbFrame}>
@@ -168,7 +169,39 @@ export default function WorkDetail() {
       </div>
 
       {/* Thumbnail / image / embed, with body + tracklist alongside for music */}
-      {isMusic ? (
+      {hasMonths ? (
+        <>
+          {bodyContent}
+          <div className={styles.yearGrid}>
+            {work.months.map((m) => (
+              <div key={m.month} className={styles.monthCard} style={{ '--accent': work.bg }}>
+                {m.image ? (
+                  <button
+                    className={styles.monthFrame}
+                    onClick={() => navigate(`/work/${work.id}/${m.month.toLowerCase()}`)}
+                    aria-label={`View ${m.month} ${work.year}`}
+                  >
+                    <img
+                      src={m.image}
+                      alt={`${work.title} — ${m.month}`}
+                      className={styles.monthImage}
+                    />
+                  </button>
+                ) : (
+                  <div className={`${styles.monthFrame} ${styles.monthFrameEmpty}`}>
+                    <p className={styles.monthEmpty}>No piece this month</p>
+                  </div>
+                )}
+                <p className={styles.monthLabel}>
+                  <span className={styles.monthSpark} aria-hidden="true">✦</span>
+                  {m.month}
+                </p>
+                {m.desc && <p className={styles.monthDesc}>{m.desc}</p>}
+              </div>
+            ))}
+          </div>
+        </>
+      ) : isMusic ? (
         <div className={styles.musicLayout}>
           {thumbContent}
           <div className={styles.musicDetails}>

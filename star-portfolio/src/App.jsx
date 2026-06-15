@@ -4,6 +4,7 @@ import Nav from './components/Nav'
 import StarCanvas from './components/StarCanvas'
 import Home from './pages/Home'
 import WorkDetail from './pages/WorkDetail'
+import MonthDetail from './pages/MonthDetail'
 import About from './pages/About'
 import Contact from './pages/Contact'
 
@@ -22,6 +23,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/work/:id" element={<WorkDetail />} />
+        <Route path="/work/:id/:month" element={<MonthDetail />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>
