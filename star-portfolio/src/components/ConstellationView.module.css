@@ -133,14 +133,14 @@
 .clusterLabel {
   font-family: var(--ff-mono);
   font-size: 3.5px;
-  fill: var(--muted);
+  fill: rgba(237, 229, 208, 0.22);
   text-anchor: middle;
   pointer-events: none;
-  transition: fill 0.3s, opacity 0.4s;
+  transition: fill 0.4s, opacity 0.4s;
 }
 
 .clusterLabelActive {
-  fill: var(--gold);
+  fill: rgba(212, 147, 106, 0.9);
 }
 
 /* ── Hover preview card ── */

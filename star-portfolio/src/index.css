@@ -16,8 +16,8 @@
   --muted: rgba(237, 229, 208, 0.5);
   --faint: rgba(237, 229, 208, 0.18);
   --ff-serif: 'Cormorant Garamond', Georgia, serif;
-  --ff-sans: 'Lora', Georgia, serif;
-  --ff-mono: 'Courier Prime', 'Courier New', monospace;
+  --ff-sans: 'Space Grotesk', sans-serif;
+  --ff-mono: 'Space Mono', monospace;
 }
 
 html {
