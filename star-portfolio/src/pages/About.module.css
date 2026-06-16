@@ -21,7 +21,7 @@
   padding: 9rem 3rem 6rem;
   max-width: 1200px;
   margin: 0 auto;
-  animation: fadeUp 0.6s forwards;
+  animation: warpIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }
 
 .grid {
@@ -94,7 +94,7 @@
 }
 
 .body {
-  font-family: var(--ff-serif);
+  font-family: var(--ff-sans);
   font-size: 1.1rem;
   line-height: 1.9;
   color: var(--muted);

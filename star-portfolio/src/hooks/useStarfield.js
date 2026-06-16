@@ -1,6 +1,13 @@
 import { useEffect, useRef } from 'react'
 
-export function useStarfield(canvasRef) {
+export function useStarfield(canvasRef, pathname) {
+  const warpRef = useRef(8)
+
+  // Reset warp burst on every route change
+  useEffect(() => {
+    warpRef.current = 8
+  }, [pathname])
+
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -104,12 +111,19 @@ export function useStarfield(canvasRef) {
       const PARALLAX_STRENGTH = 0.12
       const trailBoost = Math.min(Math.abs(scrollVelocity) * 0.5, 6)
 
+      // Decay warp burst each frame
+      if (warpRef.current > 0.05) {
+        warpRef.current *= 0.95
+      } else {
+        warpRef.current = 0
+      }
+      const warp = warpRef.current
+      const cx = W / 2
+      const cy = H / 2
+
       for (const s of stars) {
         const twinkle = (Math.sin(t * s.speed + s.phase) + 1) / 2
         const alpha = 0.55 + twinkle * 0.35
-
-        // Nearer (larger) stars drift faster, giving a sense of travelling
-        // through a vast field of depth as the page scrolls.
         const offset = currentScroll * s.depth * PARALLAX_STRENGTH
         const y = ((s.y - offset) % H + H) % H
 
@@ -120,6 +134,7 @@ export function useStarfield(canvasRef) {
           : `rgba(237,229,208,${alpha})`
         ctx.fill()
 
+        // Scroll-based vertical trails
         if (trailBoost > 1) {
           const trailLen = trailBoost * (0.3 + s.depth)
           const dir = scrollVelocity > 0 ? 1 : -1
@@ -134,10 +149,30 @@ export function useStarfield(canvasRef) {
           ctx.lineTo(s.x, y - dir * trailLen)
           ctx.stroke()
         }
+
+        // Warp arrival: trails radiate outward from center
+        if (warp > 0.3) {
+          const dx = s.x - cx
+          const dy = y - cy
+          const dist = Math.hypot(dx, dy) || 1
+          const nx = dx / dist
+          const ny = dy / dist
+          const trailLen = warp * (1.5 + s.depth * 3)
+          const warpAlpha = Math.min(1, warp / 8) * 0.45
+          const color = s.gold ? '212,147,106' : '237,229,208'
+          const grad = ctx.createLinearGradient(s.x, y, s.x - nx * trailLen, y - ny * trailLen)
+          grad.addColorStop(0, `rgba(${color},${warpAlpha})`)
+          grad.addColorStop(1, `rgba(${color},0)`)
+          ctx.strokeStyle = grad
+          ctx.lineWidth = s.r * 0.8
+          ctx.beginPath()
+          ctx.moveTo(s.x, y)
+          ctx.lineTo(s.x - nx * trailLen, y - ny * trailLen)
+          ctx.stroke()
+        }
       }
 
       drawShootingStars(W, H, t)
-
       animId = requestAnimationFrame(draw)
     }
 
