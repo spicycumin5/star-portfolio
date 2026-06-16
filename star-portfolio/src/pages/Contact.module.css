@@ -31,8 +31,9 @@
 }
 
 .eyebrow {
+  font-family: var(--ff-mono);
   font-size: 0.7rem;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 1.5rem;
@@ -81,8 +82,9 @@
 }
 
 .label {
+  font-family: var(--ff-mono);
   font-size: 0.65rem;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold);
 }
@@ -184,8 +186,9 @@
 }
 
 .socialLink {
+  font-family: var(--ff-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
   transition: color 0.3s;

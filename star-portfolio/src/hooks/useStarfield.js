@@ -71,7 +71,7 @@ export function useStarfield(canvasRef) {
         const alpha = 1 - s.life
         const tailX = s.x - s.ux * s.len
         const tailY = s.y - s.uy * s.len
-        const color = s.gold ? '201,168,76' : '232,226,212'
+        const color = s.gold ? '212,147,106' : '237,229,208'
 
         const grad = ctx.createLinearGradient(s.x, s.y, tailX, tailY)
         grad.addColorStop(0, `rgba(${color},${alpha})`)
@@ -116,15 +116,15 @@ export function useStarfield(canvasRef) {
         ctx.beginPath()
         ctx.arc(s.x, y, s.r, 0, Math.PI * 2)
         ctx.fillStyle = s.gold
-          ? `rgba(201,168,76,${alpha * 0.9})`
-          : `rgba(232,226,212,${alpha})`
+          ? `rgba(212,147,106,${alpha * 0.9})`
+          : `rgba(237,229,208,${alpha})`
         ctx.fill()
 
         if (trailBoost > 1) {
           const trailLen = trailBoost * (0.3 + s.depth)
           const dir = scrollVelocity > 0 ? 1 : -1
           const grad = ctx.createLinearGradient(s.x, y, s.x, y - dir * trailLen)
-          const color = s.gold ? '201,168,76' : '232,226,212'
+          const color = s.gold ? '212,147,106' : '237,229,208'
           grad.addColorStop(0, `rgba(${color},${alpha * 0.5})`)
           grad.addColorStop(1, `rgba(${color},0)`)
           ctx.strokeStyle = grad

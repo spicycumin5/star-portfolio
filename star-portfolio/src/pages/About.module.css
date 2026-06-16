@@ -36,8 +36,8 @@
 
 .portrait {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   overflow: hidden;
   border: 0.5px solid var(--gold-dim);
@@ -72,8 +72,9 @@
 }
 
 .eyebrow {
+  font-family: var(--ff-mono);
   font-size: 0.7rem;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 1.5rem;
@@ -156,23 +157,26 @@
 }
 
 .disciplineLabel {
-  font-size: 0.78rem;
-  letter-spacing: 0.15em;
+  font-family: var(--ff-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text);
   margin-bottom: 0.2rem;
 }
 
 .disciplineDetail {
-  font-size: 0.78rem;
+  font-family: var(--ff-mono);
+  font-size: 0.75rem;
   color: var(--muted);
   line-height: 1.5;
 }
 
 /* ── Credits ── */
 .creditsHeading {
+  font-family: var(--ff-mono);
   font-size: 0.65rem;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 1.2rem;
@@ -186,15 +190,17 @@
 }
 
 .creditYear {
+  font-family: var(--ff-mono);
   font-size: 0.75rem;
   color: var(--gold);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   flex-shrink: 0;
   width: 2.5rem;
 }
 
 .creditText {
-  font-size: 0.82rem;
+  font-family: var(--ff-mono);
+  font-size: 0.78rem;
   color: var(--muted);
   line-height: 1.5;
 }
