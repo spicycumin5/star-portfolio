@@ -74,8 +74,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
+  font-family: var(--ff-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--gold);
   cursor: pointer;
@@ -94,8 +95,9 @@
   display: flex;
   align-items: center;
   gap: 0.55rem;
+  font-family: var(--ff-mono);
   font-size: 0.68rem;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 0.8rem;
@@ -133,8 +135,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  font-family: var(--ff-mono);
   font-size: 0.65rem;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
   transition: color 0.3s;
@@ -347,7 +350,7 @@
   font-size: 1.1rem;
   line-height: 1.9;
   color: var(--muted);
-  font-weight: 300;
+  font-weight: 400;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -446,8 +449,9 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-family: var(--ff-mono);
   font-size: 0.65rem;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--gold);
 }
@@ -478,8 +482,9 @@
 }
 
 .tracklistHeading {
+  font-family: var(--ff-mono);
   font-size: 0.65rem;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 0.5rem;
@@ -633,8 +638,9 @@
 }
 
 .navLabel {
+  font-family: var(--ff-mono);
   font-size: 0.6rem;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--faint);
 }

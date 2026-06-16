@@ -2,9 +2,6 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './ConstellationView.module.css'
 
-// Hand-placed anchors for the categories currently in use, in a 160x100
-// viewBox. Categories not listed here fall back to anchorFor(), which
-// spreads any new categories around the center automatically.
 const KNOWN_CATEGORY_ANCHORS = {
   music: { x: 35, y: 30 },
   video: { x: 115, y: 22 },
@@ -21,10 +18,6 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max)
 }
 
-// Deterministic per-category spiral layout, grouped by category so each
-// category reads as its own loose constellation. Unknown categories are
-// placed automatically around the center, evenly spaced via the golden
-// angle, so adding new categories never collides with existing ones.
 function buildLayout(works) {
   const byCategory = {}
   works.forEach((work) => {
@@ -49,40 +42,63 @@ function buildLayout(works) {
 
   Object.entries(byCategory).forEach(([category, items]) => {
     const anchor = anchorFor(category)
-    let prev = null
 
-    items.forEach((work, i) => {
+    const catStars = items.map((work, i) => {
       const angle = i * GOLDEN_ANGLE
       const radius = 4 + i * 3.2
       const x = clamp(anchor.x + Math.cos(angle) * radius, 6, 154)
       const y = clamp(anchor.y + Math.sin(angle) * radius, 4, 96)
-
-      // Deterministic per-star variation so stars feel like part of the
-      // ambient sky rather than identical UI dots.
       const size = 1 + ((work.id * 7) % 5) * 0.22
       const gold = work.id % 5 === 2
       const twinkleDur = 2.2 + (work.id % 4) * 0.7
       const twinkleDelay = (work.id * 0.53) % 3
+      return { work, x, y, size, gold, twinkleDur, twinkleDelay }
+    })
 
-      const star = { work, x, y, size, gold, twinkleDur, twinkleDelay }
-      stars.push(star)
+    stars.push(...catStars)
 
-      if (prev) {
-        lines.push({ from: prev, to: star, category })
-      }
-      prev = star
+    // Connect each star to its 2 nearest neighbors within the category
+    // rather than sequential prev→next, so shapes branch and feel organic
+    const addedPairs = new Set()
+    catStars.forEach((star, i) => {
+      catStars
+        .map((other, j) => ({ j, dist: Math.hypot(star.x - other.x, star.y - other.y) }))
+        .filter(({ j }) => j !== i)
+        .sort((a, b) => a.dist - b.dist)
+        .slice(0, 2)
+        .forEach(({ j }) => {
+          const key = `${Math.min(i, j)}-${Math.max(i, j)}`
+          if (!addedPairs.has(key)) {
+            addedPairs.add(key)
+            lines.push({ from: catStars[i], to: catStars[j], category })
+          }
+        })
     })
   })
 
   return { stars, lines }
 }
 
+function tooltipStyle(x, y) {
+  const flipX = x > 100
+  const flipY = y > 60
+  const tx = flipX ? 'calc(-100% - 14px)' : '14px'
+  const ty = flipY ? 'calc(-100% - 8px)' : '8px'
+  return {
+    left: `${(x / 160) * 100}%`,
+    top: `${(y / 100) * 100}%`,
+    transform: `translate(${tx}, ${ty})`,
+  }
+}
+
 export default function ConstellationView({ works, activeFilter }) {
   const navigate = useNavigate()
-  const [hoveredCategory, setHoveredCategory] = useState(null)
+  const [hovered, setHovered] = useState(null)
   const [burstingId, setBurstingId] = useState(null)
 
   const { stars, lines } = useMemo(() => buildLayout(works), [works])
+
+  const hoveredCategory = hovered?.work.category ?? null
 
   const isDimmed = (category) =>
     activeFilter !== 'all' && category !== activeFilter
@@ -119,6 +135,19 @@ export default function ConstellationView({ works, activeFilter }) {
           ))}
         </g>
 
+        {Object.entries(KNOWN_CATEGORY_ANCHORS).map(([cat, anchor]) => (
+          <text
+            key={cat}
+            x={anchor.x}
+            y={anchor.y - 11}
+            className={`${styles.clusterLabel} ${
+              isDimmed(cat) ? styles.dimmed : ''
+            } ${isHighlighted(cat) ? styles.clusterLabelActive : ''}`}
+          >
+            {cat}
+          </text>
+        ))}
+
         {stars.map(({ work, x, y, size, gold, twinkleDur, twinkleDelay }) => (
           <g
             key={work.id}
@@ -127,10 +156,10 @@ export default function ConstellationView({ works, activeFilter }) {
             }`}
             transform={`translate(${x} ${y})`}
             onClick={() => handleSelect(work)}
-            onMouseEnter={() => setHoveredCategory(work.category)}
-            onMouseLeave={() => setHoveredCategory(null)}
-            onFocus={() => setHoveredCategory(work.category)}
-            onBlur={() => setHoveredCategory(null)}
+            onMouseEnter={() => setHovered({ work, x, y })}
+            onMouseLeave={() => setHovered(null)}
+            onFocus={() => setHovered({ work, x, y })}
+            onBlur={() => setHovered(null)}
             tabIndex={0}
             role="button"
             aria-label={`View ${work.title}`}
@@ -150,12 +179,32 @@ export default function ConstellationView({ works, activeFilter }) {
               d="M2.6,0 L0.65,0.65 L0,2.6 L-0.65,0.65 L-2.6,0 L-0.65,-0.65 L0,-2.6 L0.65,-0.65 Z"
               className={styles.starShape}
             />
-            <text x="0" y="-3.5" className={styles.label}>
-              {work.title}
-            </text>
           </g>
         ))}
       </svg>
+
+      {hovered && !burstingId && (
+        <div
+          key={hovered.work.id}
+          className={styles.preview}
+          style={tooltipStyle(hovered.x, hovered.y)}
+        >
+          {hovered.work.image && (
+            <img
+              src={hovered.work.image}
+              alt=""
+              className={styles.previewImage}
+            />
+          )}
+          <div className={styles.previewBody}>
+            <p className={styles.previewCategory}>{hovered.work.category}</p>
+            <p className={styles.previewTitle}>{hovered.work.title}</p>
+            {hovered.work.desc && (
+              <p className={styles.previewDesc}>{hovered.work.desc}</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
