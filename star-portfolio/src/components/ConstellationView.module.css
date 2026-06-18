@@ -29,14 +29,14 @@
 }
 
 .lineActive {
-  stroke: var(--gold);
+  stroke: var(--cat-color, var(--gold));
   opacity: 0.9;
   stroke-dasharray: 2 1.6;
   animation: flow 1.4s linear infinite;
 }
 
 .lineHighlighted {
-  stroke: var(--gold);
+  stroke: var(--cat-color, var(--gold));
   stroke-width: 0.32;
   opacity: 0.8;
   animation: lineGlow 2.6s ease-in-out infinite;
@@ -44,11 +44,11 @@
 
 @keyframes lineGlow {
   0%, 100% {
-    filter: drop-shadow(0 0 0 var(--gold-glow));
+    filter: drop-shadow(0 0 0 color-mix(in srgb, var(--cat-color, var(--gold)) 40%, transparent));
     opacity: 0.7;
   }
   50% {
-    filter: drop-shadow(0 0 1.5px var(--gold));
+    filter: drop-shadow(0 0 1.5px var(--cat-color, var(--gold)));
     opacity: 1;
   }
 }
@@ -80,8 +80,8 @@
   animation-delay: var(--twinkle-delay, 0s);
 }
 
-.starGold {
-  fill: var(--gold);
+.starAccent {
+  fill: var(--cat-color, var(--gold));
 }
 
 @keyframes twinkle {
@@ -99,7 +99,7 @@
 /* ── Star-shape morph (on hover, the dot blooms into a sparkle) ── */
 
 .starShape {
-  fill: var(--gold);
+  fill: var(--cat-color, var(--gold));
   opacity: 0;
   transform-box: fill-box;
   transform-origin: center;
@@ -116,7 +116,7 @@
 /* ── Glow halo ── */
 
 .glow {
-  fill: var(--gold-glow);
+  fill: color-mix(in srgb, var(--cat-color, var(--gold)) 35%, transparent);
   opacity: 0;
   transform-box: fill-box;
   transform-origin: center;
@@ -147,7 +147,7 @@
 }
 
 .clusterLabelActive {
-  fill: rgba(212, 147, 106, 0.9);
+  fill: var(--cat-color, var(--gold));
 }
 
 /* ── Status strip ── */
@@ -202,6 +202,30 @@
   padding-top: 0.05rem;
 }
 
+.stripView {
+  pointer-events: auto;
+  align-self: center;
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--ff-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: transparent;
+  border: 0.5px solid var(--gold-dim);
+  border-radius: 2px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.stripView:hover,
+.stripView:focus-visible {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+}
+
 /* ── Click burst ── */
 
 @keyframes burst {
@@ -226,5 +250,9 @@
 @media (max-width: 600px) {
   .svgContainer {
     aspect-ratio: 4 / 3;
+  }
+
+  .hitArea {
+    r: 9;
   }
 }

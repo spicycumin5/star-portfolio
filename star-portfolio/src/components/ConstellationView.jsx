@@ -10,6 +10,18 @@ const KNOWN_CATEGORY_ANCHORS = {
   code: { x: 45, y: 78 },
 }
 
+const CATEGORY_COLORS = {
+  music: 'var(--cat-music)',
+  art: 'var(--cat-art)',
+  video: 'var(--cat-video)',
+  writing: 'var(--cat-writing)',
+  code: 'var(--cat-code)',
+}
+
+function colorForCategory(category) {
+  return CATEGORY_COLORS[category] || 'var(--gold)'
+}
+
 const VIEW_CENTER = { x: 80, y: 50 }
 const EXTRA_RADIUS = { x: 50, y: 32 }
 const GOLDEN_ANGLE = 137.5 * (Math.PI / 180)
@@ -49,10 +61,10 @@ function buildLayout(works) {
       const x = clamp(anchor.x + Math.cos(angle) * radius, 6, 154)
       const y = clamp(anchor.y + Math.sin(angle) * radius, 4, 96)
       const size = 1 + ((work.id * 7) % 5) * 0.22
-      const gold = work.id % 5 === 2
+      const accent = work.id % 5 === 2
       const twinkleDur = 2.2 + (work.id % 4) * 0.7
       const twinkleDelay = (work.id * 0.53) % 3
-      return { work, x, y, size, gold, twinkleDur, twinkleDelay }
+      return { work, x, y, size, accent, twinkleDur, twinkleDelay }
     })
 
     stars.push(...catStars)
@@ -80,6 +92,7 @@ function buildLayout(works) {
 export default function ConstellationView({ works, activeFilter }) {
   const navigate = useNavigate()
   const [hovered, setHovered] = useState(null)
+  const [selectedId, setSelectedId] = useState(null)
   const [burstingId, setBurstingId] = useState(null)
 
   const { stars, lines } = useMemo(() => buildLayout(works), [works])
@@ -92,8 +105,19 @@ export default function ConstellationView({ works, activeFilter }) {
   const isHighlighted = (category) =>
     activeFilter !== 'all' && category === activeFilter
 
-  function handleSelect(work) {
+  // On touch devices there's no hover preview, so a tap selects (shows the
+  // strip) instead of navigating immediately — a second tap, or the strip's
+  // "View" button, confirms. Mouse clicks (which already had a hover
+  // preview) and keyboard Enter (which already had a focus preview)
+  // navigate right away.
+  function handleSelect(work, x, y, viaButton = false) {
     if (burstingId) return
+    const hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    if (!hasHover && !viaButton && selectedId !== work.id) {
+      setSelectedId(work.id)
+      setHovered({ work, x, y })
+      return
+    }
     setBurstingId(work.id)
     setTimeout(() => navigate(`/work/${work.id}`), 240)
   }
@@ -115,6 +139,7 @@ export default function ConstellationView({ works, activeFilter }) {
                 x2={to.x}
                 y2={to.y}
                 vectorEffect="non-scaling-stroke"
+                style={{ '--cat-color': colorForCategory(category) }}
                 className={`${styles.line} ${isDimmed(category) ? styles.dimmed : ''} ${
                   isHighlighted(category) ? styles.lineHighlighted : ''
                 } ${hoveredCategory === category ? styles.lineActive : ''}`}
@@ -127,6 +152,7 @@ export default function ConstellationView({ works, activeFilter }) {
               key={cat}
               x={anchor.x}
               y={anchor.y - 11}
+              style={{ '--cat-color': colorForCategory(cat) }}
               className={`${styles.clusterLabel} ${
                 isDimmed(cat) ? styles.dimmed : ''
               } ${isHighlighted(cat) ? styles.clusterLabelActive : ''}`}
@@ -135,14 +161,15 @@ export default function ConstellationView({ works, activeFilter }) {
             </text>
           ))}
 
-          {stars.map(({ work, x, y, size, gold, twinkleDur, twinkleDelay }) => (
+          {stars.map(({ work, x, y, size, accent, twinkleDur, twinkleDelay }) => (
             <g
               key={work.id}
               className={`${styles.starGroup} ${isDimmed(work.category) ? styles.dimmed : ''} ${
                 burstingId === work.id ? styles.bursting : ''
               }`}
               transform={`translate(${x} ${y})`}
-              onClick={() => handleSelect(work)}
+              style={{ '--cat-color': colorForCategory(work.category) }}
+              onClick={() => handleSelect(work, x, y)}
               onMouseEnter={() => setHovered({ work, x, y })}
               onMouseLeave={() => setHovered(null)}
               onFocus={() => setHovered({ work, x, y })}
@@ -150,13 +177,13 @@ export default function ConstellationView({ works, activeFilter }) {
               tabIndex={0}
               role="button"
               aria-label={`View ${work.title}`}
-              onKeyDown={(e) => e.key === 'Enter' && handleSelect(work)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSelect(work, x, y, true)}
             >
-              <circle r={6} className={styles.hitArea} />
+              <circle r={7} className={styles.hitArea} />
               <circle r={4.5} className={styles.glow} />
               <circle
                 r={size}
-                className={`${styles.star} ${gold ? styles.starGold : ''}`}
+                className={`${styles.star} ${accent ? styles.starAccent : ''}`}
                 style={{
                   '--twinkle-dur': `${twinkleDur}s`,
                   '--twinkle-delay': `${twinkleDelay}s`,
@@ -177,6 +204,15 @@ export default function ConstellationView({ works, activeFilter }) {
           <span className={styles.stripTitle}>{hovered?.work.title ?? ''}</span>
           {hovered?.work.desc && (
             <span className={styles.stripDesc}>{hovered.work.desc}</span>
+          )}
+          {hovered && (
+            <button
+              type="button"
+              className={styles.stripView}
+              onClick={() => handleSelect(hovered.work, hovered.x, hovered.y, true)}
+            >
+              View →
+            </button>
           )}
         </div>
       </div>

@@ -13,11 +13,18 @@
   --gold-dim: rgba(212, 147, 106, 0.35);
   --gold-glow: rgba(212, 147, 106, 0.12);
   --text: #ede5d0;
-  --muted: rgba(237, 229, 208, 0.5);
+  --muted: rgba(237, 229, 208, 0.58);
   --faint: rgba(237, 229, 208, 0.18);
-  --ff-serif: 'Inter', sans-serif;
+  --ff-serif: 'Playfair Display', serif;
   --ff-sans: 'Inter', sans-serif;
   --ff-mono: 'Space Mono', monospace;
+
+  /* Per-discipline sky colors — music keeps the brand gold */
+  --cat-music: var(--gold);
+  --cat-art: hsl(340, 45%, 68%);
+  --cat-video: hsl(205, 50%, 68%);
+  --cat-writing: hsl(155, 32%, 58%);
+  --cat-code: hsl(265, 45%, 72%);
 }
 
 html {
@@ -81,5 +88,14 @@ input, textarea {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

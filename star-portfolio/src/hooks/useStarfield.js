@@ -12,6 +12,7 @@ export function useStarfield(canvasRef, pathname) {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let animId
     let stars = []
     let shootingStars = []
@@ -24,6 +25,19 @@ export function useStarfield(canvasRef, pathname) {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
       buildStars()
+      if (reduceMotion) drawStatic()
+    }
+
+    function drawStatic() {
+      const W = canvas.width
+      const H = canvas.height
+      ctx.clearRect(0, 0, W, H)
+      for (const s of stars) {
+        ctx.beginPath()
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2)
+        ctx.fillStyle = s.gold ? 'rgba(212,147,106,0.75)' : 'rgba(237,229,208,0.8)'
+        ctx.fill()
+      }
     }
 
     function buildStars() {
@@ -177,8 +191,13 @@ export function useStarfield(canvasRef, pathname) {
     }
 
     window.addEventListener('resize', resize)
-    window.addEventListener('scroll', onScroll, { passive: true })
     resize()
+
+    if (reduceMotion) {
+      return () => window.removeEventListener('resize', resize)
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
     nextShootAt = performance.now() + Math.random() * 6000 + 4000
     animId = requestAnimationFrame(draw)
 

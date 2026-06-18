@@ -15,7 +15,11 @@ const DISCIPLINES = [
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('all')
-  const [view, setView] = useState('constellation')
+  // Constellation hit-targets get cramped on small touch screens — default
+  // to grid there, but leave the toggle so anyone can still switch.
+  const [view, setView] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth < 700 ? 'grid' : 'constellation'
+  )
 
   const filtered =
     activeFilter === 'all'

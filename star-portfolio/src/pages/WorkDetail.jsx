@@ -8,11 +8,12 @@ import styles from './WorkDetail.module.css'
 export default function WorkDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const work = WORKS.find((w) => w.id === Number(id))
+  const workIndex = WORKS.findIndex((w) => w.id === Number(id))
+  const work = workIndex !== -1 ? WORKS[workIndex] : undefined
   const [openTrack, setOpenTrack] = useState(null)
   const [artAspect, setArtAspect] = useState(null)
-  const prevWork = work && WORKS.find((w) => w.id === work.id - 1)
-  const nextWork = work && WORKS.find((w) => w.id === work.id + 1)
+  const prevWork = workIndex > 0 ? WORKS[workIndex - 1] : null
+  const nextWork = workIndex !== -1 && workIndex < WORKS.length - 1 ? WORKS[workIndex + 1] : null
 
   useEffect(() => {
     setArtAspect(null)

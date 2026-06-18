@@ -28,8 +28,8 @@ export default function About() {
             </p>
           </div>
 
-          {/* CV / Resume link */}
-          <a href="#" className={styles.cvLink}>
+          {/* CV / Resume link — drop your PDF at public/resume.pdf */}
+          <a href="/resume.pdf" target="_blank" rel="noreferrer" className={styles.cvLink}>
             Download Resume ↗
           </a>
         </div>

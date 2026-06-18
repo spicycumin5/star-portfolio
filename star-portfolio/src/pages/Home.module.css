@@ -3,6 +3,11 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
 .page {
   position: relative;
   z-index: 1;
@@ -33,7 +38,7 @@
 
 .heading {
   font-family: var(--ff-serif);
-  font-weight: 300;
+  font-weight: 400;
   font-size: clamp(3.5rem, 8vw, 6.5rem);
   line-height: 1.05;
   margin-bottom: 1.5rem;
@@ -64,7 +69,9 @@
   font-size: 0.7rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  animation: warpIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.8s both;
+  animation:
+    warpIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.8s both,
+    bob 2.4s ease-in-out 1.8s infinite;
 }
 
 .divider::before,
@@ -112,8 +119,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 2.75rem;
+  height: 2.75rem;
   padding: 0;
   border: none;
   background: transparent;
@@ -123,8 +130,8 @@
 }
 
 .viewBtn svg {
-  width: 100%;
-  height: 100%;
+  width: 1.1rem;
+  height: 1.1rem;
 }
 
 .viewBtn:hover {
@@ -141,6 +148,10 @@
 }
 
 .filterBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
   font-family: var(--ff-mono);
   font-size: 0.72rem;
   letter-spacing: 0.1em;

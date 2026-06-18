@@ -16,12 +16,19 @@ export default function WorkCard({ work, index }) {
     >
       <div
         className={`${styles.thumb} ${work.category === 'music' ? styles.thumbSquare : ''}`}
-        style={{ background: work.bg }}
+        style={{ '--accent': work.bg }}
       >
-        {work.image
-          ? <img src={work.image} alt={work.title} className={styles.image} />
-          : <span className={styles.emoji}>{work.emoji}</span>
-        }
+        {work.image ? (
+          <img src={work.image} alt={work.title} className={styles.image} />
+        ) : (
+          <>
+            <span className={styles.thumbDot1} aria-hidden="true" />
+            <span className={styles.thumbDot2} aria-hidden="true" />
+            <span className={styles.thumbDot3} aria-hidden="true" />
+            <span className={styles.thumbDot4} aria-hidden="true" />
+            <span className={styles.emoji}>{work.emoji}</span>
+          </>
+        )}
       </div>
       <div className={styles.meta}>
         <p className={styles.category}>
