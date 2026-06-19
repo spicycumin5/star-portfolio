@@ -34,9 +34,7 @@ export const WORKS = [
     year: '2023',
     desc: "KYUMIN's second EP — an adolescent exploration of the day-to-day",
     tags: ['pop', 'electronic', 'ballad', 'bedroom'],
-    body: `To:Day is a five-track pop EP produced in 2022.
-
-Recorded with field recordings, synthesizers, and treated guitar. Mastered for spatial listening; headphones recommended.`,
+    body: "To:Day is a five-track pop EP produced in 2022.\n Created with voice memos, synthesizers, and a lot of trial and error, the EP explore the beauty of the day-to-day — starting with the world beyond my room.",
     link: 'https://open.spotify.com/album/1Hn5BrcclmasBLt7oID1zz?si=A4kXq7MQRgqtLDGMd3FhcQ',
     linkLabel: 'Listen on Spotify',
     // TODO: replace these placeholders with the real tracklist — update
