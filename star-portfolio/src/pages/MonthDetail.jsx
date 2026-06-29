@@ -84,6 +84,18 @@ export default function MonthDetail() {
               <p className={styles.thumbHint}>Add a description for this piece in works.js</p>
             )}
           </div>
+          {entry.playlist && (
+            <iframe
+              src={entry.playlist.replace('open.spotify.com/', 'open.spotify.com/embed/')}
+              title={`${entry.month} ${work.year} playlist`}
+              width="100%"
+              height="152"
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              style={{ borderRadius: '12px', marginTop: '1.5rem' }}
+            />
+          )}
         </div>
       </div>
 

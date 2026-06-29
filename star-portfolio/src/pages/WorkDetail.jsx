@@ -197,7 +197,6 @@ export default function WorkDetail() {
                   <span className={styles.monthSpark} aria-hidden="true">✦</span>
                   {m.month}
                 </p>
-                {m.desc && <p className={styles.monthDesc}>{m.desc}</p>}
               </div>
             ))}
           </div>
