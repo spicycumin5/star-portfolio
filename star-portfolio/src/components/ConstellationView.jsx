@@ -118,6 +118,10 @@ export default function ConstellationView({ works, activeFilter }) {
       setHovered({ work, x, y })
       return
     }
+    if (work.category === 'writing' && work.link) {
+      window.open(work.link, '_blank', 'noreferrer')
+      return
+    }
     setBurstingId(work.id)
     setTimeout(() => navigate(`/work/${work.id}`), 240)
   }

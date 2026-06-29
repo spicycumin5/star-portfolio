@@ -31,10 +31,17 @@ export default function Home() {
       {/* Hero */}
       <section className={styles.hero}>
         <p className={styles.eyebrow}>✦ Kyumin Han ✦</p>
-        <h1 className={styles.heading}>
-          Work born from<br />
-          <em>many skies</em>
-        </h1>
+        <div className={styles.headingRow}>
+          <h1 className={styles.heading}>
+            Work born from<br />
+            <em>many skies</em>
+          </h1>
+          <img
+            src="/images/KYUMINlogo%20(2).png"
+            alt="KYUMIN"
+            className={styles.logoMark}
+          />
+        </div>
         <p className={styles.sub}>
           Music, art, video, writing, and code <br />
           each a piece of a greater constellation.

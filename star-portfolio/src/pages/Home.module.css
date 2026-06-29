@@ -36,13 +36,27 @@
   animation: warpIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
 }
 
+.headingRow {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  animation: warpIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+
 .heading {
   font-family: var(--ff-serif);
   font-weight: 400;
   font-size: clamp(3.5rem, 8vw, 6.5rem);
   line-height: 1.05;
-  margin-bottom: 1.5rem;
-  animation: warpIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+  margin-bottom: 0;
+}
+
+.logoMark {
+  height: clamp(120px, 18vw, 220px);
+  width: auto;
+  opacity: 0.9;
+  flex-shrink: 0;
 }
 
 .heading em {

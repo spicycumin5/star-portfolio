@@ -139,7 +139,7 @@ export const WORKS = [
     desc: 'Hackathon hosted by StatsPerform, build with Evan Inrig and Jason Press',
     tags: ['TypeScript', 'React', 'Next.js'],
     body: `VolleyVision is an ai-powered tool designed to provide detailed analytics and visualizations for volleyball games. It allows users to analyze player movements, ball trajectories, and game statistics of pre-recorded volleyball footage`,
-    link: 'https://volleyvision-kyu.vercel.app/',
+    link: 'https://volleyballvision.vercel.app/',
     linkLabel: 'Try it here',
   },
   {
@@ -221,7 +221,7 @@ export const WORKS = [
     // TODO: add a short description for each piece below.
     months: [
       { month: 'January', image: null, desc: '' },
-      { month: 'February', image: '/images/22/feb.22.jpg', desc: '' },
+      { month: 'February', image: '/images/22/feb.22.jpg', desc: 'First monthly ever! This is when I created my artist logo - well done, if I do say so myself.' },
       { month: 'March', image: '/images/22/march.22.jpg', desc: '' },
       { month: 'April', image: '/images/22/april.22.jpg', desc: '' },
       { month: 'May', image: '/images/22/may.22.jpg', desc: '' },
@@ -314,6 +314,32 @@ export const WORKS = [
       { month: 'November', image: '/images/25/nov.25.JPG', desc: '' },
       { month: 'December', image: '/images/25/dec.25.jpeg', desc: '' },
     ],
+  },
+  {
+    id: 19,
+    category: 'writing',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'On the topic of stickers',
+    year: '2026',
+    desc: 'My immature response to greed, and the way I recognize its grip on me',
+    tags: ['Writing'],
+    body: '',
+    link: 'https://kyumin.substack.com/p/on-the-topic-of-stickers?r=5zk61m',
+    linkLabel: 'Read Here',
+  },
+  {
+    id: 20,
+    category: 'writing',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'On the topic of abundance',
+    year: '2026',
+    desc: 'Reflections on the film "Sound of Music", and the understanding of Christian abundance.',
+    tags: ['Writing'],
+    body: '',
+    link: 'https://kyumin.substack.com/p/on-the-topic-of-abundance?r=5zk61m',
+    linkLabel: 'Read Here',
   },
 ]
 

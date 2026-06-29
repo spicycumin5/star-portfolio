@@ -18,7 +18,7 @@ export default function About() {
               
             </p>
             <p>
-              I'm currently based in the Bay Area and I'm seeking out opportunities that will allow me to
+              I'm currently based in the Bay Area seeking out opportunities that will allow me to
               continue exploring all that I've yet to discover while learning new skills along the way.
             </p>
             <p>

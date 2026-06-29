@@ -8,10 +8,10 @@ export default function WorkCard({ work, index }) {
     <article
       className={styles.card}
       style={{ animationDelay: `${index * 0.06}s` }}
-      onClick={() => navigate(`/work/${work.id}`)}
+      onClick={() => work.category === 'writing' && work.link ? window.open(work.link, '_blank', 'noreferrer') : navigate(`/work/${work.id}`)}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && navigate(`/work/${work.id}`)}
+      onKeyDown={(e) => e.key === 'Enter' && (work.category === 'writing' && work.link ? window.open(work.link, '_blank', 'noreferrer') : navigate(`/work/${work.id}`))}
       aria-label={`View ${work.title}`}
     >
       <div
