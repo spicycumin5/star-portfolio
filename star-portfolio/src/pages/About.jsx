@@ -48,7 +48,6 @@ export default function About() {
               { label: 'Software & Code', detail: 'Web, Projects, Development' },
             ].map((d) => (
               <li key={d.label} className={styles.discipline}>
-                <span className={styles.star}>✦</span>
                 <div>
                   <p className={styles.disciplineLabel}>{d.label}</p>
                   <p className={styles.disciplineDetail}>{d.detail}</p>

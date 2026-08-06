@@ -31,10 +31,7 @@ export default function WorkCard({ work, index }) {
         )}
       </div>
       <div className={styles.meta}>
-        <p className={styles.category}>
-          <span className={styles.spark}>✦</span>
-          {work.category}
-        </p>
+        <p className={styles.category}>{work.category}</p>
         <h3 className={styles.title}>{work.title}</h3>
       </div>
     </article>

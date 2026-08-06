@@ -52,7 +52,6 @@ export default function MonthDetail() {
 
       <div className={styles.divider}>
         <span className={styles.dividerLine} />
-        <span className={styles.dividerStar} aria-hidden="true">✦</span>
       </div>
 
       <div className={styles.musicLayout}>
@@ -105,7 +104,7 @@ export default function MonthDetail() {
             className={styles.navBtn}
             onClick={() => navigate(`/work/${work.id}/${prevEntry.month.toLowerCase()}`)}
           >
-            <span className={styles.navArrow} aria-hidden="true">✦</span>
+            <span className={styles.navArrow} aria-hidden="true">←</span>
             <span className={styles.navText}>
               <span className={styles.navLabel}>Previous</span>
               <span className={styles.navTitle}>{prevEntry.month}</span>
@@ -121,7 +120,7 @@ export default function MonthDetail() {
               <span className={styles.navLabel}>Next</span>
               <span className={styles.navTitle}>{nextEntry.month}</span>
             </span>
-            <span className={styles.navArrow} aria-hidden="true">✦</span>
+            <span className={styles.navArrow} aria-hidden="true">→</span>
           </button>
         ) : <span />}
       </div>

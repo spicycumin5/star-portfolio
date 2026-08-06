@@ -78,6 +78,11 @@
   inset: 0;
   border: 0.5px solid var(--rim);
   border-radius: 2px;
+  /* Bright source art (white album covers, video thumbnails) would
+     otherwise punch a hard rectangle through the night sky — this fades
+     the edges back into --midnight so every thumbnail sits in the scene
+     rather than floating on top of it. */
+  box-shadow: inset 0 0 2.5rem 0.25rem var(--midnight);
   transition: border-color 0.4s, box-shadow 0.4s;
   pointer-events: none;
 }
@@ -85,7 +90,7 @@
 .card:hover .thumb::after,
 .card:focus-visible .thumb::after {
   border-color: var(--gold-dim);
-  box-shadow: 0 0 24px var(--gold-glow);
+  box-shadow: inset 0 0 2.5rem 0.25rem var(--midnight), 0 0 24px var(--gold-glow);
 }
 
 .emoji {
@@ -112,36 +117,23 @@
 }
 
 .category {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
   font-family: var(--ff-mono);
   font-size: 0.65rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 0.5rem;
-  transition: color 0.3s;
-}
-
-.spark {
-  display: inline-block;
-  color: var(--gold-dim);
-  transform: scale(0.6) rotate(-25deg);
-  opacity: 0.6;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s, color 0.3s;
+  padding-bottom: 0.3rem;
+  border-bottom: 0.5px solid transparent;
+  transition: color 0.3s, border-color 0.4s;
 }
 
 .card:hover .category,
 .card:focus-visible .category {
   color: var(--gold);
-}
-
-.card:hover .spark,
-.card:focus-visible .spark {
-  transform: scale(1.05) rotate(0deg);
-  opacity: 1;
-  color: var(--gold);
+  border-color: var(--gold-dim);
 }
 
 .title {

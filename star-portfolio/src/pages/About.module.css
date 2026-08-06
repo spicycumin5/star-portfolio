@@ -133,12 +133,11 @@
 }
 
 .discipline {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
   padding: 1.1rem 0;
   border-bottom: 0.5px solid var(--rim);
-  transition: border-color 0.3s;
+  border-left: 1px solid transparent;
+  padding-left: 0;
+  transition: border-color 0.3s, padding-left 0.3s;
 }
 
 .discipline:first-child {
@@ -146,14 +145,9 @@
 }
 
 .discipline:hover {
-  border-color: var(--gold-dim);
-}
-
-.star {
-  color: var(--gold);
-  font-size: 0.55rem;
-  margin-top: 0.35rem;
-  flex-shrink: 0;
+  border-bottom-color: var(--gold-dim);
+  border-left-color: var(--gold);
+  padding-left: 0.9rem;
 }
 
 .disciplineLabel {

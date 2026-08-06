@@ -9,9 +9,21 @@ const SOCIAL_LINKS = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/kyumin5/' },
 ]
 
+// The same sparkle silhouette the constellation stars bloom into on hover —
+// reused here so sending a message reads as "launching a star" rather than
+// a generic form-submit checkmark.
+function StarIcon({ className }) {
+  return (
+    <svg viewBox="-3 -3 6 6" className={className} aria-hidden="true">
+      <path d="M2.6,0 L0.65,0.65 L0,2.6 L-0.65,0.65 L-2.6,0 L-0.65,-0.65 L0,-2.6 L0.65,-0.65 Z" />
+    </svg>
+  )
+}
+
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -21,7 +33,11 @@ export default function Contact() {
     e.preventDefault()
     // TODO: wire up to your email service (EmailJS, Formspree, etc.)
     console.log('Form submitted:', form)
-    setSent(true)
+    setSending(true)
+    window.setTimeout(() => {
+      setSending(false)
+      setSent(true)
+    }, 420)
   }
 
   return (
@@ -31,12 +47,10 @@ export default function Contact() {
         <h2 className={styles.heading}>
           Let's connect!
         </h2>
-        <p className={styles.sub}>
-        </p>
 
         {sent ? (
           <div className={styles.thanks}>
-            <p className={styles.thanksStar}>✦</p>
+            <StarIcon className={styles.thanksStar} />
             <p className={styles.thanksHeading}>Message received.</p>
             <p className={styles.thanksSub}>Thank you for reaching out!</p>
             <button className={styles.resetBtn} onClick={() => { setSent(false); setForm({ name: '', email: '', message: '' }) }}>
@@ -86,8 +100,13 @@ export default function Contact() {
                 rows={5}
               />
             </div>
-            <button type="submit" className={styles.submit}>
-              Send message →
+            <button
+              type="submit"
+              className={`${styles.submit} ${sending ? styles.sending : ''}`}
+              disabled={sending}
+            >
+              {sending ? 'Sending' : 'Send message'}
+              <StarIcon className={styles.submitStar} />
             </button>
           </form>
         )}

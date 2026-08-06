@@ -114,7 +114,7 @@ export default function WorkDetail() {
               aria-expanded={isOpen}
             >
               <span className={styles.trackTitle}>
-                <span className={styles.trackSpark}>✦</span>
+                <span className={styles.trackNumber}>{String(i + 1).padStart(2, '0')}</span>
                 {track.title}
               </span>
               <span className={styles.trackToggle}>{isOpen ? '−' : '+'}</span>
@@ -166,7 +166,6 @@ export default function WorkDetail() {
 
       <div className={styles.divider}>
         <span className={styles.dividerLine} />
-        <span className={styles.dividerStar} aria-hidden="true">✦</span>
       </div>
 
       {/* Thumbnail / image / embed, with body + tracklist alongside for music */}
@@ -193,10 +192,7 @@ export default function WorkDetail() {
                     <p className={styles.monthEmpty}>No piece this month</p>
                   </div>
                 )}
-                <p className={styles.monthLabel}>
-                  <span className={styles.monthSpark} aria-hidden="true">✦</span>
-                  {m.month}
-                </p>
+                <p className={styles.monthLabel}>{m.month}</p>
               </div>
             ))}
           </div>
@@ -226,7 +222,7 @@ export default function WorkDetail() {
             className={styles.navBtn}
             onClick={() => navigate(`/work/${prevWork.id}`)}
           >
-            <span className={styles.navArrow} aria-hidden="true">✦</span>
+            <span className={styles.navArrow} aria-hidden="true">←</span>
             <span className={styles.navText}>
               <span className={styles.navLabel}>Previous</span>
               <span className={styles.navTitle}>{prevWork.title}</span>
@@ -242,7 +238,7 @@ export default function WorkDetail() {
               <span className={styles.navLabel}>Next</span>
               <span className={styles.navTitle}>{nextWork.title}</span>
             </span>
-            <span className={styles.navArrow} aria-hidden="true">✦</span>
+            <span className={styles.navArrow} aria-hidden="true">→</span>
           </button>
         ) : <span />}
       </div>

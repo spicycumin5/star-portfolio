@@ -8,6 +8,11 @@
   50% { transform: translateY(4px); }
 }
 
+@keyframes satelliteTwinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
 .page {
   position: relative;
   z-index: 1;
@@ -52,8 +57,40 @@
   margin-bottom: 0;
 }
 
-.logoMark {
+.logoCluster {
+  position: relative;
   height: clamp(120px, 18vw, 220px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logoLines {
+  position: absolute;
+  inset: -30%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.logoLines line {
+  stroke: var(--gold-dim);
+  stroke-width: 0.6;
+  opacity: 0.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.satellite {
+  fill: var(--gold);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: satelliteTwinkle 3.2s ease-in-out infinite;
+  animation-delay: var(--sd, 0s);
+}
+
+.logoMark {
+  position: relative;
+  height: 100%;
   width: auto;
   opacity: 0.9;
   flex-shrink: 0;
@@ -105,7 +142,7 @@
 
 .filterLabel {
   font-family: var(--ff-mono);
-  text-align: center;
+  text-align: left;
   font-size: 0.7rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -115,7 +152,7 @@
 
 .filterBar {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.5rem;
   margin-bottom: 3.5rem;
   flex-wrap: wrap;
@@ -194,6 +231,16 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
   gap: 2.5rem 2rem;
+}
+
+/* The constellation needs real room to spread out — on wide desktop
+   viewports let it claim more of the screen than the 1200px content
+   column the grid/filter bar use. Scoped to the constellation view only
+   (see Home.jsx) so the card grid and mobile layout are untouched. */
+@media (min-width: 1100px) {
+  .galleryWide {
+    max-width: min(92vw, 1800px);
+  }
 }
 
 @media (max-width: 900px) {
