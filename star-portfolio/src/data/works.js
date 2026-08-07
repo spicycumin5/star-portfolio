@@ -393,6 +393,33 @@ export const WORKS = [
     link: 'https://youtu.be/W5y3-XQ_u6g',
     linkLabel: 'Watch on Youtube',
   },
+  {
+    id: 25,
+    category: 'video',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'Issacs Car',
+    year: '2026',
+    desc: 'A look at senior year from Issacs car',
+    tags: ['video', 'b-roll'],
+    body: '',
+    link: 'https://www.youtube.com/watch?v=EmU2T0S6Rvk',
+    linkLabel: 'Watch on Youtube',
+  },
+  {
+    id: 25,
+    category: 'music',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'May I Ask - Cover by Tommy Kwon and Ellie Kaiser',
+    year: '2026',
+    desc: 'A cover I helped record and mix for Tommy and Ellie',
+    tags: ['video', 'cover'],
+    body: '',
+    link: 'https://youtu.be/pAiYEmWSWkI?si=0SaBqWs-IAuhbZEp',
+    linkLabel: 'Watch on Youtube',
+  },
+
 ]
 
 export const CATEGORIES = ['all', 'video', 'music', 'art', 'writing', 'code']
