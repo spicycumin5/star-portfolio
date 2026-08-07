@@ -162,23 +162,26 @@
 /* ── Status strip ── */
 
 .strip {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 60;
   display: flex;
   align-items: baseline;
   gap: 1.25rem;
-  padding: 3rem 0.5rem 1rem;
-  background: linear-gradient(to top, rgba(17, 14, 28, 0.88) 0%, transparent 100%);
+  padding: 2.5rem clamp(1rem, 4vw, 3rem) 1.5rem;
+  background: linear-gradient(to top, rgba(17, 14, 28, 0.94) 0%, rgba(17, 14, 28, 0.75) 55%, transparent 100%);
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.22s;
+  transform: translateY(16px);
+  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
 }
 
 .stripVisible {
   opacity: 1;
+  transform: translateY(0);
 }
 
 .stripCategory {

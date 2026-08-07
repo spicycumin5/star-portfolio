@@ -78,11 +78,6 @@
   inset: 0;
   border: 0.5px solid var(--rim);
   border-radius: 2px;
-  /* Bright source art (white album covers, video thumbnails) would
-     otherwise punch a hard rectangle through the night sky — this fades
-     the edges back into --midnight so every thumbnail sits in the scene
-     rather than floating on top of it. */
-  box-shadow: inset 0 0 2.5rem 0.25rem var(--midnight);
   transition: border-color 0.4s, box-shadow 0.4s;
   pointer-events: none;
 }
@@ -90,7 +85,7 @@
 .card:hover .thumb::after,
 .card:focus-visible .thumb::after {
   border-color: var(--gold-dim);
-  box-shadow: inset 0 0 2.5rem 0.25rem var(--midnight), 0 0 24px var(--gold-glow);
+  box-shadow: 0 0 24px var(--gold-glow);
 }
 
 .emoji {
