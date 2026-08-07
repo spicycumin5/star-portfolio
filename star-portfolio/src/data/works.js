@@ -416,7 +416,7 @@ export const WORKS = [
     desc: 'A cover I helped record and mix for Tommy and Ellie',
     tags: ['video', 'cover'],
     body: '',
-    link: 'https://youtu.be/pAiYEmWSWkI?si=0SaBqWs-IAuhbZEp',
+    link: 'https://youtu.be/pAiYEmWSWkI?si=Nh3pkAlM6h4WVYmM',
     linkLabel: 'Watch on Youtube',
   },
 
