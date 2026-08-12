@@ -13,6 +13,8 @@ const DISCIPLINES = [
   { label: 'Code', category: 'code' },
 ]
 
+const pad = (n) => String(n).padStart(2, '0')
+
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('all')
   // Constellation hit-targets get cramped on small touch screens — default
@@ -20,6 +22,11 @@ export default function Home() {
   const [view, setView] = useState(() =>
     typeof window !== 'undefined' && window.innerWidth < 700 ? 'grid' : 'constellation'
   )
+  // Logged once at mount — the moment this page happened to be opened,
+  // not a ticking clock.
+  const [loggedAt] = useState(() => new Date())
+  const logDate = `${pad(loggedAt.getMonth() + 1)}.${pad(loggedAt.getDate())}.${loggedAt.getFullYear()}`
+  const logTime = `${pad(loggedAt.getHours())}:${pad(loggedAt.getMinutes())}`
 
   const filtered =
     activeFilter === 'all'
@@ -30,36 +37,38 @@ export default function Home() {
     <div className={styles.page}>
       {/* Hero */}
       <section className={styles.hero}>
-        <p className={styles.eyebrow}>✦ Kyumin Han ✦</p>
-        <div className={styles.headingRow}>
-          <h1 className={styles.heading}>
-            Work born from<br />
-            <em>many skies</em>
-          </h1>
-          <div className={styles.logoCluster}>
-            {/* A few satellite stars wired to the logo mark — the same
-                anchor-and-line language as the constellation view below,
-                so the hero reads as the first node rather than a static
-                lockup dropped on top of a starfield. */}
-            <svg className={styles.logoLines} viewBox="0 0 200 200" aria-hidden="true">
-              <line x1="100" y1="104" x2="26" y2="52" />
-              <line x1="100" y1="104" x2="172" y2="40" />
-              <line x1="100" y1="104" x2="146" y2="176" />
-              <circle cx="26" cy="52" r="2.6" className={styles.satellite} style={{ '--sd': '0s' }} />
-              <circle cx="172" cy="40" r="1.9" className={styles.satellite} style={{ '--sd': '0.9s' }} />
-              <circle cx="146" cy="176" r="2.2" className={styles.satellite} style={{ '--sd': '1.7s' }} />
-            </svg>
-            <img
-              src="/images/KYUMINlogo%20(2).png"
-              alt="KYUMIN"
-              className={styles.logoMark}
-            />
-          </div>
+        <h1 className={styles.identityName}>✦ Kyumin Han ✦</h1>
+
+        {/* A larger mark anchored to the right — balances the chart's
+            left-anchored spread and fills what was otherwise dead air
+            on wide viewports. */}
+        <img src="/images/KYUMINlogo%20(2).png" alt="" className={styles.sideMark} />
+
+        {/* Not a chart — a logbook page. What's charted below is the
+            real sky; this is just the entry written the night it was
+            observed, the way an astronomer's notebook always reads
+            plainer than the atlas it's building toward. */}
+        <div className={styles.log}>
+          <p className={styles.logLine}>Observation Log</p>
+          <p className={styles.logLine}>
+            <span className={styles.logLabel}>Date</span>{logDate}
+          </p>
+          <p className={styles.logLine}>
+            <span className={styles.logLabel}>Time</span>{logTime}
+          </p>
+          <p className={styles.logLine}>
+            <span className={styles.logLabel}>Seeing</span>Clear, no moon
+          </p>
+          <p className={styles.logLine}>
+            <span className={styles.logLabel}>R.A. / Dec</span>
+            18<span className={styles.unit}>h</span> 36<span className={styles.unit}>m</span>{' '}
+            <span className={styles.sep}>·</span> +38<span className={styles.unit}>°</span> 47<span className={styles.unit}>′</span>
+          </p>
+          <p className={styles.logLine}>
+            Five bodies logged tonight. Full chart follows below.
+          </p>
         </div>
-        <p className={styles.sub}>
-          Music, art, video, writing, and code <br />
-          each a piece of a greater constellation.
-        </p>
+
         <div className={styles.divider}>Scroll to explore</div>
       </section>
 

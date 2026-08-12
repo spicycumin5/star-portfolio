@@ -19,6 +19,7 @@
 }
 
 .hero {
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -31,84 +32,103 @@
   width: 100%;
 }
 
-.eyebrow {
+.identityName {
   font-family: var(--ff-mono);
   font-size: 0.7rem;
+  font-weight: 400;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--gold);
-  margin-bottom: 1.5rem;
+  margin: 0 0 1.5rem;
   animation: warpIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
 }
 
-.headingRow {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
-  animation: warpIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
-}
-
-.heading {
-  font-family: var(--ff-serif);
-  font-weight: 400;
-  font-size: clamp(3.5rem, 8vw, 6.5rem);
-  line-height: 1.05;
-  margin-bottom: 0;
-}
-
-.logoCluster {
-  position: relative;
-  height: clamp(120px, 18vw, 220px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.logoLines {
+/* A second, larger mark anchored to the page itself rather than the
+   text — it balances the chart's left-anchored spread on wide
+   viewports instead of sitting in a tidy lockup with the name. */
+.sideMark {
   position: absolute;
-  inset: -30%;
-  overflow: visible;
-  pointer-events: none;
-}
-
-.logoLines line {
-  stroke: var(--gold-dim);
-  stroke-width: 0.6;
-  opacity: 0.5;
-  vector-effect: non-scaling-stroke;
-}
-
-.satellite {
-  fill: var(--gold);
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: satelliteTwinkle 3.2s ease-in-out infinite;
-  animation-delay: var(--sd, 0s);
-}
-
-.logoMark {
-  position: relative;
-  height: 100%;
+  right: clamp(1.5rem, 5vw, 4.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  height: clamp(160px, 24vw, 320px);
   width: auto;
-  opacity: 0.9;
-  flex-shrink: 0;
+  opacity: 0.85;
+  pointer-events: none;
+  animation: warpIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
 }
 
-.heading em {
-  font-style: italic;
-  color: var(--gold);
+@media (max-width: 1300px) {
+  .sideMark {
+    height: clamp(120px, 18vw, 220px);
+    opacity: 0.6;
+  }
 }
 
-.sub {
-  font-size: 1rem;
-  color: var(--muted);
+@media (max-width: 980px) {
+  .sideMark {
+    display: none;
+  }
+}
+
+/* ── Observation log ──
+   Not a preview of the constellations — the plainer thing that comes
+   before them. Just typed lines, no card, no rules, one font — the
+   actual sky (below, on scroll) lands as the payoff rather than a
+   repeat. */
+
+.log {
+  width: min(100%, 460px);
+  margin: 1rem 0 2rem;
+  font-family: var(--ff-mono);
+  animation: warpIn 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+
+.logLine {
+  font-size: 0.8rem;
   letter-spacing: 0.02em;
-  max-width: 520px;
-  line-height: 1.8;
-  margin-bottom: 3rem;
-  animation: warpIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both;
+  color: var(--text);
+  line-height: 2.1;
+}
+
+.logLine:first-child {
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.3rem;
+}
+
+.logLine:last-child {
+  color: var(--muted);
+  margin-top: 0.6rem;
+}
+
+.logLabel {
+  display: inline-block;
+  width: 9.5em;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.unit {
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+
+.sep {
+  color: var(--gold-dim);
+}
+
+.logNotes {
+  margin-top: 1rem;
+  padding-top: 1.1rem;
+  border-top: 0.5px solid var(--rim);
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: 0.98rem;
+  color: var(--muted);
+  line-height: 1.7;
 }
 
 .divider {
