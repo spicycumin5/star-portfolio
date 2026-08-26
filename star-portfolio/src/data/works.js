@@ -113,7 +113,7 @@ export const WORKS = [
     desc: 'A philisophical argument responding to the question, "What is art?"',
     tags: ['essays', 'aesthetics'],
     body: `"An Argument For Art" is an essay tackling the task of defining art.`,
-    link: 'https://docs.google.com/document/d/14tgC1o3rCUr5cTyCvMYzp2JoQ5D__coOr9TFqmb3HKE/edit?usp=sharing',
+    link: 'https://docs.google.com/document/d/1ZkFmHExUiHHsspnfsze88JTZVAlLCSCw6nGnE3QKO1k/edit?usp=sharing',
     linkLabel: 'Read Here',
   },
   {
