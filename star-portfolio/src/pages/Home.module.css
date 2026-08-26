@@ -247,12 +247,6 @@
   color: var(--gold);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
-  gap: 2.5rem 2rem;
-}
-
 /* The constellation needs real room to spread out — on wide desktop
    viewports let it claim more of the screen than the 1200px content
    column the grid/filter bar use. Scoped to the constellation view only
@@ -275,8 +269,5 @@
 @media (max-width: 600px) {
   .gallery {
     padding: 0 1.5rem 4rem;
-  }
-  .grid {
-    grid-template-columns: 1fr;
   }
 }

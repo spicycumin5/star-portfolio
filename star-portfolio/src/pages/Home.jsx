@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import WorkCard from '../components/WorkCard'
+import WorkLogList from '../components/WorkLogList'
 import ConstellationView from '../components/ConstellationView'
 import { WORKS } from '../data/works'
 import styles from './Home.module.css'
@@ -18,9 +18,9 @@ const pad = (n) => String(n).padStart(2, '0')
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('all')
   // Constellation hit-targets get cramped on small touch screens — default
-  // to grid there, but leave the toggle so anyone can still switch.
+  // to the log there, but leave the toggle so anyone can still switch.
   const [view, setView] = useState(() =>
-    typeof window !== 'undefined' && window.innerWidth < 700 ? 'grid' : 'constellation'
+    typeof window !== 'undefined' && window.innerWidth < 700 ? 'log' : 'constellation'
   )
   // Logged once at mount — the moment this page happened to be opened,
   // not a ticking clock.
@@ -77,17 +77,16 @@ export default function Home() {
         {/* View toggle */}
         <div className={styles.viewToggle}>
           <button
-            className={`${styles.viewBtn} ${view === 'grid' ? styles.viewActive : ''}`}
-            onClick={() => setView('grid')}
-            aria-label="Grid view"
-            aria-pressed={view === 'grid'}
-            title="Grid view"
+            className={`${styles.viewBtn} ${view === 'log' ? styles.viewActive : ''}`}
+            onClick={() => setView('log')}
+            aria-label="Log view"
+            aria-pressed={view === 'log'}
+            title="Log view"
           >
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <rect x="3" y="3" width="8" height="8" rx="1" />
-              <rect x="13" y="3" width="8" height="8" rx="1" />
-              <rect x="3" y="13" width="8" height="8" rx="1" />
-              <rect x="13" y="13" width="8" height="8" rx="1" />
+              <rect x="3" y="5" width="18" height="1.6" rx="0.8" />
+              <rect x="3" y="11.2" width="18" height="1.6" rx="0.8" />
+              <rect x="3" y="17.4" width="18" height="1.6" rx="0.8" />
             </svg>
           </button>
           <button
@@ -118,13 +117,9 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Grid or constellation */}
-        {view === 'grid' ? (
-          <div className={styles.grid}>
-            {filtered.map((work, i) => (
-              <WorkCard key={work.id} work={work} index={i} />
-            ))}
-          </div>
+        {/* Log or constellation */}
+        {view === 'log' ? (
+          <WorkLogList works={filtered} />
         ) : (
           <ConstellationView works={WORKS} activeFilter={activeFilter} />
         )}
