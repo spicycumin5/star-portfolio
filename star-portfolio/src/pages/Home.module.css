@@ -154,7 +154,16 @@
   background: var(--gold-dim);
 }
 
-.gallery {
+/* Fixed-width regardless of view — kept separate from .content so the
+   constellation's wider column (below) never shifts the toggle/filter
+   row's position. */
+.toolbar {
+  padding: 0 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.content {
   padding: 0 3rem 6rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -184,6 +193,18 @@
   align-items: center;
   gap: 1.5rem;
   margin-bottom: 1.25rem;
+}
+
+/* A nudge toward the constellation view — echoes the hero's "Scroll to
+   explore" cue, pointing at the star icon instead of down the page. */
+.viewHint {
+  font-family: var(--ff-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+  animation: fadeUp 0.5s ease both;
 }
 
 .viewBtn {
@@ -249,10 +270,10 @@
 
 /* The constellation needs real room to spread out — on wide desktop
    viewports let it claim more of the screen than the 1200px content
-   column the grid/filter bar use. Scoped to the constellation view only
-   (see Home.jsx) so the card grid and mobile layout are untouched. */
+   column the toolbar/filter bar use. Scoped to the constellation view
+   only (see Home.jsx) and to .content, so the toolbar stays put. */
 @media (min-width: 1100px) {
-  .galleryWide {
+  .contentWide {
     max-width: min(92vw, 1800px);
   }
 }
@@ -261,13 +282,19 @@
   .hero {
     padding: 5rem 2rem 3.5rem;
   }
-  .gallery {
+  .toolbar {
+    padding: 0 2rem;
+  }
+  .content {
     padding: 0 2rem 5rem;
   }
 }
 
 @media (max-width: 600px) {
-  .gallery {
+  .toolbar {
+    padding: 0 1.5rem;
+  }
+  .content {
     padding: 0 1.5rem 4rem;
   }
 }

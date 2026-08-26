@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import WorkLogList from '../components/WorkLogList'
 import ConstellationView from '../components/ConstellationView'
 import { WORKS } from '../data/works'
@@ -17,11 +17,21 @@ const pad = (n) => String(n).padStart(2, '0')
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('all')
-  // Constellation hit-targets get cramped on small touch screens — default
-  // to the log there, but leave the toggle so anyone can still switch.
-  const [view, setView] = useState(() =>
-    typeof window !== 'undefined' && window.innerWidth < 700 ? 'log' : 'constellation'
-  )
+  // Home unmounts when navigating into a work and remounts on return, so
+  // the chosen view is stashed in sessionStorage — otherwise "back" would
+  // always land back on the width-based default instead of wherever the
+  // visitor actually was. Constellation hit-targets get cramped on small
+  // touch screens, so that's still the fallback default there.
+  const [view, setView] = useState(() => {
+    if (typeof window === 'undefined') return 'constellation'
+    const saved = sessionStorage.getItem('homeView')
+    if (saved === 'log' || saved === 'constellation') return saved
+    return window.innerWidth < 700 ? 'log' : 'constellation'
+  })
+
+  useEffect(() => {
+    sessionStorage.setItem('homeView', view)
+  }, [view])
   // Logged once at mount — the moment this page happened to be opened,
   // not a ticking clock.
   const [loggedAt] = useState(() => new Date())
@@ -72,8 +82,10 @@ export default function Home() {
         <div className={styles.divider}>Scroll to explore</div>
       </section>
 
-      {/* Gallery */}
-      <section className={`${styles.gallery} ${view === 'constellation' ? styles.galleryWide : ''}`}>
+      {/* Toolbar — fixed-width regardless of view, so the toggle and filter
+          bar never shift position when the content column below widens
+          for the constellation view. */}
+      <section className={styles.toolbar}>
         {/* View toggle */}
         <div className={styles.viewToggle}>
           <button
@@ -89,6 +101,9 @@ export default function Home() {
               <rect x="3" y="17.4" width="18" height="1.6" rx="0.8" />
             </svg>
           </button>
+          <span className={styles.viewHint}>
+            {view === 'log' ? 'See the sky →' : '← View logs'}
+          </span>
           <button
             className={`${styles.viewBtn} ${view === 'constellation' ? styles.viewActive : ''}`}
             onClick={() => setView('constellation')}
@@ -116,8 +131,10 @@ export default function Home() {
             </button>
           ))}
         </div>
+      </section>
 
-        {/* Log or constellation */}
+      {/* Log or constellation */}
+      <section className={`${styles.content} ${view === 'constellation' ? styles.contentWide : ''}`}>
         {view === 'log' ? (
           <WorkLogList works={filtered} />
         ) : (
