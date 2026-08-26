@@ -18,8 +18,7 @@ export default function About() {
               
             </p>
             <p>
-              I'm currently based in the Bay Area seeking out opportunities that will allow me to
-              continue exploring all that I've yet to discover while learning new skills along the way.
+              I'm currently based in the Bay Area seeking out early career opportunities.
             </p>
             <p>
               This portfolio is a map of where I've been and where I'm
@@ -29,7 +28,7 @@ export default function About() {
           </div>
 
           {/* CV / Resume link — drop your PDF at public/resume.pdf */}
-          <a href="/resume.pdf" target="_blank" rel="noreferrer" className={styles.cvLink}>
+          <a href="/Kyumin Han Resume!.pdf" target="_blank" rel="noreferrer" className={styles.cvLink}>
             Download Resume ↗
           </a>
         </div>
