@@ -458,6 +458,19 @@ export const WORKS = [
     link: 'https://github.com/spicycumin5/memory-weekly',
     linkLabel: 'Github Link',
   },
+  {
+    id: 30,
+    category: 'code',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'FreeTime',
+    year: '2026',
+    desc: 'A web app to help scheduling meetings with friends. Comes with scheduling with Google Calendar.',
+    tags: ['project', 'web app'],
+    body: '',
+    link: 'https://whenfreetime.vercel.app/',
+    linkLabel: 'Visit Site',
+  },
 
 
 ]

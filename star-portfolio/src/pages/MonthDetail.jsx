@@ -48,7 +48,17 @@ export default function MonthDetail() {
         {work.category}
       </p>
       <h1 className={styles.title}>{entry.month} {work.year}</h1>
-      <p className={styles.meta}>From "{work.title}"</p>
+
+      <div className={styles.logMeta}>
+        <p className={styles.logMetaRow}>
+          <span className={styles.logMetaLabel}>Cat. No.</span>
+          {work.id}.{String(index + 1).padStart(2, '0')}
+        </p>
+        <p className={styles.logMetaRow}>
+          <span className={styles.logMetaLabel}>Logged</span>
+          {entry.month} {work.year}
+        </p>
+      </div>
 
       <div className={styles.divider}>
         <span className={styles.dividerLine} />

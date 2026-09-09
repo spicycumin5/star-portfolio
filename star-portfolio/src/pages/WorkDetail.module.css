@@ -117,36 +117,29 @@
   text-shadow: 0 0 40px var(--gold-glow);
 }
 
-.meta {
-  font-size: 0.8rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  margin-bottom: 1rem;
-}
+/* ── Log metadata ──
+   Same label/value convention as the hero's observation log — every
+   detail page reads as a page from the same logbook rather than a
+   standard portfolio card. */
 
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 1.1rem;
+.logMeta {
+  font-family: var(--ff-mono);
   margin-bottom: 2rem;
 }
 
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding-bottom: 0.2rem;
-  font-family: var(--ff-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  border-bottom: 0.5px solid transparent;
-  transition: color 0.3s, border-color 0.3s;
+.logMetaRow {
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  line-height: 1.9;
 }
 
-.tag:hover {
-  color: var(--text);
-  border-color: var(--gold-dim);
+.logMetaLabel {
+  display: inline-block;
+  width: 6.5em;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* ── Divider ── */

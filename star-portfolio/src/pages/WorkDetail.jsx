@@ -154,15 +154,23 @@ export default function WorkDetail() {
         {work.category}
       </p>
       <h1 className={styles.title}>{work.title}</h1>
-      <p className={styles.meta}>{work.year}</p>
 
-      {work.tags && (
-        <div className={styles.tags}>
-          {work.tags.map((tag) => (
-            <span key={tag} className={styles.tag}>{tag}</span>
-          ))}
-        </div>
-      )}
+      <div className={styles.logMeta}>
+        <p className={styles.logMetaRow}>
+          <span className={styles.logMetaLabel}>Cat. No.</span>
+          {String(work.id).padStart(3, '0')}
+        </p>
+        <p className={styles.logMetaRow}>
+          <span className={styles.logMetaLabel}>Logged</span>
+          {work.year}
+        </p>
+        {work.tags && (
+          <p className={styles.logMetaRow}>
+            <span className={styles.logMetaLabel}>Medium</span>
+            {work.tags.join(' · ')}
+          </p>
+        )}
+      </div>
 
       <div className={styles.divider}>
         <span className={styles.dividerLine} />
