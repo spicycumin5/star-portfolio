@@ -471,8 +471,19 @@ export const WORKS = [
     link: 'https://whenfreetime.vercel.app/',
     linkLabel: 'Visit Site',
   },
-
-
+  {
+    id: 31,
+    category: 'code',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'System Design Visualizer',
+    year: '2026',
+    desc: 'A web app to help visualize system design principles.',
+    tags: ['project', 'web app'],
+    body: '',
+    link: 'https://personal-api-chi.vercel.app/',
+    linkLabel: 'Visit Site',
+  },
 ]
 
 export const CATEGORIES = ['all', 'video', 'music', 'art', 'writing', 'code']
