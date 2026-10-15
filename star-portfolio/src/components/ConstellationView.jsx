@@ -46,6 +46,10 @@ const LABEL_OFFSET_Y = -11
 // center point.
 const LABEL_MARGIN = 3.2
 const LABEL_HALF_HEIGHT = 4.4
+// Work stars render a little bigger than the background starfield's
+// pinpoints, not as solid discs on top of it — enough to find them,
+// small enough that the sky still reads as one sky.
+const STAR_SCALE = 0.58
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max)
@@ -161,7 +165,7 @@ function buildLayout(works, wide) {
       const radius = (4 + i * 3.2) * starSpread
       const x = clamp(anchor.x + Math.cos(angle) * radius, 6, 154)
       const y = clamp(anchor.y + Math.sin(angle) * radius, 4, 96)
-      const size = 1 + ((work.id * 7) % 5) * 0.22
+      const size = (1 + ((work.id * 7) % 5) * 0.22) * STAR_SCALE
       const accent = work.id % 5 === 2
       const twinkleDur = 2.2 + (work.id % 4) * 0.7
       const twinkleDelay = (work.id * 0.53) % 3
@@ -268,7 +272,9 @@ export default function ConstellationView({ works, activeFilter }) {
               style={{ '--cat-color': colorForCategory(cat) }}
               className={`${styles.clusterLabel} ${
                 isDimmed(cat) ? styles.dimmed : ''
-              } ${isHighlighted(cat) ? styles.clusterLabelActive : ''}`}
+              } ${isHighlighted(cat) ? styles.clusterLabelActive : ''} ${
+                hoveredCategory === cat ? styles.clusterLabelHover : ''
+              }`}
             >
               {cat}
             </text>
@@ -293,7 +299,7 @@ export default function ConstellationView({ works, activeFilter }) {
               onKeyDown={(e) => e.key === 'Enter' && handleSelect(work, x, y, true)}
             >
               <circle r={7} className={styles.hitArea} />
-              <circle r={4.5} className={styles.glow} />
+              <circle r={3.2} className={styles.glow} />
               <circle
                 r={size}
                 className={`${styles.star} ${accent ? styles.starAccent : ''}`}

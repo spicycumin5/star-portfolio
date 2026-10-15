@@ -29,11 +29,15 @@
 
 /* ── Connecting lines ── */
 
+/* vector-effect: non-scaling-stroke means these widths are screen px,
+   not viewBox units. Hidden at rest so the sky stays uncluttered — a
+   cluster's lines only draw in when one of its stars is hovered (or its
+   category is filtered to), tinted toward the cluster's color. */
 .line {
-  stroke: var(--faint);
-  stroke-width: 0.18;
+  stroke: color-mix(in srgb, var(--cat-color, var(--gold)) 45%, var(--text));
+  stroke-width: 0.75;
   fill: none;
-  opacity: 0.5;
+  opacity: 0;
   transition: opacity 0.4s, stroke 0.3s;
 }
 
@@ -46,7 +50,7 @@
 
 .lineHighlighted {
   stroke: var(--cat-color, var(--gold));
-  stroke-width: 0.32;
+  stroke-width: 1.1;
   opacity: 0.8;
   animation: lineGlow 2.6s ease-in-out infinite;
 }
@@ -80,8 +84,13 @@
   fill: transparent;
 }
 
+/* Warm-white core with a soft halo — the category color only shows up
+   faintly in the outer glow, like a real star's tint. Blur radii are in
+   viewBox units (the SVG scales them ~9x on desktop), hence the tiny values. */
 .star {
-  fill: var(--text);
+  fill: #f3ecdc;
+  filter: drop-shadow(0 0 0.25px rgba(255, 240, 215, 0.7))
+    drop-shadow(0 0 0.7px color-mix(in srgb, var(--cat-color, var(--gold)) 60%, transparent));
   transform-box: fill-box;
   transform-origin: center;
   transition: fill 0.2s, transform 0.25s;
@@ -90,11 +99,11 @@
 }
 
 .starAccent {
-  fill: var(--cat-color, var(--gold));
+  fill: color-mix(in srgb, var(--cat-color, var(--gold)) 70%, #fff);
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.45; }
+  0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
 }
 
@@ -146,13 +155,21 @@
 
 /* ── Cluster labels ── */
 
+/* Star-chart style annotations: small, spaced out, and faint until the
+   cluster is hovered or filtered to. */
 .clusterLabel {
   font-family: var(--ff-mono);
-  font-size: 3.5px;
-  fill: rgba(237, 229, 208, 0.22);
+  font-size: 2.3px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  fill: rgba(237, 229, 208, 0.2);
   text-anchor: middle;
   pointer-events: none;
   transition: fill 0.4s, opacity 0.4s;
+}
+
+.clusterLabelHover {
+  fill: color-mix(in srgb, var(--cat-color, var(--gold)) 60%, transparent);
 }
 
 .clusterLabelActive {
@@ -257,6 +274,12 @@
 .dimmed {
   opacity: 0.15;
   transition: opacity 0.4s;
+}
+
+/* Lines are hidden at rest, so a dimmed one stays hidden rather than
+   fading in to .dimmed's 15%. */
+.line.dimmed {
+  opacity: 0;
 }
 
 @media (max-width: 600px) {
