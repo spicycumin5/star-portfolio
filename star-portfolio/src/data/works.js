@@ -549,7 +549,19 @@ export const WORKS = [
     link: 'https://kyumin.substack.com/p/on-the-topic-of-impatience?r=5zk61m',
     linkLabel: 'Read Here',
   },
-
+  {
+    id: 37,
+    category: 'code',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'Job Hunt',
+    year: '2026',
+    desc: 'Theres a wanted perpetrator runnning free... heres a tool to visualize the job hunt',
+    tags: ['project', 'web app'],
+    body: '',
+    link: 'https://job-hunt-ochre-ten.vercel.app/',
+    linkLabel: 'Visit Site',
+  },
 ]
 
 export const CATEGORIES = ['all', 'video', 'music', 'art', 'writing', 'code']
