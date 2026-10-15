@@ -484,6 +484,19 @@ export const WORKS = [
     link: 'https://personal-api-chi.vercel.app/',
     linkLabel: 'Visit Site',
   },
+  {
+    id: 31,
+    category: 'code',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'Retension',
+    year: '2026',
+    desc: 'A web app designed to assist in reviewing LeetCode problems by scheduling spaced repition and sending daily email reminders to users',
+    tags: ['project', 'web app'],
+    body: '',
+    link: 'https://recall-ckzy.onrender.com/',
+    linkLabel: 'Visit Site',
+  },
 ]
 
 export const CATEGORIES = ['all', 'video', 'music', 'art', 'writing', 'code']
