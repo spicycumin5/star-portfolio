@@ -1,5 +1,10 @@
 import { useEffect, useRef } from 'react'
 
+// Dispatched by the constellation when a star is clicked: the field
+// zooms toward that screen point with warp trails building up, until
+// the route change hands off to the usual arrival burst.
+export const DIVE_EVENT = 'starfield:dive'
+
 export function useStarfield(canvasRef, pathname) {
   const warpRef = useRef(8)
 
@@ -20,6 +25,9 @@ export function useStarfield(canvasRef, pathname) {
     let targetScroll = window.scrollY
     let currentScroll = targetScroll
     let scrollVelocity = 0
+    let diveUntil = 0
+    let diveCenter = null
+    let zoom = 0
 
     function resize() {
       canvas.width = window.innerWidth
@@ -57,6 +65,11 @@ export function useStarfield(canvasRef, pathname) {
 
     function onScroll() {
       targetScroll = window.scrollY
+    }
+
+    function onDive(e) {
+      diveCenter = { x: e.detail.x, y: e.detail.y }
+      diveUntil = performance.now() + e.detail.duration
     }
 
     function spawnShootingStar(W, H) {
@@ -125,24 +138,40 @@ export function useStarfield(canvasRef, pathname) {
       const PARALLAX_STRENGTH = 0.12
       const trailBoost = Math.min(Math.abs(scrollVelocity) * 0.5, 6)
 
-      // Decay warp burst each frame
-      if (warpRef.current > 0.05) {
-        warpRef.current *= 0.95
+      // While diving, warp builds toward the clicked star and the field
+      // zooms in around it; otherwise the arrival burst decays as usual.
+      const diving = t < diveUntil
+      if (diving) {
+        warpRef.current = Math.min(warpRef.current * 1.1 + 0.6, 22)
+        zoom += (1 - zoom) * 0.08
       } else {
-        warpRef.current = 0
+        if (warpRef.current > 0.05) {
+          warpRef.current *= 0.95
+        } else {
+          warpRef.current = 0
+        }
+        zoom = zoom > 0.001 ? zoom * 0.9 : 0
       }
       const warp = warpRef.current
-      const cx = W / 2
-      const cy = H / 2
+      const cx = diving ? diveCenter.x : W / 2
+      const cy = diving ? diveCenter.y : H / 2
+      const zoomScale = 1 + zoom * 0.6
+      const zx = diveCenter ? diveCenter.x : W / 2
+      const zy = diveCenter ? diveCenter.y : H / 2
 
       for (const s of stars) {
         const twinkle = (Math.sin(t * s.speed + s.phase) + 1) / 2
         const alpha = 0.55 + twinkle * 0.35
         const offset = currentScroll * s.depth * PARALLAX_STRENGTH
-        const y = ((s.y - offset) % H + H) % H
+        let y = ((s.y - offset) % H + H) % H
+        let x = s.x
+        if (zoom > 0) {
+          x = zx + (x - zx) * zoomScale
+          y = zy + (y - zy) * zoomScale
+        }
 
         ctx.beginPath()
-        ctx.arc(s.x, y, s.r, 0, Math.PI * 2)
+        ctx.arc(x, y, s.r, 0, Math.PI * 2)
         ctx.fillStyle = s.gold
           ? `rgba(212,147,106,${alpha * 0.9})`
           : `rgba(237,229,208,${alpha})`
@@ -152,21 +181,21 @@ export function useStarfield(canvasRef, pathname) {
         if (trailBoost > 1) {
           const trailLen = trailBoost * (0.3 + s.depth)
           const dir = scrollVelocity > 0 ? 1 : -1
-          const grad = ctx.createLinearGradient(s.x, y, s.x, y - dir * trailLen)
+          const grad = ctx.createLinearGradient(x, y, x, y - dir * trailLen)
           const color = s.gold ? '212,147,106' : '237,229,208'
           grad.addColorStop(0, `rgba(${color},${alpha * 0.5})`)
           grad.addColorStop(1, `rgba(${color},0)`)
           ctx.strokeStyle = grad
           ctx.lineWidth = s.r
           ctx.beginPath()
-          ctx.moveTo(s.x, y)
-          ctx.lineTo(s.x, y - dir * trailLen)
+          ctx.moveTo(x, y)
+          ctx.lineTo(x, y - dir * trailLen)
           ctx.stroke()
         }
 
         // Warp arrival: trails radiate outward from center
         if (warp > 0.3) {
-          const dx = s.x - cx
+          const dx = x - cx
           const dy = y - cy
           const dist = Math.hypot(dx, dy) || 1
           const nx = dx / dist
@@ -174,14 +203,14 @@ export function useStarfield(canvasRef, pathname) {
           const trailLen = warp * (1.5 + s.depth * 3)
           const warpAlpha = Math.min(1, warp / 8) * 0.45
           const color = s.gold ? '212,147,106' : '237,229,208'
-          const grad = ctx.createLinearGradient(s.x, y, s.x - nx * trailLen, y - ny * trailLen)
+          const grad = ctx.createLinearGradient(x, y, x - nx * trailLen, y - ny * trailLen)
           grad.addColorStop(0, `rgba(${color},${warpAlpha})`)
           grad.addColorStop(1, `rgba(${color},0)`)
           ctx.strokeStyle = grad
           ctx.lineWidth = s.r * 0.8
           ctx.beginPath()
-          ctx.moveTo(s.x, y)
-          ctx.lineTo(s.x - nx * trailLen, y - ny * trailLen)
+          ctx.moveTo(x, y)
+          ctx.lineTo(x - nx * trailLen, y - ny * trailLen)
           ctx.stroke()
         }
       }
@@ -198,6 +227,7 @@ export function useStarfield(canvasRef, pathname) {
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener(DIVE_EVENT, onDive)
     nextShootAt = performance.now() + Math.random() * 6000 + 4000
     animId = requestAnimationFrame(draw)
 
@@ -205,6 +235,7 @@ export function useStarfield(canvasRef, pathname) {
       cancelAnimationFrame(animId)
       window.removeEventListener('resize', resize)
       window.removeEventListener('scroll', onScroll)
+      window.removeEventListener(DIVE_EVENT, onDive)
     }
   }, [canvasRef])
 }

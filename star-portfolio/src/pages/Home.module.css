@@ -20,6 +20,7 @@
 
 .hero {
   position: relative;
+  transition: opacity 0.4s ease-in;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -297,4 +298,12 @@
   .content {
     padding: 0 1.5rem 4rem;
   }
+}
+/* While the constellation dives into a clicked star, the rest of the
+   page falls away so only the sky is left (the flag is set on <html> by
+   ConstellationView and cleared when it unmounts). */
+:global(html[data-diving]) .hero,
+:global(html[data-diving]) .toolbar {
+  opacity: 0;
+  transition: opacity 0.4s ease-in;
 }

@@ -27,6 +27,72 @@
   overflow: visible;
 }
 
+/* ── Scroll depth ──
+   Each star (and cluster label) sits in a wrapper that drifts by its own
+   --depth share of the sky's scroll offset; --sky-shift is set on the svg
+   from JS. Inside an svg, CSS px are viewBox units. */
+.depth {
+  transform: translateY(calc(var(--sky-shift, 0) * var(--depth, 0) * 1px));
+}
+
+/* ── Dive (click a star) ──
+   The sky accelerates toward the clicked star (transform-origin is set
+   inline to its position) and fades as it passes through. */
+.diving {
+  transform: scale(7);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.7s cubic-bezier(0.55, 0, 0.85, 0.35),
+    opacity 0.55s ease-in 0.15s;
+}
+
+/* ── First-view reveal ──
+   Pending: everything hidden until the sky scrolls into view. Revealing:
+   stars fade in with a brief flare, labels follow their cluster, and
+   lines trace in then fade back to their hidden resting state. Each
+   element's --reveal-delay comes from the layout (see buildLayout). */
+.revealPending .starGroup,
+.revealPending .clusterLabel {
+  opacity: 0;
+}
+
+.revealing .starGroup,
+.revealing .clusterLabel {
+  animation: revealFade 0.8s ease-out both;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+.revealing .glow {
+  animation: revealFlare 1s ease-out both;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+/* pathLength="1" is set on lines only while revealing, so these dash
+   values mean "the whole line" regardless of its actual length. */
+.revealing .line {
+  stroke-dasharray: 1;
+  animation: revealTrace 2.4s ease-in-out both;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+@keyframes revealFade {
+  from { opacity: 0; }
+}
+
+@keyframes revealFlare {
+  0% { opacity: 0; transform: scale(0.3); }
+  35% { opacity: 0.5; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.2); }
+}
+
+@keyframes revealTrace {
+  0% { stroke-dashoffset: 1; opacity: 0.6; }
+  35% { stroke-dashoffset: 0; opacity: 0.6; }
+  70% { stroke-dashoffset: 0; opacity: 0.6; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
 /* ── Connecting lines ── */
 
 /* vector-effect: non-scaling-stroke means these widths are screen px,
@@ -291,3 +357,4 @@
     r: 9;
   }
 }
+

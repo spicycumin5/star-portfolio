@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { DIVE_EVENT } from '../hooks/useStarfield'
 import styles from './ConstellationView.module.css'
 
 const KNOWN_CATEGORY_ANCHORS = {
@@ -50,6 +51,28 @@ const LABEL_HALF_HEIGHT = 4.4
 // pinpoints, not as solid discs on top of it — enough to find them,
 // small enough that the sky still reads as one sky.
 const STAR_SCALE = 0.58
+// First-view reveal: clusters light up one after another, stars within a
+// cluster in quick succession, then each cluster's lines trace in and
+// fade back out (they're hidden at rest — this is the one hint that
+// hovering draws them). Plays once per session.
+const REVEAL_CLUSTER_STAGGER = 0.45
+const REVEAL_STAR_STAGGER = 0.09
+const REVEAL_LINE_LAG = 0.25
+const REVEAL_LINE_DURATION = 2.4
+// How long the click-to-dive zoom runs before the route changes.
+const DIVE_MS = 700
+// Scroll depth: each star drifts at its own rate as the sky scrolls past,
+// so the chart reads as stars at different distances rather than dots on
+// one sheet. A star's factor is the fraction of the sky's scroll offset
+// (from viewport center) it moves by on top of the page — positive is
+// nearer (outruns the page), negative is farther (lags behind it). Bigger
+// stars sit nearer. At factor 0, or with the sky centered in the
+// viewport, every star is exactly where the layout put it.
+const DEPTH_RANGE = 0.13
+// Same cutoff Home uses to default to the log view on small screens.
+const DEPTH_MIN_WIDTH = 700
+// Matches .line's stroke-width (screen px) in ConstellationView.module.css.
+const LINE_WIDTH_PX = 0.75
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max)
@@ -157,8 +180,12 @@ function buildLayout(works, wide) {
   const stars = []
   const lines = []
 
-  Object.entries(byCategory).forEach(([category, items]) => {
+  const clusterDelays = {}
+
+  Object.entries(byCategory).forEach(([category, items], clusterIndex) => {
     const anchor = anchors[category] || anchorFor(category)
+    const clusterDelay = clusterIndex * REVEAL_CLUSTER_STAGGER
+    clusterDelays[category] = clusterDelay
 
     const catStars = items.map((work, i) => {
       const angle = i * GOLDEN_ANGLE
@@ -169,7 +196,11 @@ function buildLayout(works, wide) {
       const accent = work.id % 5 === 2
       const twinkleDur = 2.2 + (work.id % 4) * 0.7
       const twinkleDelay = (work.id * 0.53) % 3
-      return { work, x, y, size, accent, twinkleDur, twinkleDelay }
+      const revealDelay = clusterDelay + i * REVEAL_STAR_STAGGER
+      const sizeStep = ((work.id * 7) % 5) / 4
+      const jitter = ((work.id * 13) % 7) / 6 - 0.5
+      const depth = clamp(sizeStep * 2 - 1 + jitter * 0.5, -1, 1) * DEPTH_RANGE
+      return { work, x, y, size, accent, twinkleDur, twinkleDelay, revealDelay, depth }
     })
 
     stars.push(...catStars)
@@ -185,7 +216,13 @@ function buildLayout(works, wide) {
           const key = `${Math.min(i, j)}-${Math.max(i, j)}`
           if (!addedPairs.has(key)) {
             addedPairs.add(key)
-            lines.push({ from: catStars[i], to: catStars[j], category })
+            lines.push({
+              from: catStars[i],
+              to: catStars[j],
+              category,
+              revealDelay:
+                Math.max(catStars[i].revealDelay, catStars[j].revealDelay) + REVEAL_LINE_LAG,
+            })
           }
         })
     })
@@ -196,8 +233,22 @@ function buildLayout(works, wide) {
   // nudging positions here keeps everything else in sync automatically.
   resolveLayout(stars, anchors)
 
-  return { stars, lines, anchors }
+  const revealDuration =
+    Math.max(0, ...lines.map((l) => l.revealDelay)) + REVEAL_LINE_DURATION
+
+  // Labels ride at their cluster's average depth so they stay with it.
+  const clusterDepths = {}
+  Object.keys(byCategory).forEach((category) => {
+    const members = stars.filter((s) => s.work.category === category)
+    clusterDepths[category] = members.reduce((sum, s) => sum + s.depth, 0) / members.length
+  })
+
+  return { stars, lines, anchors, clusterDelays, clusterDepths, revealDuration }
 }
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 export default function ConstellationView({ works, activeFilter }) {
   const navigate = useNavigate()
@@ -208,7 +259,97 @@ export default function ConstellationView({ works, activeFilter }) {
     typeof window !== 'undefined' && window.innerWidth >= WIDE_MIN_WIDTH
   )
 
-  const { stars, lines, anchors } = useMemo(() => buildLayout(works, wide), [works, wide])
+  const { stars, lines, anchors, clusterDelays, clusterDepths, revealDuration } = useMemo(
+    () => buildLayout(works, wide),
+    [works, wide]
+  )
+
+  const containerRef = useRef(null)
+  const svgRef = useRef(null)
+  const lineRefs = useRef([])
+  // The sky's current scroll offset from viewport center, in viewBox units.
+  const skyShiftRef = useRef(0)
+  const [diveOrigin, setDiveOrigin] = useState(null)
+  // Line width in viewBox units for the reveal trace — see the line JSX.
+  const revealStrokeRef = useRef(0)
+
+  // 'pending' (hidden, waiting to scroll into view) → 'revealing' → 'done'
+  const [reveal, setReveal] = useState(() => {
+    if (prefersReducedMotion()) return 'done'
+    try {
+      return sessionStorage.getItem('skyRevealed') ? 'done' : 'pending'
+    } catch {
+      return 'done'
+    }
+  })
+
+  useEffect(() => {
+    if (reveal !== 'pending') return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        const svg = svgRef.current
+        revealStrokeRef.current =
+          LINE_WIDTH_PX / Math.min(svg.clientWidth / 160, svg.clientHeight / 100)
+        setReveal('revealing')
+      },
+      { threshold: 0.3 }
+    )
+    observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [reveal])
+
+  useEffect(() => {
+    if (reveal !== 'revealing') return
+    try {
+      sessionStorage.setItem('skyRevealed', '1')
+    } catch {
+      // Without storage the reveal just replays next time — harmless.
+    }
+    const id = setTimeout(() => setReveal('done'), revealDuration * 1000)
+    return () => clearTimeout(id)
+  }, [reveal, revealDuration])
+
+  // Scroll depth. Stars and labels follow a --sky-shift variable through
+  // CSS (see .depth), but SVG lines have no CSS-settable endpoints, so
+  // each line's y1/y2 is moved here directly to stay pinned to its stars.
+  // Skipped on narrow screens: the sky is small enough there that drifting
+  // stars slide into each other's (already enlarged) tap targets.
+  useEffect(() => {
+    if (prefersReducedMotion() || window.innerWidth < DEPTH_MIN_WIDTH) return
+    let frame = null
+    function update() {
+      frame = null
+      const svg = svgRef.current
+      if (!svg) return
+      const rect = containerRef.current.getBoundingClientRect()
+      const scale = Math.min(svg.clientWidth / 160, svg.clientHeight / 100)
+      const shift = (rect.top + rect.height / 2 - window.innerHeight / 2) / scale
+      skyShiftRef.current = shift
+      svg.style.setProperty('--sky-shift', shift)
+      lines.forEach(({ from, to }, i) => {
+        const el = lineRefs.current[i]
+        if (!el) return
+        el.setAttribute('y1', from.y + shift * from.depth)
+        el.setAttribute('y2', to.y + shift * to.depth)
+      })
+    }
+    function schedule() {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    return () => {
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+      if (frame) cancelAnimationFrame(frame)
+    }
+  }, [lines])
+
+  // Home fades its hero/toolbar while a dive is underway (see
+  // Home.module.css) — make sure that flag never outlives this view.
+  useEffect(() => () => delete document.documentElement.dataset.diving, [])
 
   const hoveredCategory = hovered?.work.category ?? null
 
@@ -236,27 +377,66 @@ export default function ConstellationView({ works, activeFilter }) {
       return
     }
     setBurstingId(work.id)
-    setTimeout(() => navigate(`/work/${work.id}`), 240)
+    if (prefersReducedMotion()) {
+      navigate(`/work/${work.id}`)
+      return
+    }
+
+    // Dive: zoom the sky in on the clicked star (where its scroll depth
+    // has currently carried it) while the background starfield warps
+    // toward the same screen point, then hand off to the work page (whose
+    // arrival burst the starfield already plays).
+    const depth = stars.find((s) => s.work.id === work.id)?.depth ?? 0
+    const svg = svgRef.current
+    const rect = svg.getBoundingClientRect()
+    const scale = Math.min(svg.clientWidth / 160, svg.clientHeight / 100)
+    const ox = (svg.clientWidth - 160 * scale) / 2 + x * scale
+    const oy = (svg.clientHeight - 100 * scale) / 2 + (y + skyShiftRef.current * depth) * scale
+    setDiveOrigin({ x: ox, y: oy })
+    document.documentElement.dataset.diving = ''
+    window.dispatchEvent(
+      new CustomEvent(DIVE_EVENT, {
+        detail: { x: rect.left + ox, y: rect.top + oy, duration: DIVE_MS },
+      })
+    )
+    setTimeout(() => navigate(`/work/${work.id}`), DIVE_MS)
   }
+
+  const revealClass =
+    reveal === 'pending' ? styles.revealPending : reveal === 'revealing' ? styles.revealing : ''
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.svgContainer}>
+      <div className={styles.svgContainer} ref={containerRef}>
         <svg
+          ref={svgRef}
           viewBox="0 0 160 100"
           preserveAspectRatio="xMidYMid meet"
-          className={styles.svg}
+          className={`${styles.svg} ${revealClass} ${diveOrigin ? styles.diving : ''}`}
+          style={
+            diveOrigin ? { transformOrigin: `${diveOrigin.x}px ${diveOrigin.y}px` } : undefined
+          }
         >
           <g>
-            {lines.map(({ from, to, category }) => (
+            {lines.map(({ from, to, category, revealDelay }, i) => (
               <line
                 key={`${from.work.id}-${to.work.id}`}
+                ref={(el) => (lineRefs.current[i] = el)}
                 x1={from.x}
                 y1={from.y}
                 x2={to.x}
                 y2={to.y}
-                vectorEffect="non-scaling-stroke"
-                style={{ '--cat-color': colorForCategory(category) }}
+                // The reveal traces each line with pathLength="1" dashes,
+                // which non-scaling-stroke would measure in screen px
+                // instead. So while revealing, the stroke goes back to
+                // viewBox units, with a width converted to match.
+                pathLength={reveal === 'revealing' ? 1 : undefined}
+                vectorEffect={reveal === 'revealing' ? undefined : 'non-scaling-stroke'}
+                style={{
+                  '--cat-color': colorForCategory(category),
+                  '--reveal-delay': `${revealDelay}s`,
+                  strokeWidth: reveal === 'revealing' ? revealStrokeRef.current : undefined,
+                }}
                 className={`${styles.line} ${isDimmed(category) ? styles.dimmed : ''} ${
                   isHighlighted(category) ? styles.lineHighlighted : ''
                 } ${hoveredCategory === category ? styles.lineActive : ''}`}
@@ -265,53 +445,61 @@ export default function ConstellationView({ works, activeFilter }) {
           </g>
 
           {Object.entries(anchors).map(([cat, anchor]) => (
-            <text
-              key={cat}
-              x={anchor.x}
-              y={anchor.y + LABEL_OFFSET_Y}
-              style={{ '--cat-color': colorForCategory(cat) }}
-              className={`${styles.clusterLabel} ${
-                isDimmed(cat) ? styles.dimmed : ''
-              } ${isHighlighted(cat) ? styles.clusterLabelActive : ''} ${
-                hoveredCategory === cat ? styles.clusterLabelHover : ''
-              }`}
-            >
-              {cat}
-            </text>
+            <g key={cat} className={styles.depth} style={{ '--depth': clusterDepths[cat] ?? 0 }}>
+              <text
+                x={anchor.x}
+                y={anchor.y + LABEL_OFFSET_Y}
+                style={{
+                  '--cat-color': colorForCategory(cat),
+                  '--reveal-delay': `${clusterDelays[cat] ?? 0}s`,
+                }}
+                className={`${styles.clusterLabel} ${
+                  isDimmed(cat) ? styles.dimmed : ''
+                } ${isHighlighted(cat) ? styles.clusterLabelActive : ''} ${
+                  hoveredCategory === cat ? styles.clusterLabelHover : ''
+                }`}
+              >
+                {cat}
+              </text>
+            </g>
           ))}
 
-          {stars.map(({ work, x, y, size, accent, twinkleDur, twinkleDelay }) => (
-            <g
-              key={work.id}
-              className={`${styles.starGroup} ${isDimmed(work.category) ? styles.dimmed : ''} ${
-                burstingId === work.id ? styles.bursting : ''
-              }`}
-              transform={`translate(${x} ${y})`}
-              style={{ '--cat-color': colorForCategory(work.category) }}
-              onClick={() => handleSelect(work, x, y)}
-              onMouseEnter={() => setHovered({ work, x, y })}
-              onMouseLeave={() => setHovered(null)}
-              onFocus={() => setHovered({ work, x, y })}
-              onBlur={() => setHovered(null)}
-              tabIndex={0}
-              role="button"
-              aria-label={`View ${work.title}`}
-              onKeyDown={(e) => e.key === 'Enter' && handleSelect(work, x, y, true)}
-            >
-              <circle r={7} className={styles.hitArea} />
-              <circle r={3.2} className={styles.glow} />
-              <circle
-                r={size}
-                className={`${styles.star} ${accent ? styles.starAccent : ''}`}
+          {stars.map(({ work, x, y, size, accent, twinkleDur, twinkleDelay, revealDelay, depth }) => (
+            <g key={work.id} className={styles.depth} style={{ '--depth': depth }}>
+              <g
+                className={`${styles.starGroup} ${isDimmed(work.category) ? styles.dimmed : ''} ${
+                  burstingId === work.id ? styles.bursting : ''
+                }`}
+                transform={`translate(${x} ${y})`}
                 style={{
-                  '--twinkle-dur': `${twinkleDur}s`,
-                  '--twinkle-delay': `${twinkleDelay}s`,
+                  '--cat-color': colorForCategory(work.category),
+                  '--reveal-delay': `${revealDelay}s`,
                 }}
-              />
-              <path
-                d="M2.6,0 L0.65,0.65 L0,2.6 L-0.65,0.65 L-2.6,0 L-0.65,-0.65 L0,-2.6 L0.65,-0.65 Z"
-                className={styles.starShape}
-              />
+                onClick={() => handleSelect(work, x, y)}
+                onMouseEnter={() => setHovered({ work, x, y })}
+                onMouseLeave={() => setHovered(null)}
+                onFocus={() => setHovered({ work, x, y })}
+                onBlur={() => setHovered(null)}
+                tabIndex={0}
+                role="button"
+                aria-label={`View ${work.title}`}
+                onKeyDown={(e) => e.key === 'Enter' && handleSelect(work, x, y, true)}
+              >
+                <circle r={7} className={styles.hitArea} />
+                <circle r={3.2} className={styles.glow} />
+                <circle
+                  r={size}
+                  className={`${styles.star} ${accent ? styles.starAccent : ''}`}
+                  style={{
+                    '--twinkle-dur': `${twinkleDur}s`,
+                    '--twinkle-delay': `${twinkleDelay}s`,
+                  }}
+                />
+                <path
+                  d="M2.6,0 L0.65,0.65 L0,2.6 L-0.65,0.65 L-2.6,0 L-0.65,-0.65 L0,-2.6 L0.65,-0.65 Z"
+                  className={styles.starShape}
+                />
+              </g>
             </g>
           ))}
         </svg>
