@@ -494,7 +494,7 @@ export const WORKS = [
     desc: 'A web app designed to assist in reviewing LeetCode problems by scheduling spaced repition and sending daily email reminders to users',
     tags: ['project', 'web app'],
     body: '',
-    link: 'https://recall-ckzy.onrender.com/',
+    link: 'https://retension.vercel.app/',
     linkLabel: 'Visit Site',
   },
   {
