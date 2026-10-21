@@ -562,6 +562,19 @@ export const WORKS = [
     link: 'https://job-hunt-ochre-ten.vercel.app/',
     linkLabel: 'Visit Site',
   },
+  {
+    id: 378,
+    category: 'code',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'BeReal Close Friends Feature Demo',
+    year: '2026',
+    desc: 'A feature I crafted during my product management externship at BeReal',
+    tags: ['project', 'web app', 'demo'],
+    body: '',
+    link: 'https://bereal-close-friends.vercel.app/',
+    linkLabel: 'Try It!',
+  },
 ]
 
 export const CATEGORIES = ['all', 'video', 'music', 'art', 'writing', 'code']
