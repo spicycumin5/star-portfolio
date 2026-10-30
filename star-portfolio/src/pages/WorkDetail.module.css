@@ -189,6 +189,64 @@
   }
 }
 
+/* ── Epigraph ──
+   Stands in for the thumbnail on pieces with no visual component,
+   so text-only work reads as a page of writing, not a missing image. */
+
+.epigraph {
+  position: relative;
+  margin: 0 0 2.75rem;
+  padding: 0.25rem 0 0.25rem 1.75rem;
+  border-left: 0.5px solid var(--gold-dim);
+  max-width: 40ch;
+}
+
+.epigraphMark {
+  position: absolute;
+  top: -1.6rem;
+  left: -0.9rem;
+  font-family: var(--ff-serif);
+  font-size: 5rem;
+  line-height: 1;
+  color: var(--gold);
+  opacity: 0.35;
+  text-shadow: 0 0 30px var(--gold-glow);
+  pointer-events: none;
+}
+
+.epigraphText {
+  margin: 0;
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: clamp(1.35rem, 2.6vw, 1.75rem);
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.epigraphSource {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  font-family: var(--ff-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.epigraphSource span {
+  font-size: 0.55rem;
+  color: var(--gold);
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+@media (max-width: 600px) {
+  .epigraph {
+    padding-left: 1.25rem;
+  }
+}
+
 /* ── Thumbnail ── */
 
 .thumbFrame {
@@ -249,12 +307,6 @@
   overflow: hidden;
   border: 0.5px solid var(--gold-dim);
   background: radial-gradient(ellipse at 50% 45%, var(--accent, var(--surface)) 0%, var(--midnight) 78%);
-}
-
-.emoji {
-  position: relative;
-  z-index: 1;
-  font-size: 4rem;
 }
 
 .image {

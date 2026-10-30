@@ -35,6 +35,16 @@ export function getVideoEmbedUrl(url) {
   return null
 }
 
+// Bare hostname for captioning a link, e.g. "kyumin.substack.com".
+export function getSourceHost(url) {
+  if (!url) return null
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return null
+  }
+}
+
 export function parseGithubUrl(url) {
   if (!url) return null
   let u

@@ -12,6 +12,68 @@
   background: radial-gradient(ellipse at 50% 45%, var(--accent, var(--surface)) 0%, var(--midnight) 78%);
 }
 
+/* ── Browser window around the site screenshot ── */
+
+.window {
+  display: block;
+  margin-bottom: 0.5rem;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 0.5px solid var(--gold-dim);
+  background: var(--midnight);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  text-decoration: none;
+  transition: box-shadow 0.4s, transform 0.4s;
+}
+
+.window:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45), 0 0 30px var(--gold-glow);
+}
+
+.windowBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.9rem;
+  border-bottom: 0.5px solid var(--rim);
+}
+
+.windowDots {
+  position: absolute;
+  left: 0.8rem;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.windowDots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 0.5px solid var(--gold-dim);
+}
+
+.windowUrl {
+  font-family: var(--ff-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.screenshot {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top;
+  transition: opacity 0.4s;
+}
+
+.window:hover .screenshot {
+  opacity: 0.92;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -84,5 +146,9 @@
 @media (max-width: 600px) {
   .card {
     padding: 1.75rem;
+  }
+
+  .windowUrl {
+    display: none;
   }
 }

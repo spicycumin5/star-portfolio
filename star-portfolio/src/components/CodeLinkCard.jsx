@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { parseGithubUrl } from '../utils/embeds'
+import { parseGithubUrl, getSourceHost } from '../utils/embeds'
 import styles from './CodeLinkCard.module.css'
 
 export default function CodeLinkCard({ work }) {
@@ -30,6 +30,24 @@ export default function CodeLinkCard({ work }) {
 
   return (
     <div className={styles.card} style={{ '--accent': work.bg }}>
+      {work.image && (
+        <a
+          href={hasLink ? work.link : undefined}
+          target="_blank"
+          rel="noreferrer"
+          className={styles.window}
+          aria-label={`Open ${work.title}`}
+        >
+          <span className={styles.windowBar} aria-hidden="true">
+            <span className={styles.windowDots}>
+              <span /><span /><span />
+            </span>
+            <span className={styles.windowUrl}>{getSourceHost(work.link)}</span>
+          </span>
+          <img src={work.image} alt={`Screenshot of ${work.title}`} className={styles.screenshot} />
+        </a>
+      )}
+
       <div className={styles.header}>
         <span className={styles.icon} aria-hidden="true">{work.emoji || '⟨/⟩'}</span>
         <div>

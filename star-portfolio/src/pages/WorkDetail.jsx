@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { WORKS } from '../data/works'
 import CodeLinkCard from '../components/CodeLinkCard'
-import { getVideoEmbedUrl } from '../utils/embeds'
+import { getVideoEmbedUrl, getSourceHost } from '../utils/embeds'
 import styles from './WorkDetail.module.css'
 
 export default function WorkDetail() {
@@ -35,7 +35,24 @@ export default function WorkDetail() {
   const isMusic = work.category === 'music'
   const hasMonths = Array.isArray(work.months)
 
-  const thumbContent = (
+  const hasVisual = Boolean(embedUrl || work.image || work.category === 'code')
+  const sourceHost = getSourceHost(work.link)
+
+  // Pieces with no visual component (essays, mostly) skip the frame
+  // entirely and lead with their tagline as an epigraph instead.
+  const epigraphContent = work.desc && (
+    <figure className={styles.epigraph}>
+      <span className={styles.epigraphMark} aria-hidden="true">“</span>
+      <blockquote className={styles.epigraphText}>{work.desc}</blockquote>
+      {sourceHost && (
+        <figcaption className={styles.epigraphSource}>
+          <span aria-hidden="true">✦</span> {sourceHost}
+        </figcaption>
+      )}
+    </figure>
+  )
+
+  const thumbContent = !hasVisual ? epigraphContent : (
     <div className={styles.thumbFrame}>
       {embedUrl ? (
         <div className={styles.videoFrame}>
@@ -62,27 +79,18 @@ export default function WorkDetail() {
           <span className={`${styles.thumbDot} ${styles.thumbDot2}`} aria-hidden="true" />
           <span className={`${styles.thumbDot} ${styles.thumbDot3}`} aria-hidden="true" />
           <span className={`${styles.thumbDot} ${styles.thumbDot4}`} aria-hidden="true" />
-          {work.image
-          ? (
-            <img
-              src={work.image}
-              alt={work.title}
-              className={styles.image}
-              onLoad={isArt ? (e) => setArtAspect(e.target.naturalWidth / e.target.naturalHeight) : undefined}
-            />
-          )
-          : (
-            <>
-              <span className={styles.emoji}>{work.emoji}</span>
-              <p className={styles.thumbHint}>Replace with image</p>
-            </>
-          )}
+          <img
+            src={work.image}
+            alt={work.title}
+            className={styles.image}
+            onLoad={isArt ? (e) => setArtAspect(e.target.naturalWidth / e.target.naturalHeight) : undefined}
+          />
         </div>
       )}
     </div>
   )
 
-  const bodyContent = (
+  const bodyContent = work.body && (
     <div className={styles.body}>
       {work.body.split('\n\n').map((para, i) => (
         <p key={i}>{para}</p>
@@ -205,7 +213,7 @@ export default function WorkDetail() {
             ))}
           </div>
         </>
-      ) : isMusic ? (
+      ) : isMusic && hasVisual ? (
         <div className={styles.musicLayout}>
           {thumbContent}
           <div className={styles.musicDetails}>
