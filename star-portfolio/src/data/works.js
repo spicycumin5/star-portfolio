@@ -611,7 +611,36 @@ export const WORKS = [
     image: '/images/sites/40.jpg',
     link: 'https://do-date-three.vercel.app/',
     linkLabel: 'Try It!',
-  }
+  },
+  {
+    id: 41,
+    category: 'writing',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'On the topic of sexuality',
+    year: '2026',
+    desc: 'A time management visualizer to help me put my ambition in perspective',
+    tags: ['Writing'],
+    body: '',
+    link: 'https://kyumin.substack.com/p/on-the-topic-of-sexuality?r=5zk61m',
+    linkLabel: 'Read Here',
+  },
+  {
+    id: 42,
+    category: 'code',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'Bible-ography',
+    year: '2026',
+    desc: 'A resource for bible-reading: geography, historical context, themes, and more!',
+    tags: ['project', 'web app'],
+    body: '',
+    image: '',
+    link: 'https://bible-ography.vercel.app/#/',
+    linkLabel: 'Try It!',
+  },
 ]
+
+
 
 export const CATEGORIES = ['all', 'video', 'music', 'art', 'writing', 'code']
