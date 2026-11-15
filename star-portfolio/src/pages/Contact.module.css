@@ -197,6 +197,14 @@
   animation: starBurst 0.4s ease-out forwards;
 }
 
+.error {
+  font-family: var(--ff-mono);
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--gold);
+  max-width: 48ch;
+}
+
 /* ── Thank you state ── */
 .thanks {
   display: flex;

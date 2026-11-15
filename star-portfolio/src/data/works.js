@@ -3,7 +3,7 @@
 //  Add, edit, or remove entries freely.
 //  Each entry supports:
 //    id       (unique number)
-//    category ('music' | 'art' | 'writing' | 'code')
+//    category ('music' | 'art' | 'video' | 'writing' | 'code')
 //    emoji    (shown as thumbnail placeholder — swap with image path later)
 //    bg       (thumbnail background color)
 //    title    string
@@ -21,13 +21,25 @@
 //             per month. Set `image` to null for a month with no piece
 //             (shows an empty cell), and fill in `desc` with a short
 //             caption for each piece whenever you're ready.
+//
+//  Code projects can also carry short case-study notes. Each is optional
+//  and only the ones present are shown, under the project card:
+//    problem  what needed solving / why you built it (1–3 sentences)
+//    built    what the thing actually is and does
+//    role     your part in it — solo, lead, the pieces you owned
+//    stack    array of technologies, e.g. ['React', 'Vite', 'Supabase']
+//    learned  the one thing you'd tell a teammate about it
+//
+//  Images: put files in public/images and run
+//    node scripts/optimize-images.mjs
+//  to produce web-sized .webp versions, then reference those here.
 // ─────────────────────────────────────────────────────────────
 
 export const WORKS = [
   {
     id: 1,
     category: 'music',
-    image: '/images/today.png',
+    image: '/images/today.webp',
     emoji: ' :) ',
     bg: '#1a1330',
     title: 'To:Day',
@@ -62,7 +74,7 @@ export const WORKS = [
   {
     id: 2,
     category: 'music',
-    image: '/images/beloved.jpg',
+    image: '/images/beloved.webp',
     emoji: '🎨',
     bg: '#0d1a1d',
     title: 'Beloved',
@@ -78,7 +90,7 @@ export const WORKS = [
   {
     id: 3,
     category: 'video',
-    image: '/images/sundays.jpg',
+    image: '/images/sundays.webp',
     emoji: '✒️',
     bg: '#13100a',
     title: 'Sundays',
@@ -212,7 +224,7 @@ export const WORKS = [
     {
     id: 15,
     category: 'art',
-    image: '/images/22/dec.22.jpg',
+    image: '/images/22/dec.22.webp',
     emoji: '🎨',
     bg: '#0d1a1d',
     title: '2022',
@@ -223,23 +235,23 @@ export const WORKS = [
     // TODO: add a short description for each piece below.
     months: [
       { month: 'January', image: null, desc: '' },
-      { month: 'February', image: '/images/22/feb.22.jpg', desc: 'The start of the monthly tradition! This is when I created my artist logo - well done, if I do say so myself.', playlist: 'https://open.spotify.com/playlist/7BNOuwfAPFeH1Q6fHKzkKg?si=f88b4b63697b4c9f' },
-      { month: 'March', image: '/images/22/march.22.jpg', desc: '벚꽃, or cherry blossoms. Indicating the transition to spring. Also ended up being reused as my ep cover ', playlist: 'https://open.spotify.com/playlist/0knXyAoHMBv0taXn1n4aUt?si=349ec6a99650476f' },
-      { month: 'April', image: '/images/22/april.22.jpg', desc: 'When I think of april I think yellow. And when I think of yellow, I think of sunflowers', playlist: 'https://open.spotify.com/playlist/5CrtObGEgHtysarPLBba4y?si=679bb66aa4a3478e' },
-      { month: 'May', image: '/images/22/may.22.jpg', desc: 'A time when I felt as though I was reaching for something - anything!', playlist: 'https://open.spotify.com/playlist/6JXtxy1WSrPgI4BqqvEjOz?si=86fc625813284132' },
-      { month: 'June', image: '/images/22/june.22.jpg', desc: 'The month of my highschool graduation. Onto bigger and vaster worlds.', playlist: 'https://open.spotify.com/playlist/4ymGnvOffr2eqMFaxwQELr?si=8a252dbd67fe4ba0' },
-      { month: 'July', image: '/images/22/july.22.jpg', desc: 'A very difficult time of my life. Lots of bitterness simmered in a state of solitute', playlist: 'https://open.spotify.com/playlist/1k0B7XE2xZXbuJ0GVxAZMx?si=3fa6fa1c60344528' },
-      { month: 'August', image: '/images/22/aug.22.png', desc: 'The transition into college, accompanied with a narrative of questioning direction and meaning', playlist: 'https://open.spotify.com/playlist/1lWeg8W8KtBMfOoRKaXWc2?si=0d9b17c2975e4d83' },
-      { month: 'September', image: '/images/22/september.22.jpg', desc: 'The vibrant orange skies of Malibu. My view from Pepperdine', playlist: 'https://open.spotify.com/playlist/47MYrF1uDefXBtxD9y9fHJ?si=46b421ffbe1a4cdf' },
-      { month: 'October', image: '/images/22/oct.22.jpg', desc: 'A month of exploration and experimentation; fun and play', playlist: 'https://open.spotify.com/playlist/4evNqhlCtr0nnPS8rhVURx?si=47f6cedf56534798' },
-      { month: 'November', image: '/images/22/nov.22.jpg', desc: 'The view from my commute back to my dorm room. A cold, confused time.', playlist: 'https://open.spotify.com/playlist/1MMJgk4adHTnz4KXqg9vBr?si=9c35ec6749cd4589' },
-      { month: 'December', image: '/images/22/dec.22.jpg', desc: 'A resolution to a very dissonant year, but one that is sure to repeat in a new way.', playlist: 'https://open.spotify.com/playlist/0u8GeCJIsqYEvpJJjHWbCQ?si=8ac8850e80364a36' },
+      { month: 'February', image: '/images/22/feb.22.webp', desc: 'The start of the monthly tradition! This is when I created my artist logo - well done, if I do say so myself.', playlist: 'https://open.spotify.com/playlist/7BNOuwfAPFeH1Q6fHKzkKg?si=f88b4b63697b4c9f' },
+      { month: 'March', image: '/images/22/march.22.webp', desc: '벚꽃, or cherry blossoms. Indicating the transition to spring. Also ended up being reused as my ep cover ', playlist: 'https://open.spotify.com/playlist/0knXyAoHMBv0taXn1n4aUt?si=349ec6a99650476f' },
+      { month: 'April', image: '/images/22/april.22.webp', desc: 'When I think of april I think yellow. And when I think of yellow, I think of sunflowers', playlist: 'https://open.spotify.com/playlist/5CrtObGEgHtysarPLBba4y?si=679bb66aa4a3478e' },
+      { month: 'May', image: '/images/22/may.22.webp', desc: 'A time when I felt as though I was reaching for something - anything!', playlist: 'https://open.spotify.com/playlist/6JXtxy1WSrPgI4BqqvEjOz?si=86fc625813284132' },
+      { month: 'June', image: '/images/22/june.22.webp', desc: 'The month of my highschool graduation. Onto bigger and vaster worlds.', playlist: 'https://open.spotify.com/playlist/4ymGnvOffr2eqMFaxwQELr?si=8a252dbd67fe4ba0' },
+      { month: 'July', image: '/images/22/july.22.webp', desc: 'A very difficult time of my life. Lots of bitterness simmered in a state of solitute', playlist: 'https://open.spotify.com/playlist/1k0B7XE2xZXbuJ0GVxAZMx?si=3fa6fa1c60344528' },
+      { month: 'August', image: '/images/22/aug.22.webp', desc: 'The transition into college, accompanied with a narrative of questioning direction and meaning', playlist: 'https://open.spotify.com/playlist/1lWeg8W8KtBMfOoRKaXWc2?si=0d9b17c2975e4d83' },
+      { month: 'September', image: '/images/22/september.22.webp', desc: 'The vibrant orange skies of Malibu. My view from Pepperdine', playlist: 'https://open.spotify.com/playlist/47MYrF1uDefXBtxD9y9fHJ?si=46b421ffbe1a4cdf' },
+      { month: 'October', image: '/images/22/oct.22.webp', desc: 'A month of exploration and experimentation; fun and play', playlist: 'https://open.spotify.com/playlist/4evNqhlCtr0nnPS8rhVURx?si=47f6cedf56534798' },
+      { month: 'November', image: '/images/22/nov.22.webp', desc: 'The view from my commute back to my dorm room. A cold, confused time.', playlist: 'https://open.spotify.com/playlist/1MMJgk4adHTnz4KXqg9vBr?si=9c35ec6749cd4589' },
+      { month: 'December', image: '/images/22/dec.22.webp', desc: 'A resolution to a very dissonant year, but one that is sure to repeat in a new way.', playlist: 'https://open.spotify.com/playlist/0u8GeCJIsqYEvpJJjHWbCQ?si=8ac8850e80364a36' },
     ],
   },
   {
     id: 16,
     category: 'art',
-    image: '/images/23/dec.23.jpg',
+    image: '/images/23/dec.23.webp',
     emoji: '🎨',
     bg: '#0d1a1d',
     title: '2023',
@@ -249,24 +261,24 @@ export const WORKS = [
     body: `The 2023 calendar in pieces.`,
     // TODO: add a short description for each piece below.
     months: [
-      { month: 'January', image: '/images/23/jan.23.jpg', desc: 'Like the primary colors combine to create all colors, the possibilities of this year are endless!', playlist: 'https://open.spotify.com/playlist/0T3kgGZChBHB97wixGjhJE?si=a054e95f94ec4578' },
-      { month: 'February', image: '/images/23/feb.23.jpg', desc: 'February is blue. I like clouds a lot.', playlist: 'https://open.spotify.com/playlist/4CyFsG4rGvlWM0OVigE4Bn?si=3fa6a81666884d06' },
-      { month: 'March', image: '/images/23/march.23.jpg', desc: 'A love for clovers in a piece', playlist: 'https://open.spotify.com/playlist/2tkJCKkmgHMtE5wYy80tbg?si=94881156f0e04978' },
-      { month: 'April', image: '/images/23/april.23.jpg', desc: 'A quick passing of seasons. How fast time flies', playlist: 'https://open.spotify.com/playlist/1saDtPMRSc8FRoHJgTzcHU?si=1bcd98fca89d421f' },
-      { month: 'May', image: '/images/23/may.23.jpg', desc: 'A hand that finally has reached out to me. An invitation to hold and trust.', playlist: 'https://open.spotify.com/playlist/2NlLu5ZrDVBUIPWb2y5lS7?si=b9f22c42a4c64758' },
-      { month: 'June', image: '/images/23/june.23.jpg', desc: 'A move to Pacifica', playlist: 'https://open.spotify.com/playlist/1QPMddFRaXwg9O0u95e5Cn?si=59dcbde865114eeb' },
-      { month: 'July', image: '/images/23/july.23.jpg', desc: 'Referencing Jonah and the plant - a commentary on my comfort', playlist: 'https://open.spotify.com/playlist/15QoX4bQsxFgpZkujtNM6P?si=5ef01adafe64435d' },
-      { month: 'August', image: '/images/23/august.23.jpg', desc: 'A silhouette... I wonder who that is?', playlist: 'https://open.spotify.com/playlist/7zlip4fWDPx66E6hRnErAw?si=f0ec48ddd10b40bf' },
-      { month: 'September', image: '/images/23/september.23.jpg', desc: 'Things settling into routine. My commute is met with the familiar face of the sun', playlist: 'https://open.spotify.com/playlist/5IDSAz4rmOIeLyz5uvZC82?si=ef6141a8461949c7' },
-      { month: 'October', image: '/images/23/oct.23.jpg', desc: 'A bit of anger hidden in the eyes', playlist: 'https://open.spotify.com/playlist/7MzxJVWl4c1EIYpizIv39c?si=4d2e2ed490ea4fb5' },
-      { month: 'November', image: '/images/23/nov.23.jpg', desc: 'numbness, jadedness. Whatever gray mist feels like', playlist: 'https://open.spotify.com/playlist/3W52KKgirW0bnOGObMSCUU?si=e928b066996e48cf' },
-      { month: 'December', image: '/images/23/dec.23.jpg', desc: 'Another rendering of my artist logo - well done, if I do say so myself', playlist: 'https://open.spotify.com/playlist/50UeSMUPUcI8n703fEbJos?si=09671335ece84a56' },
+      { month: 'January', image: '/images/23/jan.23.webp', desc: 'Like the primary colors combine to create all colors, the possibilities of this year are endless!', playlist: 'https://open.spotify.com/playlist/0T3kgGZChBHB97wixGjhJE?si=a054e95f94ec4578' },
+      { month: 'February', image: '/images/23/feb.23.webp', desc: 'February is blue. I like clouds a lot.', playlist: 'https://open.spotify.com/playlist/4CyFsG4rGvlWM0OVigE4Bn?si=3fa6a81666884d06' },
+      { month: 'March', image: '/images/23/march.23.webp', desc: 'A love for clovers in a piece', playlist: 'https://open.spotify.com/playlist/2tkJCKkmgHMtE5wYy80tbg?si=94881156f0e04978' },
+      { month: 'April', image: '/images/23/april.23.webp', desc: 'A quick passing of seasons. How fast time flies', playlist: 'https://open.spotify.com/playlist/1saDtPMRSc8FRoHJgTzcHU?si=1bcd98fca89d421f' },
+      { month: 'May', image: '/images/23/may.23.webp', desc: 'A hand that finally has reached out to me. An invitation to hold and trust.', playlist: 'https://open.spotify.com/playlist/2NlLu5ZrDVBUIPWb2y5lS7?si=b9f22c42a4c64758' },
+      { month: 'June', image: '/images/23/june.23.webp', desc: 'A move to Pacifica', playlist: 'https://open.spotify.com/playlist/1QPMddFRaXwg9O0u95e5Cn?si=59dcbde865114eeb' },
+      { month: 'July', image: '/images/23/july.23.webp', desc: 'Referencing Jonah and the plant - a commentary on my comfort', playlist: 'https://open.spotify.com/playlist/15QoX4bQsxFgpZkujtNM6P?si=5ef01adafe64435d' },
+      { month: 'August', image: '/images/23/august.23.webp', desc: 'A silhouette... I wonder who that is?', playlist: 'https://open.spotify.com/playlist/7zlip4fWDPx66E6hRnErAw?si=f0ec48ddd10b40bf' },
+      { month: 'September', image: '/images/23/september.23.webp', desc: 'Things settling into routine. My commute is met with the familiar face of the sun', playlist: 'https://open.spotify.com/playlist/5IDSAz4rmOIeLyz5uvZC82?si=ef6141a8461949c7' },
+      { month: 'October', image: '/images/23/oct.23.webp', desc: 'A bit of anger hidden in the eyes', playlist: 'https://open.spotify.com/playlist/7MzxJVWl4c1EIYpizIv39c?si=4d2e2ed490ea4fb5' },
+      { month: 'November', image: '/images/23/nov.23.webp', desc: 'numbness, jadedness. Whatever gray mist feels like', playlist: 'https://open.spotify.com/playlist/3W52KKgirW0bnOGObMSCUU?si=e928b066996e48cf' },
+      { month: 'December', image: '/images/23/dec.23.webp', desc: 'Another rendering of my artist logo - well done, if I do say so myself', playlist: 'https://open.spotify.com/playlist/50UeSMUPUcI8n703fEbJos?si=09671335ece84a56' },
     ],
   },
   {
     id: 17,
     category: 'art',
-    image: '/images/24/dec.24.JPG',
+    image: '/images/24/dec.24.webp',
     emoji: '🎨',
     bg: '#0d1a1d',
     title: '2024',
@@ -276,24 +288,24 @@ export const WORKS = [
     body: `2024 in pieces.`,
     // TODO: add a short description for each piece below.
     months: [
-      { month: 'January', image: '/images/24/jan.24.jpg', desc: 'A process of rewriting my character. First step, erase what I dont want to be.', playlist: 'https://open.spotify.com/playlist/0p0yeN2o8otogknyhTGYzt?si=8ff2991c8c214746' },
-      { month: 'February', image: '/images/24/feb.24.jpg', desc: 'Blind running. As long as Im moving, Im changing!', playlist: 'https://open.spotify.com/playlist/4OOVdcOw4vNb255uavxUMx?si=c0f2682a44454716' },
-      { month: 'March', image: '/images/24/march.24.jpg', desc: 'Birthday month. Each one feels like its costing me', playlist: 'https://open.spotify.com/playlist/02rMJLukzsD3KapKAKCKbt?si=b4e3a1aea72643a6' },
-      { month: 'April', image: '/images/24/april.24.JPG', desc: 'The shadow of what used to be present. A farewell to the upperclassmen', playlist: 'https://open.spotify.com/playlist/0V1mHOZwmFHUsFkvMhLW6M?si=1b44a296ce464197' },
-      { month: 'May', image: '/images/24/may.24.JPG', desc: 'Korea trip! A traversal across the world, and of course, through time', playlist: 'https://open.spotify.com/playlist/3y8pFiDeVACrCO9qT8wIFA?si=5dfe0d5891294a59' },
-      { month: 'June', image: '/images/24/june.24.jpg', desc: 'Back home. Dont let the adolescence of the piece fool you - its not a great place to be', playlist: 'https://open.spotify.com/playlist/1Eg1otTFuJZGvSkOg12jmN?si=0243e2cc737e4312' },
-      { month: 'July', image: '/images/24/july.24.JPG', desc: 'A reference to the prodigal son... but the older brother who refuses to join the party', playlist: 'https://open.spotify.com/playlist/0A6gfsoIm4JcWjt8K9u8pU?si=b144d39f656245cb' },
-      { month: 'August', image: '/images/24/august.24.JPG', desc: '80-20. The split if you wish to love someone well', playlist: 'https://open.spotify.com/playlist/4AdTax71KmtfcjVtqvqlGh?si=492ebc48246949da' },
-      { month: 'September', image: '/images/24/sept.24.JPG', desc: 'A taxing month. Physically, but moreso emotionally', playlist: 'https://open.spotify.com/playlist/17YmV8KzhCSGE9MvDxjYX6?si=5bf3125baf6e414d' },
-      { month: 'October', image: '/images/24/oct.24.JPG', desc: 'My character is becoming an abstraction - really, who am I?', playlist: 'https://open.spotify.com/playlist/09zHWDwjIWavnNVwgZRoWh?si=295264a1ce324ab7' },
-      { month: 'November', image: '/images/2４/nov.2４.JPG', desc: 'A piece for some of my favorite bible verses, Ephesians 3:14-19', playlist: 'https://open.spotify.com/playlist/3jWinu1ye0lhnObFutG1YV?si=0000bc6f0fbb4119' },
-      { month: 'December', image: '/images/24/dec.24.JPG', desc: 'Simple. Next page.', playlist: 'https://open.spotify.com/playlist/4ne8RP4Jj6zjvZhSzhQB1m?si=20ad693350f34fb6' },
+      { month: 'January', image: '/images/24/jan.24.webp', desc: 'A process of rewriting my character. First step, erase what I dont want to be.', playlist: 'https://open.spotify.com/playlist/0p0yeN2o8otogknyhTGYzt?si=8ff2991c8c214746' },
+      { month: 'February', image: '/images/24/feb.24.webp', desc: 'Blind running. As long as Im moving, Im changing!', playlist: 'https://open.spotify.com/playlist/4OOVdcOw4vNb255uavxUMx?si=c0f2682a44454716' },
+      { month: 'March', image: '/images/24/march.24.webp', desc: 'Birthday month. Each one feels like its costing me', playlist: 'https://open.spotify.com/playlist/02rMJLukzsD3KapKAKCKbt?si=b4e3a1aea72643a6' },
+      { month: 'April', image: '/images/24/april.24.webp', desc: 'The shadow of what used to be present. A farewell to the upperclassmen', playlist: 'https://open.spotify.com/playlist/0V1mHOZwmFHUsFkvMhLW6M?si=1b44a296ce464197' },
+      { month: 'May', image: '/images/24/may.24.webp', desc: 'Korea trip! A traversal across the world, and of course, through time', playlist: 'https://open.spotify.com/playlist/3y8pFiDeVACrCO9qT8wIFA?si=5dfe0d5891294a59' },
+      { month: 'June', image: '/images/24/june.24.webp', desc: 'Back home. Dont let the adolescence of the piece fool you - its not a great place to be', playlist: 'https://open.spotify.com/playlist/1Eg1otTFuJZGvSkOg12jmN?si=0243e2cc737e4312' },
+      { month: 'July', image: '/images/24/july.24.webp', desc: 'A reference to the prodigal son... but the older brother who refuses to join the party', playlist: 'https://open.spotify.com/playlist/0A6gfsoIm4JcWjt8K9u8pU?si=b144d39f656245cb' },
+      { month: 'August', image: '/images/24/august.24.webp', desc: '80-20. The split if you wish to love someone well', playlist: 'https://open.spotify.com/playlist/4AdTax71KmtfcjVtqvqlGh?si=492ebc48246949da' },
+      { month: 'September', image: '/images/24/sept.24.webp', desc: 'A taxing month. Physically, but moreso emotionally', playlist: 'https://open.spotify.com/playlist/17YmV8KzhCSGE9MvDxjYX6?si=5bf3125baf6e414d' },
+      { month: 'October', image: '/images/24/oct.24.webp', desc: 'My character is becoming an abstraction - really, who am I?', playlist: 'https://open.spotify.com/playlist/09zHWDwjIWavnNVwgZRoWh?si=295264a1ce324ab7' },
+      { month: 'November', image: '/images/24/nov.24.webp', desc: 'A piece for some of my favorite bible verses, Ephesians 3:14-19', playlist: 'https://open.spotify.com/playlist/3jWinu1ye0lhnObFutG1YV?si=0000bc6f0fbb4119' },
+      { month: 'December', image: '/images/24/dec.24.webp', desc: 'Simple. Next page.', playlist: 'https://open.spotify.com/playlist/4ne8RP4Jj6zjvZhSzhQB1m?si=20ad693350f34fb6' },
     ],
   },
   {
     id: 18,
     category: 'art',
-    image: '/images/25/dec.25.jpeg',
+    image: '/images/25/dec.25.webp',
     emoji: '🎨',
     bg: '#0d1a1d',
     title: '2025',
@@ -303,18 +315,18 @@ export const WORKS = [
     body: `2025 in pieces.`,
     // TODO: add a short description for each piece below.
     months: [
-      { month: 'January', image: '/images/25/jan.25.JPG', desc: 'A star is born after undergoing immense heat and pressure, correct?', playlist: 'https://open.spotify.com/playlist/1JHBMs2PQMKFpDq2zqjDaH?si=8f0408935aa84774' },
-      { month: 'February', image: '/images/25/feb.25.JPG', desc: 'Connect. Like DNA', playlist: 'https://open.spotify.com/playlist/6GVyFpKaHVSnCVhrdrRbb6?si=b13766aaecfa4e41' },
-      { month: 'March', image: '/images/25/march.25.JPG', desc: 'Learning how to be isnt creating new parts of you out of nothing - its chipping away at the parts that arent you.', playlist: 'https://open.spotify.com/playlist/0eA4CHlFhUglJbeaDSBF5y?si=836e481a0f044898' },
-      { month: 'April', image: '/images/25/april.25.jpg', desc: 'Withered, weathered.', playlist: 'https://open.spotify.com/playlist/4OE8iLeoELxbTfDDO9BQQ4?si=e2a54b0974fa4e98' },
-      { month: 'May', image: '/images/25/may.25.jpg', desc: 'A time of learning about imperfect action when it pertains to art. Also a shoutout to the metro which I took a lot', playlist: 'https://open.spotify.com/playlist/3n3y93ZuD1V5Pr7reARJms?si=59297e7b10a04563' },
-      { month: 'June', image: '/images/25/jun.25.jpg', desc: 'A lonely sound in a vast sky', playlist: 'https://open.spotify.com/playlist/1SS6wSUUrDMr9X8H6UhUSR?si=26af31dcabce44c3' },
-      { month: 'July', image: '/images/25/july.25.JPG', desc: 'First car! Which I am borrowing for a year! Woohoo!', playlist: 'https://open.spotify.com/playlist/4sBtRIfLa2ZEodIHv712CV?si=2f34a722c8674189' },
-      { month: 'August', image: '/images/25/aug.25.JPG', desc: 'Look up, not in', playlist: 'https://open.spotify.com/playlist/7jzXdqptznfxnrw1mQsmWB?si=dd622201a67e4405' },
-      { month: 'September', image: '/images/25/sept.25.PNG', desc: 'Abundance', playlist: 'https://open.spotify.com/playlist/6liG5gZuiYLVroCpUUVqQK?si=2442182d5478418f' },
-      { month: 'October', image: '/images/25/oct.25.JPG', desc: 'Costly love.', playlist: 'https://open.spotify.com/playlist/30wiYS8oxbj8XCtVbisMuZ?si=f4db90fe41754d5f' },
-      { month: 'November', image: '/images/25/nov.25.JPG', desc: 'Full circle moments. Lots and lots of them', playlist: 'https://open.spotify.com/playlist/01CwJQwpSMWHkBHYp8s6u0?si=955fb7188ba74001' },
-      { month: 'December', image: '/images/25/dec.25.jpeg', desc: 'The prechorus to my song, Beloved. Notice how the melody follows the motion of a descending bird!', playlist: 'https://open.spotify.com/playlist/4Fem4LobLW2YQXseSIasjA?si=fd57684de9104edc' },
+      { month: 'January', image: '/images/25/jan.25.webp', desc: 'A star is born after undergoing immense heat and pressure, correct?', playlist: 'https://open.spotify.com/playlist/1JHBMs2PQMKFpDq2zqjDaH?si=8f0408935aa84774' },
+      { month: 'February', image: '/images/25/feb.25.webp', desc: 'Connect. Like DNA', playlist: 'https://open.spotify.com/playlist/6GVyFpKaHVSnCVhrdrRbb6?si=b13766aaecfa4e41' },
+      { month: 'March', image: '/images/25/march.25.webp', desc: 'Learning how to be isnt creating new parts of you out of nothing - its chipping away at the parts that arent you.', playlist: 'https://open.spotify.com/playlist/0eA4CHlFhUglJbeaDSBF5y?si=836e481a0f044898' },
+      { month: 'April', image: '/images/25/april.25.webp', desc: 'Withered, weathered.', playlist: 'https://open.spotify.com/playlist/4OE8iLeoELxbTfDDO9BQQ4?si=e2a54b0974fa4e98' },
+      { month: 'May', image: '/images/25/may.25.webp', desc: 'A time of learning about imperfect action when it pertains to art. Also a shoutout to the metro which I took a lot', playlist: 'https://open.spotify.com/playlist/3n3y93ZuD1V5Pr7reARJms?si=59297e7b10a04563' },
+      { month: 'June', image: '/images/25/jun.25.webp', desc: 'A lonely sound in a vast sky', playlist: 'https://open.spotify.com/playlist/1SS6wSUUrDMr9X8H6UhUSR?si=26af31dcabce44c3' },
+      { month: 'July', image: '/images/25/july.25.webp', desc: 'First car! Which I am borrowing for a year! Woohoo!', playlist: 'https://open.spotify.com/playlist/4sBtRIfLa2ZEodIHv712CV?si=2f34a722c8674189' },
+      { month: 'August', image: '/images/25/aug.25.webp', desc: 'Look up, not in', playlist: 'https://open.spotify.com/playlist/7jzXdqptznfxnrw1mQsmWB?si=dd622201a67e4405' },
+      { month: 'September', image: '/images/25/sept.25.webp', desc: 'Abundance', playlist: 'https://open.spotify.com/playlist/6liG5gZuiYLVroCpUUVqQK?si=2442182d5478418f' },
+      { month: 'October', image: '/images/25/oct.25.webp', desc: 'Costly love.', playlist: 'https://open.spotify.com/playlist/30wiYS8oxbj8XCtVbisMuZ?si=f4db90fe41754d5f' },
+      { month: 'November', image: '/images/25/nov.25.webp', desc: 'Full circle moments. Lots and lots of them', playlist: 'https://open.spotify.com/playlist/01CwJQwpSMWHkBHYp8s6u0?si=955fb7188ba74001' },
+      { month: 'December', image: '/images/25/dec.25.webp', desc: 'The prechorus to my song, Beloved. Notice how the melody follows the motion of a descending bird!', playlist: 'https://open.spotify.com/playlist/4Fem4LobLW2YQXseSIasjA?si=fd57684de9104edc' },
     ],
   },
   {

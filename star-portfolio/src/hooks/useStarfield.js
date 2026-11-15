@@ -5,6 +5,16 @@ import { useEffect, useRef } from 'react'
 // the route change hands off to the usual arrival burst.
 export const DIVE_EVENT = 'starfield:dive'
 
+// Dispatched by the constellation sky every time its camera moves: the
+// field drifts a little with it (slower than the sky's own layers), so
+// the far background reads as the deepest layer of the same space.
+// detail: { x, y } — the camera's displacement from home, in CSS px.
+export const SKY_CAMERA_EVENT = 'starfield:camera'
+
+// How much of the sky camera's movement the background copies, scaled
+// per star by depth so nearer pinpoints slide a touch more than far ones.
+const BG_FOLLOW = 0.12
+
 export function useStarfield(canvasRef, pathname) {
   const warpRef = useRef(8)
 
@@ -28,17 +38,28 @@ export function useStarfield(canvasRef, pathname) {
     let diveUntil = 0
     let diveCenter = null
     let zoom = 0
+    let targetCam = { x: 0, y: 0 }
+    let currentCam = { x: 0, y: 0 }
+    // Logical (CSS px) size. The canvas's backing store is scaled by the
+    // device pixel ratio so stars stay crisp on high-DPI screens, capped
+    // at 2x since finer than that is invisible and costs fill rate.
+    let W = 0
+    let H = 0
 
     function resize() {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      W = window.innerWidth
+      H = window.innerHeight
+      canvas.width = Math.round(W * dpr)
+      canvas.height = Math.round(H * dpr)
+      canvas.style.width = `${W}px`
+      canvas.style.height = `${H}px`
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       buildStars()
       if (reduceMotion) drawStatic()
     }
 
     function drawStatic() {
-      const W = canvas.width
-      const H = canvas.height
       ctx.clearRect(0, 0, W, H)
       for (const s of stars) {
         ctx.beginPath()
@@ -49,9 +70,9 @@ export function useStarfield(canvasRef, pathname) {
     }
 
     function buildStars() {
-      const W = canvas.width
-      const H = canvas.height
-      const count = Math.floor((W * H) / 4000)
+      // Density-based, but capped: a 4K display doesn't need 2,000 stars
+      // each drawing gradient trails every frame.
+      const count = Math.min(Math.floor((W * H) / 4000), 900)
       stars = Array.from({ length: count }, () => ({
         x: Math.random() * W,
         y: Math.random() * H,
@@ -70,6 +91,10 @@ export function useStarfield(canvasRef, pathname) {
     function onDive(e) {
       diveCenter = { x: e.detail.x, y: e.detail.y }
       diveUntil = performance.now() + e.detail.duration
+    }
+
+    function onCamera(e) {
+      targetCam = { x: e.detail.x, y: e.detail.y }
     }
 
     function spawnShootingStar(W, H) {
@@ -127,13 +152,13 @@ export function useStarfield(canvasRef, pathname) {
     }
 
     function draw(t) {
-      const W = canvas.width
-      const H = canvas.height
       ctx.clearRect(0, 0, W, H)
 
       const prevScroll = currentScroll
       currentScroll += (targetScroll - currentScroll) * 0.07
       scrollVelocity = currentScroll - prevScroll
+      currentCam.x += (targetCam.x - currentCam.x) * 0.07
+      currentCam.y += (targetCam.y - currentCam.y) * 0.07
 
       const PARALLAX_STRENGTH = 0.12
       const trailBoost = Math.min(Math.abs(scrollVelocity) * 0.5, 6)
@@ -163,8 +188,9 @@ export function useStarfield(canvasRef, pathname) {
         const twinkle = (Math.sin(t * s.speed + s.phase) + 1) / 2
         const alpha = 0.55 + twinkle * 0.35
         const offset = currentScroll * s.depth * PARALLAX_STRENGTH
-        let y = ((s.y - offset) % H + H) % H
-        let x = s.x
+        const follow = BG_FOLLOW * (0.4 + s.depth * 0.6)
+        let y = ((s.y - offset - currentCam.y * follow) % H + H) % H
+        let x = ((s.x - currentCam.x * follow) % W + W) % W
         if (zoom > 0) {
           x = zx + (x - zx) * zoomScale
           y = zy + (y - zy) * zoomScale
@@ -228,6 +254,7 @@ export function useStarfield(canvasRef, pathname) {
 
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener(DIVE_EVENT, onDive)
+    window.addEventListener(SKY_CAMERA_EVENT, onCamera)
     nextShootAt = performance.now() + Math.random() * 6000 + 4000
     animId = requestAnimationFrame(draw)
 
@@ -236,6 +263,7 @@ export function useStarfield(canvasRef, pathname) {
       window.removeEventListener('resize', resize)
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener(DIVE_EVENT, onDive)
+      window.removeEventListener(SKY_CAMERA_EVENT, onCamera)
     }
   }, [canvasRef])
 }

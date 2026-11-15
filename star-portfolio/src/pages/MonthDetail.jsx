@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { WORKS } from '../data/works'
+import { usePageMeta } from '../hooks/usePageMeta'
 import styles from './WorkDetail.module.css'
 
 export default function MonthDetail() {
@@ -14,16 +15,29 @@ export default function MonthDetail() {
   const entry = index >= 0 ? months[index] : null
   const [artAspect, setArtAspect] = useState(null)
 
+  usePageMeta({
+    title: work && entry ? `${entry.month} ${work.year}` : 'Piece not found',
+    description: entry?.desc || work?.desc,
+    image: entry?.image || work?.image,
+  })
+
   useEffect(() => {
     setArtAspect(null)
   }, [work?.id, month])
 
   if (!work || !entry) {
+    // A real month of a real year with nothing in it reads as an empty
+    // page of the log, not a missing one.
+    const emptyMonth = work && months.find((m) => m.month.toLowerCase() === month?.toLowerCase())
     return (
       <div className={styles.notFound}>
-        <p>Piece not found.</p>
-        <button className={styles.back} onClick={() => navigate('/')}>
-          ← Back to work
+        <p>
+          {emptyMonth
+            ? `No piece was logged for ${emptyMonth.month} ${work.year}.`
+            : 'Piece not found.'}
+        </p>
+        <button className={styles.back} onClick={() => navigate(work ? `/work/${work.id}` : '/')}>
+          ← Back to {work ? work.title : 'work'}
         </button>
       </div>
     )

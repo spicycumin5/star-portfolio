@@ -1,38 +1,72 @@
-.wrapper {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.svgContainer {
+/* ── The sky ──
+   A full-viewport window onto a world several screens wide. The camera
+   (useSkyCamera) rewrites the svg's viewBox as the visitor pans, so
+   everything inside stays in literal world coordinates and CSS px inside
+   the svg are sky units. */
+.sky {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10;
-  max-height: 65vh;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  overflow: clip;
+  /* Until the sky fills the viewport, vertical swipes keep scrolling the
+     page (sideways ones still pan); once docked, every swipe pans. */
+  touch-action: pan-y;
+  cursor: grab;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-/* Paired with Home's .galleryWide: once there's a wider column to fill,
-   let the 16:10 shape grow into more of the viewport height too, instead
-   of being capped well short of its natural size. */
-@media (min-width: 1100px) {
-  .svgContainer {
-    max-height: 82vh;
-  }
+.sky.docked {
+  touch-action: none;
+}
+
+.sky:active {
+  cursor: grabbing;
+}
+
+.sky:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--gold-dim);
+}
+
+.skyDiving {
+  cursor: default;
 }
 
 .svg {
   width: 100%;
   height: 100%;
   display: block;
-  overflow: visible;
 }
 
-/* ── Scroll depth ──
-   Each star (and cluster label) sits in a wrapper that drifts by its own
-   --depth share of the sky's scroll offset; --sky-shift is set on the svg
-   from JS. Inside an svg, CSS px are viewBox units. */
+/* ── Depth ──
+   Each star (and label) sits in a wrapper offset by its own --depth share
+   of its distance from the camera, so nearer stars outrun the sheet as it
+   pans and farther ones lag. At the camera's center every star is exactly
+   where the layout put it. --cam-x/--cam-y are set on the svg from JS. */
 .depth {
-  transform: translateY(calc(var(--sky-shift, 0) * var(--depth, 0) * 1px));
+  transform: translate(
+    calc((var(--sx, 0) - var(--cam-x, 0)) * var(--depth, 0) * 1px),
+    calc((var(--sy, 0) - var(--cam-y, 0)) * var(--depth, 0) * 1px)
+  );
+}
+
+/* Deep field layers follow the camera by --follow of its travel, so they
+   slide across the screen slower than the chart: dust far behind it. */
+.field {
+  transform: translate(
+    calc((var(--cam-x, 0) - var(--cam0-x, 0)) * var(--follow, 0) * 1px),
+    calc((var(--cam-y, 0) - var(--cam0-y, 0)) * var(--follow, 0) * 1px)
+  );
+  pointer-events: none;
+}
+
+.fieldDots {
+  fill: none;
+  stroke: #ede5d0;
+  stroke-linecap: round;
 }
 
 /* ── Dive (click a star) ──
@@ -49,16 +83,21 @@
 
 /* ── First-view reveal ──
    Pending: everything hidden until the sky scrolls into view. Revealing:
-   stars fade in with a brief flare, labels follow their cluster, and
-   lines trace in then fade back to their hidden resting state. Each
-   element's --reveal-delay comes from the layout (see buildLayout). */
+   stars fade in with a brief flare, rippling outward from where the camera
+   starts; labels follow their constellation, and lines trace in then fade
+   back to their hidden resting state. Each element's --reveal-delay comes
+   from the layout (see skyLayout.js). */
 .revealPending .starGroup,
-.revealPending .clusterLabel {
+.revealPending .clusterLabel,
+.revealPending .clusterName,
+.revealPending .ghost {
   opacity: 0;
 }
 
 .revealing .starGroup,
-.revealing .clusterLabel {
+.revealing .clusterLabel,
+.revealing .clusterName,
+.revealing .ghost {
   animation: revealFade 0.8s ease-out both;
   animation-delay: var(--reveal-delay, 0s);
 }
@@ -96,9 +135,9 @@
 /* ── Connecting lines ── */
 
 /* vector-effect: non-scaling-stroke means these widths are screen px,
-   not viewBox units. Hidden at rest so the sky stays uncluttered — a
-   cluster's lines only draw in when one of its stars is hovered (or its
-   category is filtered to), tinted toward the cluster's color. */
+   not sky units. Hidden at rest so the sky stays uncluttered — a
+   constellation's lines only draw in when one of its stars is hovered (or
+   its category is filtered to), tinted toward the constellation's color. */
 .line {
   stroke: color-mix(in srgb, var(--cat-color, var(--gold)) 45%, var(--text));
   stroke-width: 0.75;
@@ -152,7 +191,7 @@
 
 /* Warm-white core with a soft halo — the category color only shows up
    faintly in the outer glow, like a real star's tint. Blur radii are in
-   viewBox units (the SVG scales them ~9x on desktop), hence the tiny values. */
+   sky units (the SVG scales them ~9x on desktop), hence the tiny values. */
 .star {
   fill: #f3ecdc;
   filter: drop-shadow(0 0 0.25px rgba(255, 240, 215, 0.7))
@@ -168,9 +207,20 @@
   fill: color-mix(in srgb, var(--cat-color, var(--gold)) 70%, #fff);
 }
 
+/* Outlying members of a constellation (works beyond its figure's slots)
+   sit a little further back visually. */
+.outlier .star {
+  animation-name: twinkleFaint;
+}
+
 @keyframes twinkle {
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
+}
+
+@keyframes twinkleFaint {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.8; }
 }
 
 .starGroup:hover .star,
@@ -178,6 +228,12 @@
   opacity: 0;
   animation-play-state: paused;
   transform: scale(0);
+}
+
+/* Slots of a figure with no work in them yet — the shape still reads. */
+.ghost {
+  fill: rgba(237, 229, 208, 0.16);
+  pointer-events: none;
 }
 
 /* ── Star-shape morph (on hover, the dot blooms into a sparkle) ── */
@@ -219,10 +275,10 @@
   50% { transform: scale(1.3); }
 }
 
-/* ── Cluster labels ── */
+/* ── Constellation labels ── */
 
 /* Star-chart style annotations: small, spaced out, and faint until the
-   cluster is hovered or filtered to. */
+   constellation is hovered or filtered to. */
 .clusterLabel {
   font-family: var(--ff-mono);
   font-size: 2.3px;
@@ -240,6 +296,119 @@
 
 .clusterLabelActive {
   fill: var(--cat-color, var(--gold));
+}
+
+/* The figure's own name, the way an atlas prints it under the designation. */
+.clusterName {
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: 1.9px;
+  letter-spacing: 0.08px;
+  fill: rgba(237, 229, 208, 0.1);
+  text-anchor: middle;
+  pointer-events: none;
+  transition: fill 0.4s, opacity 0.4s;
+}
+
+.clusterNameActive {
+  fill: rgba(237, 229, 208, 0.38);
+}
+
+/* ── Vignette ──
+   Darkens the frame's edges so the chart fades out instead of ending in
+   a hard rectangle. Opacity is driven from JS by how much of the viewport
+   the sky currently fills, so there's no seam while it's scrolling in. */
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(ellipse at 50% 50%, transparent 52%, rgba(17, 14, 28, 0.5) 100%),
+    linear-gradient(to right, rgba(17, 14, 28, 0.55), transparent 12%, transparent 88%, rgba(17, 14, 28, 0.55)),
+    linear-gradient(to top, rgba(17, 14, 28, 0.6), transparent 20%);
+  transition: opacity 0.2s linear;
+}
+
+/* ── Edge markers ──
+   One per constellation, pinned to the frame's edge in its direction
+   while it's off-screen. Positioned from JS each frame (transform). */
+.marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.6rem;
+  font-family: var(--ff-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cat-color, var(--gold));
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.6;
+  white-space: nowrap;
+  transition: opacity 0.3s;
+  will-change: transform;
+}
+
+.marker:hover,
+.marker:focus-visible {
+  opacity: 1;
+}
+
+.markerHidden {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.markerDimmed {
+  opacity: 0.2;
+}
+
+.chevron {
+  width: 9px;
+  height: 9px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+/* ── Hint ── */
+
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 2.25rem;
+  transform: translateX(-50%);
+  z-index: 4;
+  pointer-events: none;
+  font-family: var(--ff-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  animation: hintPulse 3s ease-in-out infinite;
+  transition: opacity 0.6s ease;
+}
+
+.hintHidden {
+  opacity: 0 !important;
+  animation: none;
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.9; }
 }
 
 /* ── Status strip ── */
@@ -349,12 +518,17 @@
 }
 
 @media (max-width: 600px) {
-  .svgContainer {
-    aspect-ratio: 4 / 3;
-  }
-
   .hitArea {
     r: 9;
   }
-}
 
+  .hint {
+    bottom: 1.5rem;
+    font-size: 0.58rem;
+  }
+
+  .marker {
+    font-size: 0.55rem;
+    padding: 0.35rem 0.45rem;
+  }
+}

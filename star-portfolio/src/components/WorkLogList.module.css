@@ -120,3 +120,11 @@
     padding-left: 0;
   }
 }
+
+/* Essays open on Substack in a new tab; the arrow says so up front. */
+.entryExternal {
+  font-family: var(--ff-mono);
+  font-size: 0.75em;
+  color: var(--muted);
+  margin-left: 0.15em;
+}

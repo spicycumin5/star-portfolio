@@ -385,6 +385,62 @@
   margin-bottom: 3rem;
 }
 
+/* ── Project notes (code pieces) ── */
+.notes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem 3rem;
+  margin: 0 0 3rem;
+  padding-top: 2rem;
+  border-top: 0.5px solid var(--rim);
+}
+
+@media (min-width: 760px) {
+  .notes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.note {
+  margin: 0;
+}
+
+.noteLabel {
+  font-family: var(--ff-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+}
+
+.noteBody {
+  margin: 0;
+  font-family: var(--ff-sans);
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+.stack {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+}
+
+.stackItem {
+  font-family: var(--ff-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  border: 0.5px solid var(--rim);
+  border-radius: 2px;
+  padding: 0.3rem 0.65rem;
+}
+
 .externalLink {
   display: inline-flex;
   align-items: center;

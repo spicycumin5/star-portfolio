@@ -3,7 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { WORKS } from '../data/works'
 import CodeLinkCard from '../components/CodeLinkCard'
 import { getVideoEmbedUrl, getSourceHost } from '../utils/embeds'
+import { usePageMeta } from '../hooks/usePageMeta'
 import styles from './WorkDetail.module.css'
+
+// Project notes shown on code pieces (see the works.js header). Each is
+// optional; only the ones a work fills in are rendered, in this order.
+const PROJECT_NOTE_FIELDS = [
+  ['problem', 'The problem'],
+  ['built', 'What I built'],
+  ['role', 'My role'],
+  ['learned', 'What I learned'],
+]
 
 export default function WorkDetail() {
   const { id } = useParams()
@@ -14,6 +24,12 @@ export default function WorkDetail() {
   const [artAspect, setArtAspect] = useState(null)
   const prevWork = workIndex > 0 ? WORKS[workIndex - 1] : null
   const nextWork = workIndex !== -1 && workIndex < WORKS.length - 1 ? WORKS[workIndex + 1] : null
+
+  usePageMeta({
+    title: work ? work.title : 'Piece not found',
+    description: work?.desc,
+    image: work?.image,
+  })
 
   useEffect(() => {
     setArtAspect(null)
@@ -96,6 +112,37 @@ export default function WorkDetail() {
         <p key={i}>{para}</p>
       ))}
     </div>
+  )
+
+  // Code pieces get a structured case study when the data provides one:
+  // the problem, what was built, the role, the stack, the lesson.
+  const hasNotes =
+    work.category === 'code' &&
+    (PROJECT_NOTE_FIELDS.some(([key]) => work[key]) || work.stack?.length)
+  const notesContent = hasNotes && (
+    <dl className={styles.notes}>
+      {PROJECT_NOTE_FIELDS.map(
+        ([key, label]) =>
+          work[key] && (
+            <div key={key} className={styles.note}>
+              <dt className={styles.noteLabel}>{label}</dt>
+              <dd className={styles.noteBody}>{work[key]}</dd>
+            </div>
+          )
+      )}
+      {work.stack?.length > 0 && (
+        <div className={styles.note}>
+          <dt className={styles.noteLabel}>Stack</dt>
+          <dd className={styles.noteBody}>
+            <ul className={styles.stack}>
+              {work.stack.map((item) => (
+                <li key={item} className={styles.stackItem}>{item}</li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      )}
+    </dl>
   )
 
   const linkContent = work.link && (
@@ -201,6 +248,8 @@ export default function WorkDetail() {
                       src={m.image}
                       alt={`${work.title} — ${m.month}`}
                       className={styles.monthImage}
+                      loading="lazy"
+                      decoding="async"
                     />
                   </button>
                 ) : (
@@ -226,6 +275,7 @@ export default function WorkDetail() {
         <>
           {thumbContent}
           {bodyContent}
+          {notesContent}
           {linkContent}
           {tracklistContent}
         </>

@@ -54,11 +54,20 @@ export default function WorkLogList({ works }) {
                 tabIndex={0}
                 onClick={() => open(work)}
                 onKeyDown={(e) => e.key === 'Enter' && open(work)}
-                aria-label={`View ${work.title}`}
+                aria-label={
+                  work.category === 'writing' && work.link
+                    ? `Read ${work.title} (opens in a new tab)`
+                    : `View ${work.title}`
+                }
               >
                 <span className={styles.entryIndex}>{pad(i + 1)}</span>
                 <span className={styles.entryMain}>
-                  <span className={styles.entryTitle}>{work.title}</span>
+                  <span className={styles.entryTitle}>
+                    {work.title}
+                    {work.category === 'writing' && work.link && (
+                      <span className={styles.entryExternal} aria-hidden="true"> ↗</span>
+                    )}
+                  </span>
                   {work.desc && (
                     <span className={styles.entryDesc}>{work.desc}</span>
                   )}

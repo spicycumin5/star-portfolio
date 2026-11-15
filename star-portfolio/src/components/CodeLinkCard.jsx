@@ -44,7 +44,13 @@ export default function CodeLinkCard({ work }) {
             </span>
             <span className={styles.windowUrl}>{getSourceHost(work.link)}</span>
           </span>
-          <img src={work.image} alt={`Screenshot of ${work.title}`} className={styles.screenshot} />
+          <img
+            src={work.image}
+            alt={`Screenshot of ${work.title}`}
+            className={styles.screenshot}
+            loading="lazy"
+            decoding="async"
+          />
         </a>
       )}
 

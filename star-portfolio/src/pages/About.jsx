@@ -1,6 +1,8 @@
+import { usePageMeta } from '../hooks/usePageMeta'
 import styles from './About.module.css'
 
 export default function About() {
+  usePageMeta({ title: 'About', description: 'Who Kyumin Han is and what they make: music, art, video, writing, and code.' })
   return (
     <div className={styles.page}>
       <div className={styles.grid}>
@@ -27,8 +29,8 @@ export default function About() {
             </p>
           </div>
 
-          {/* CV / Resume link — drop your PDF at public/resume.pdf */}
-          <a href="/Kyumin Han Resume!.pdf" target="_blank" rel="noreferrer" className={styles.cvLink}>
+          {/* CV / Resume link — the PDF lives at public/kyumin-han-resume.pdf */}
+          <a href="/kyumin-han-resume.pdf" target="_blank" rel="noreferrer" className={styles.cvLink}>
             Download Resume ↗
           </a>
         </div>
@@ -36,7 +38,7 @@ export default function About() {
         {/* Right column */}
         <div className={styles.right}>
           <div className={styles.portrait}>
-            <img src="/images/seaside-headshot.jpg" alt="Portrait of Kyumin Han" />
+            <img src="/images/seaside-headshot.webp" alt="Portrait of Kyumin Han" />
           </div>
 
           <ul className={styles.disciplines}>

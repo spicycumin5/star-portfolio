@@ -1,5 +1,13 @@
 import { useState } from 'react'
+import { usePageMeta } from '../hooks/usePageMeta'
 import styles from './Contact.module.css'
+
+// Messages are delivered by Formspree (https://formspree.io): sign up, create
+// a form, and paste its ID here (the short code after /f/ in the endpoint,
+// e.g. 'xabcdefg'). Until it's set, the form says so instead of pretending
+// a message went through. Form IDs are public by design, so it's fine to
+// commit this.
+const FORMSPREE_FORM_ID = ''
 
 const SOCIAL_LINKS = [
   { label: 'Instagram', href: 'https://www.instagram.com/spicy_cumin/' },
@@ -24,20 +32,45 @@ export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
+  const [error, setError] = useState(null)
+  usePageMeta({ title: 'Contact', description: 'Get in touch with Kyumin Han.' })
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    if (error) setError(null)
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    // TODO: wire up to your email service (EmailJS, Formspree, etc.)
-    console.log('Form submitted:', form)
+    if (!FORMSPREE_FORM_ID) {
+      setError("This form isn't connected yet — please reach out through one of the links below.")
+      return
+    }
     setSending(true)
-    window.setTimeout(() => {
-      setSending(false)
+    setError(null)
+    try {
+      const res = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          _subject: `Portfolio message from ${form.name}`,
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.errors?.map((err) => err.message).join(' ') || `Request failed (${res.status})`)
+      }
       setSent(true)
-    }, 420)
+    } catch (err) {
+      setError(
+        `Couldn't send that (${err.message}). Please try again, or reach out through one of the links below.`
+      )
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -108,6 +141,11 @@ export default function Contact() {
               {sending ? 'Sending' : 'Send message'}
               <StarIcon className={styles.submitStar} />
             </button>
+            {error && (
+              <p className={styles.error} role="alert">
+                {error}
+              </p>
+            )}
           </form>
         )}
 

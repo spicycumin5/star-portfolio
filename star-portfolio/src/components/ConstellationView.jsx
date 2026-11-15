@@ -1,14 +1,20 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { DIVE_EVENT } from '../hooks/useStarfield'
+import { DIVE_EVENT, SKY_CAMERA_EVENT } from '../hooks/useStarfield'
+import { useSkyCamera } from '../hooks/useSkyCamera'
+import { buildLayout } from './skyLayout'
+import { CONSTELLATIONS, WORLD, HOME_CAMERA } from '../data/constellations'
+import { sourceName } from '../data/site'
 import styles from './ConstellationView.module.css'
 
-const KNOWN_CATEGORY_ANCHORS = {
-  music: { x: 35, y: 30 },
-  video: { x: 115, y: 22 },
-  art: { x: 80, y: 65 },
-  writing: { x: 128, y: 70 },
-  code: { x: 45, y: 78 },
+// Essays live off-site, so the strip says where a click will take you
+// instead of a generic "View".
+function actionLabel(work) {
+  if (work.category === 'writing' && work.link) {
+    const source = sourceName(work.link)
+    return source ? `Read on ${source} ↗` : 'Read ↗'
+  }
+  return 'View →'
 }
 
 const CATEGORY_COLORS = {
@@ -20,231 +26,27 @@ const CATEGORY_COLORS = {
 }
 
 function colorForCategory(category) {
-  return CATEGORY_COLORS[category] || 'var(--gold)'
+  return CONSTELLATIONS[category]?.color || CATEGORY_COLORS[category] || 'var(--gold)'
 }
 
-const VIEW_CENTER = { x: 80, y: 50 }
-const EXTRA_RADIUS = { x: 50, y: 32 }
-const GOLDEN_ANGLE = 137.5 * (Math.PI / 180)
-// Desktop has real room now (see Home's .galleryWide) — push category
-// clusters further from center and let stars within a cluster spread a
-// little wider too, instead of reusing the same cramped mobile spacing.
-const WIDE_MIN_WIDTH = 1100
-const WIDE_CLUSTER_SPREAD = 1.3
-const WIDE_STAR_SPREAD = 1.2
-// Minimum center-to-center distance (viewBox units) between any two
-// stars. The golden-angle spiral spaces stars out fine on its own until
-// a cluster has enough pieces (or clamping near the canvas edge) to fold
-// back on itself — this pass nudges any pair that ends up too close
-// apart afterwards, so two pieces never render on top of each other.
-const MIN_STAR_DIST = 6
-// Cluster labels ("music", "writing", ...) sit this far above their
-// anchor. Shared with the JSX below so the collision math always agrees
-// with where the label actually renders.
-const LABEL_OFFSET_Y = -11
-// Padded past the raw text box to also clear a star's own rendered
-// radius (up to ~1.9 units) plus a little breathing room, not just its
-// center point.
-const LABEL_MARGIN = 3.2
-const LABEL_HALF_HEIGHT = 4.4
-// Work stars render a little bigger than the background starfield's
-// pinpoints, not as solid discs on top of it — enough to find them,
-// small enough that the sky still reads as one sky.
-const STAR_SCALE = 0.58
-// First-view reveal: clusters light up one after another, stars within a
-// cluster in quick succession, then each cluster's lines trace in and
-// fade back out (they're hidden at rest — this is the one hint that
-// hovering draws them). Plays once per session.
-const REVEAL_CLUSTER_STAGGER = 0.45
-const REVEAL_STAR_STAGGER = 0.09
-const REVEAL_LINE_LAG = 0.25
-const REVEAL_LINE_DURATION = 2.4
 // How long the click-to-dive zoom runs before the route changes.
 const DIVE_MS = 700
-// Scroll depth: each star drifts at its own rate as the sky scrolls past,
-// so the chart reads as stars at different distances rather than dots on
-// one sheet. A star's factor is the fraction of the sky's scroll offset
-// (from viewport center) it moves by on top of the page — positive is
-// nearer (outruns the page), negative is farther (lags behind it). Bigger
-// stars sit nearer. At factor 0, or with the sky centered in the
-// viewport, every star is exactly where the layout put it.
-const DEPTH_RANGE = 0.13
-// Same cutoff Home uses to default to the log view on small screens.
-const DEPTH_MIN_WIDTH = 700
 // Matches .line's stroke-width (screen px) in ConstellationView.module.css.
 const LINE_WIDTH_PX = 0.75
-
-function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max)
-}
-
-// Golden-angle spirals periodically sweep back past "straight up" from
-// the anchor — exactly where the cluster label sits — so a star from a
-// larger cluster (or one nudged there by the star-star pass below) can
-// end up rendering right through the label text. Treat each label as a
-// rectangular keep-out zone sized to roughly its text width and push any
-// star that lands inside back out along the shorter axis.
-function labelBoxes(anchors) {
-  return Object.entries(anchors).map(([category, anchor]) => ({
-    x: anchor.x,
-    y: anchor.y + LABEL_OFFSET_Y,
-    halfW: category.length * 1.15 + LABEL_MARGIN,
-    halfH: LABEL_HALF_HEIGHT,
-  }))
-}
-
-function pushOutOfLabel(star, box) {
-  const dx = star.x - box.x
-  const dy = star.y - box.y
-  const overlapX = box.halfW - Math.abs(dx)
-  const overlapY = box.halfH - Math.abs(dy)
-  if (overlapX <= 0 || overlapY <= 0) return false
-  if (overlapX < overlapY) {
-    star.x = clamp(star.x + (dx >= 0 ? overlapX : -overlapX), 6, 154)
-  } else {
-    star.y = clamp(star.y + (dy >= 0 ? overlapY : -overlapY), 4, 96)
-  }
-  return true
-}
-
-function resolveLayout(stars, anchors) {
-  const boxes = labelBoxes(anchors)
-  for (let pass = 0; pass < 10; pass++) {
-    let moved = false
-    for (let i = 0; i < stars.length; i++) {
-      for (let j = i + 1; j < stars.length; j++) {
-        const a = stars[i]
-        const b = stars[j]
-        const dx = b.x - a.x
-        const dy = b.y - a.y
-        const dist = Math.hypot(dx, dy)
-        if (dist < MIN_STAR_DIST) {
-          const push = (MIN_STAR_DIST - dist) / 2
-          // Stars land exactly on top of each other only in a degenerate
-          // case (dist === 0) — nudge along a fixed axis so they still
-          // separate instead of dividing by zero.
-          const ux = dist > 0.001 ? dx / dist : 1
-          const uy = dist > 0.001 ? dy / dist : 0
-          a.x = clamp(a.x - ux * push, 6, 154)
-          a.y = clamp(a.y - uy * push, 4, 96)
-          b.x = clamp(b.x + ux * push, 6, 154)
-          b.y = clamp(b.y + uy * push, 4, 96)
-          moved = true
-        }
-      }
-    }
-    stars.forEach((star) => {
-      boxes.forEach((box) => {
-        if (pushOutOfLabel(star, box)) moved = true
-      })
-    })
-    if (!moved) break
-  }
-}
-
-function buildLayout(works, wide) {
-  const clusterSpread = wide ? WIDE_CLUSTER_SPREAD : 1
-  const starSpread = wide ? WIDE_STAR_SPREAD : 1
-
-  const byCategory = {}
-  works.forEach((work) => {
-    if (!byCategory[work.category]) byCategory[work.category] = []
-    byCategory[work.category].push(work)
-  })
-
-  let extraIndex = 0
-  function anchorFor(category) {
-    const known = KNOWN_CATEGORY_ANCHORS[category]
-    if (known) {
-      return {
-        x: clamp(VIEW_CENTER.x + (known.x - VIEW_CENTER.x) * clusterSpread, 16, 144),
-        y: clamp(VIEW_CENTER.y + (known.y - VIEW_CENTER.y) * clusterSpread, 14, 86),
-      }
-    }
-    const angle = extraIndex * GOLDEN_ANGLE
-    extraIndex += 1
-    return {
-      x: clamp(VIEW_CENTER.x + Math.cos(angle) * EXTRA_RADIUS.x * clusterSpread, 15, 145),
-      y: clamp(VIEW_CENTER.y + Math.sin(angle) * EXTRA_RADIUS.y * clusterSpread, 12, 88),
-    }
-  }
-
-  // Pre-compute every known cluster's anchor (even categories with zero
-  // works right now) so the label layer always has a spread-adjusted
-  // position to render at, matching wherever its stars actually land.
-  const anchors = {}
-  Object.keys(KNOWN_CATEGORY_ANCHORS).forEach((category) => {
-    anchors[category] = anchorFor(category)
-  })
-
-  const stars = []
-  const lines = []
-
-  const clusterDelays = {}
-
-  Object.entries(byCategory).forEach(([category, items], clusterIndex) => {
-    const anchor = anchors[category] || anchorFor(category)
-    const clusterDelay = clusterIndex * REVEAL_CLUSTER_STAGGER
-    clusterDelays[category] = clusterDelay
-
-    const catStars = items.map((work, i) => {
-      const angle = i * GOLDEN_ANGLE
-      const radius = (4 + i * 3.2) * starSpread
-      const x = clamp(anchor.x + Math.cos(angle) * radius, 6, 154)
-      const y = clamp(anchor.y + Math.sin(angle) * radius, 4, 96)
-      const size = (1 + ((work.id * 7) % 5) * 0.22) * STAR_SCALE
-      const accent = work.id % 5 === 2
-      const twinkleDur = 2.2 + (work.id % 4) * 0.7
-      const twinkleDelay = (work.id * 0.53) % 3
-      const revealDelay = clusterDelay + i * REVEAL_STAR_STAGGER
-      const sizeStep = ((work.id * 7) % 5) / 4
-      const jitter = ((work.id * 13) % 7) / 6 - 0.5
-      const depth = clamp(sizeStep * 2 - 1 + jitter * 0.5, -1, 1) * DEPTH_RANGE
-      return { work, x, y, size, accent, twinkleDur, twinkleDelay, revealDelay, depth }
-    })
-
-    stars.push(...catStars)
-
-    const addedPairs = new Set()
-    catStars.forEach((star, i) => {
-      catStars
-        .map((other, j) => ({ j, dist: Math.hypot(star.x - other.x, star.y - other.y) }))
-        .filter(({ j }) => j !== i)
-        .sort((a, b) => a.dist - b.dist)
-        .slice(0, 2)
-        .forEach(({ j }) => {
-          const key = `${Math.min(i, j)}-${Math.max(i, j)}`
-          if (!addedPairs.has(key)) {
-            addedPairs.add(key)
-            lines.push({
-              from: catStars[i],
-              to: catStars[j],
-              category,
-              revealDelay:
-                Math.max(catStars[i].revealDelay, catStars[j].revealDelay) + REVEAL_LINE_LAG,
-            })
-          }
-        })
-    })
-  })
-
-  // Runs last, across every category at once (not just within one
-  // cluster) — lines/labels reference these same star objects, so
-  // nudging positions here keeps everything else in sync automatically.
-  resolveLayout(stars, anchors)
-
-  const revealDuration =
-    Math.max(0, ...lines.map((l) => l.revealDelay)) + REVEAL_LINE_DURATION
-
-  // Labels ride at their cluster's average depth so they stay with it.
-  const clusterDepths = {}
-  Object.keys(byCategory).forEach((category) => {
-    const members = stars.filter((s) => s.work.category === category)
-    clusterDepths[category] = members.reduce((sum, s) => sum + s.depth, 0) / members.length
-  })
-
-  return { stars, lines, anchors, clusterDelays, clusterDepths, revealDuration }
-}
+// Below this width the sky is small enough that drifting stars slide into
+// each other's (already enlarged) tap targets, so parallax is off there.
+// Same cutoff Home uses to default to the log view on small screens.
+const NARROW_MAX_WIDTH = 700
+// The camera shows this many sky units across at zoom 1 (landscape).
+const BASE_VIEW = 160
+// Edge markers stay this far inside the frame: clear of the HUD at the
+// top, the hover strip at the bottom, and the window edges at the sides.
+const MARKER_INSET = { top: 128, right: 28, bottom: 104, left: 28 }
+// ...and never closer than this to the window's actual edge.
+const MARKER_EDGE = 12
+// Focusing a star that's off-screen flies the camera to it; "on-screen"
+// means at least this many px inside the frame.
+const FOCUS_INSET_PX = 40
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' &&
@@ -255,21 +57,32 @@ export default function ConstellationView({ works, activeFilter }) {
   const [hovered, setHovered] = useState(null)
   const [selectedId, setSelectedId] = useState(null)
   const [burstingId, setBurstingId] = useState(null)
-  const [wide] = useState(() =>
-    typeof window !== 'undefined' && window.innerWidth >= WIDE_MIN_WIDTH
+  const [diveOrigin, setDiveOrigin] = useState(null)
+  const [narrow] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < NARROW_MAX_WIDTH
   )
+  const [reducedMotion] = useState(prefersReducedMotion)
+  const [hintHidden, setHintHidden] = useState(() => {
+    try {
+      return Boolean(sessionStorage.getItem('skyHintSeen'))
+    } catch {
+      return false
+    }
+  })
 
-  const { stars, lines, anchors, clusterDelays, clusterDepths, revealDuration } = useMemo(
-    () => buildLayout(works, wide),
-    [works, wide]
+  const layout = useMemo(
+    () => buildLayout(works, CONSTELLATIONS, { narrow }),
+    [works, narrow]
   )
+  const { stars, ghosts, lines, labels, anchors, field, revealDuration } = layout
 
   const containerRef = useRef(null)
   const svgRef = useRef(null)
+  const vignetteRef = useRef(null)
   const lineRefs = useRef([])
-  // The sky's current scroll offset from viewport center, in viewBox units.
-  const skyShiftRef = useRef(0)
-  const [diveOrigin, setDiveOrigin] = useState(null)
+  const markerRefs = useRef([])
+  const chevronRefs = useRef([])
+  const markerSizes = useRef([])
   // Line width in viewBox units for the reveal trace — see the line JSX.
   const revealStrokeRef = useRef(0)
 
@@ -283,24 +96,143 @@ export default function ConstellationView({ works, activeFilter }) {
     }
   })
 
+  // ── Camera ──
+  // Every frame the camera moves, write the new window onto the world:
+  // the svg's viewBox (the layout stays in literal world coordinates),
+  // the --cam-x/--cam-y variables the parallax CSS reads, each line's
+  // endpoints (SVG lines have no CSS-settable geometry), the edge markers
+  // pointing at whatever's off-screen, and a nudge to the background
+  // starfield so it drifts along as the deepest layer.
+  const onFrame = useCallback(
+    (cam, view) => {
+      const svg = svgRef.current
+      const container = containerRef.current
+      if (!svg || !container) return
+      const { vw, vh, scale, cw, ch, docked, dockProgress } = view
+
+      svg.setAttribute('viewBox', `${cam.x - vw / 2} ${cam.y - vh / 2} ${vw} ${vh}`)
+      svg.style.setProperty('--cam-x', cam.x)
+      svg.style.setProperty('--cam-y', cam.y)
+
+      for (let i = 0; i < lines.length; i++) {
+        const el = lineRefs.current[i]
+        if (!el) continue
+        const { from, to } = lines[i]
+        const fd = from.depth ?? 0
+        const td = to.depth ?? 0
+        el.setAttribute('x1', from.x + (from.x - cam.x) * fd)
+        el.setAttribute('y1', from.y + (from.y - cam.y) * fd)
+        el.setAttribute('x2', to.x + (to.x - cam.x) * td)
+        el.setAttribute('y2', to.y + (to.y - cam.y) * td)
+      }
+
+      // Edge markers: where the ray from the frame's center toward each
+      // constellation leaves the (inset) frame.
+      const left = MARKER_INSET.left
+      const top = MARKER_INSET.top
+      const right = cw - MARKER_INSET.right
+      const bottom = ch - MARKER_INSET.bottom
+      const rcx = (left + right) / 2
+      const rcy = (top + bottom) / 2
+      const hx = (right - left) / 2
+      const hy = (bottom - top) / 2
+      for (let i = 0; i < labels.length; i++) {
+        const el = markerRefs.current[i]
+        if (!el) continue
+        const label = labels[i]
+        const px = (label.x - cam.x) * scale + cw / 2
+        const py = (label.y - cam.y) * scale + ch / 2
+        const inside = px >= left && px <= right && py >= top && py <= bottom
+        if (inside || hx <= 0 || hy <= 0) {
+          el.classList.add(styles.markerHidden)
+          continue
+        }
+        el.classList.remove(styles.markerHidden)
+        const dx = px - rcx
+        const dy = py - rcy
+        const t = Math.min(hx / Math.max(Math.abs(dx), 1e-6), hy / Math.max(Math.abs(dy), 1e-6))
+        // Keep the whole label inside the frame (its size is static, so
+        // measure it once rather than forcing layout every frame).
+        let size = markerSizes.current[i]
+        if (!size) size = markerSizes.current[i] = { w: el.offsetWidth, h: el.offsetHeight }
+        const mx = Math.min(Math.max(rcx + dx * t, MARKER_EDGE + size.w / 2), cw - MARKER_EDGE - size.w / 2)
+        const my = Math.min(Math.max(rcy + dy * t, top), ch - MARKER_EDGE - size.h / 2)
+        el.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`
+        const chevron = chevronRefs.current[i]
+        if (chevron) chevron.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`
+      }
+
+      container.classList.toggle(styles.docked, docked)
+      if (vignetteRef.current) vignetteRef.current.style.opacity = dockProgress
+
+      window.dispatchEvent(
+        new CustomEvent(SKY_CAMERA_EVENT, {
+          detail: { x: (cam.x - HOME_CAMERA.x) * scale, y: (cam.y - HOME_CAMERA.y) * scale },
+        })
+      )
+    },
+    [lines, labels]
+  )
+
+  const camera = useSkyCamera({
+    containerRef,
+    world: WORLD,
+    initial: HOME_CAMERA,
+    baseView: BASE_VIEW,
+    reducedMotion,
+    onFrame,
+  })
+
+  // The background field should settle back to rest once the sky is gone.
+  useEffect(
+    () => () =>
+      window.dispatchEvent(new CustomEvent(SKY_CAMERA_EVENT, { detail: { x: 0, y: 0 } })),
+    []
+  )
+
+  // First interaction retires the "drag to wander" hint for the session.
   useEffect(() => {
-    if (reveal !== 'pending') return
+    if (hintHidden) return undefined
+    return camera.onInteract(() => {
+      setHintHidden(true)
+      try {
+        sessionStorage.setItem('skyHintSeen', '1')
+      } catch {
+        // Then it just shows again next visit.
+      }
+    })
+  }, [camera, hintHidden])
+
+  // Choosing a constellation in the HUD flies the camera to it; "All"
+  // returns home. Not on mount: the camera has its own idea of where to
+  // start (wherever the visitor left it).
+  const mountedRef = useRef(false)
+  useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true
+      return
+    }
+    const target = activeFilter === 'all' ? HOME_CAMERA : anchors[activeFilter]
+    if (target) camera.flyTo(target)
+  }, [activeFilter, anchors, camera])
+
+  // ── Reveal ──
+  useEffect(() => {
+    if (reveal !== 'pending') return undefined
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return
-        const svg = svgRef.current
-        revealStrokeRef.current =
-          LINE_WIDTH_PX / Math.min(svg.clientWidth / 160, svg.clientHeight / 100)
+        revealStrokeRef.current = LINE_WIDTH_PX / camera.view().scale
         setReveal('revealing')
       },
       { threshold: 0.3 }
     )
     observer.observe(containerRef.current)
     return () => observer.disconnect()
-  }, [reveal])
+  }, [reveal, camera])
 
   useEffect(() => {
-    if (reveal !== 'revealing') return
+    if (reveal !== 'revealing') return undefined
     try {
       sessionStorage.setItem('skyRevealed', '1')
     } catch {
@@ -310,66 +242,27 @@ export default function ConstellationView({ works, activeFilter }) {
     return () => clearTimeout(id)
   }, [reveal, revealDuration])
 
-  // Scroll depth. Stars and labels follow a --sky-shift variable through
-  // CSS (see .depth), but SVG lines have no CSS-settable endpoints, so
-  // each line's y1/y2 is moved here directly to stay pinned to its stars.
-  // Skipped on narrow screens: the sky is small enough there that drifting
-  // stars slide into each other's (already enlarged) tap targets.
-  useEffect(() => {
-    if (prefersReducedMotion() || window.innerWidth < DEPTH_MIN_WIDTH) return
-    let frame = null
-    function update() {
-      frame = null
-      const svg = svgRef.current
-      if (!svg) return
-      const rect = containerRef.current.getBoundingClientRect()
-      const scale = Math.min(svg.clientWidth / 160, svg.clientHeight / 100)
-      const shift = (rect.top + rect.height / 2 - window.innerHeight / 2) / scale
-      skyShiftRef.current = shift
-      svg.style.setProperty('--sky-shift', shift)
-      lines.forEach(({ from, to }, i) => {
-        const el = lineRefs.current[i]
-        if (!el) return
-        el.setAttribute('y1', from.y + shift * from.depth)
-        el.setAttribute('y2', to.y + shift * to.depth)
-      })
-    }
-    function schedule() {
-      if (!frame) frame = requestAnimationFrame(update)
-    }
-    update()
-    window.addEventListener('scroll', schedule, { passive: true })
-    window.addEventListener('resize', schedule)
-    return () => {
-      window.removeEventListener('scroll', schedule)
-      window.removeEventListener('resize', schedule)
-      if (frame) cancelAnimationFrame(frame)
-    }
-  }, [lines])
-
-  // Home fades its hero/toolbar while a dive is underway (see
-  // Home.module.css) — make sure that flag never outlives this view.
+  // Home fades its hero/HUD while a dive is underway (see Home.module.css);
+  // make sure that flag never outlives this view.
   useEffect(() => () => delete document.documentElement.dataset.diving, [])
 
   const hoveredCategory = hovered?.work.category ?? null
 
-  const isDimmed = (category) =>
-    activeFilter !== 'all' && category !== activeFilter
-
-  const isHighlighted = (category) =>
-    activeFilter !== 'all' && category === activeFilter
+  const isDimmed = (category) => activeFilter !== 'all' && category !== activeFilter
+  const isHighlighted = (category) => activeFilter !== 'all' && category === activeFilter
 
   // On touch devices there's no hover preview, so a tap selects (shows the
   // strip) instead of navigating immediately — a second tap, or the strip's
   // "View" button, confirms. Mouse clicks (which already had a hover
   // preview) and keyboard Enter (which already had a focus preview)
   // navigate right away.
-  function handleSelect(work, x, y, viaButton = false) {
+  function handleSelect(star, viaButton = false) {
+    const { work } = star
     if (burstingId) return
     const hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches
     if (!hasHover && !viaButton && selectedId !== work.id) {
       setSelectedId(work.id)
-      setHovered({ work, x, y })
+      setHovered(star)
       return
     }
     if (work.category === 'writing' && work.link) {
@@ -377,113 +270,187 @@ export default function ConstellationView({ works, activeFilter }) {
       return
     }
     setBurstingId(work.id)
-    if (prefersReducedMotion()) {
+    if (reducedMotion) {
       navigate(`/work/${work.id}`)
       return
     }
 
-    // Dive: zoom the sky in on the clicked star (where its scroll depth
-    // has currently carried it) while the background starfield warps
-    // toward the same screen point, then hand off to the work page (whose
-    // arrival burst the starfield already plays).
-    const depth = stars.find((s) => s.work.id === work.id)?.depth ?? 0
-    const svg = svgRef.current
-    const rect = svg.getBoundingClientRect()
-    const scale = Math.min(svg.clientWidth / 160, svg.clientHeight / 100)
-    const ox = (svg.clientWidth - 160 * scale) / 2 + x * scale
-    const oy = (svg.clientHeight - 100 * scale) / 2 + (y + skyShiftRef.current * depth) * scale
-    setDiveOrigin({ x: ox, y: oy })
+    // Dive: zoom the sky in on the clicked star (where the camera has it
+    // right now) while the background starfield warps toward the same
+    // screen point, then hand off to the work page (whose arrival burst
+    // the starfield already plays).
+    const origin = camera.project(star.x, star.y, star.depth)
+    camera.freeze()
+    setDiveOrigin(origin)
     document.documentElement.dataset.diving = ''
+    const rect = containerRef.current.getBoundingClientRect()
     window.dispatchEvent(
       new CustomEvent(DIVE_EVENT, {
-        detail: { x: rect.left + ox, y: rect.top + oy, duration: DIVE_MS },
+        detail: { x: rect.left + origin.x, y: rect.top + origin.y, duration: DIVE_MS },
       })
     )
     setTimeout(() => navigate(`/work/${work.id}`), DIVE_MS)
   }
 
+  function handleStarClick(star) {
+    // A drag that happens to end on a star is not a click on it.
+    if (camera.consumeDragged()) return
+    handleSelect(star)
+  }
+
+  function handleStarFocus(star) {
+    setHovered(star)
+    if (!camera.isInView(star.x, star.y, star.depth, FOCUS_INSET_PX)) {
+      camera.flyTo({ x: star.x, y: star.y }, 600)
+    }
+  }
+
   const revealClass =
     reveal === 'pending' ? styles.revealPending : reveal === 'revealing' ? styles.revealing : ''
 
+  const initialViewBox = `${HOME_CAMERA.x - BASE_VIEW / 2} ${HOME_CAMERA.y - (BASE_VIEW * 9) / 32} ${BASE_VIEW} ${(BASE_VIEW * 9) / 16}`
+
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.svgContainer} ref={containerRef}>
-        <svg
-          ref={svgRef}
-          viewBox="0 0 160 100"
-          preserveAspectRatio="xMidYMid meet"
-          className={`${styles.svg} ${revealClass} ${diveOrigin ? styles.diving : ''}`}
-          style={
-            diveOrigin ? { transformOrigin: `${diveOrigin.x}px ${diveOrigin.y}px` } : undefined
-          }
-        >
-          <g>
-            {lines.map(({ from, to, category, revealDelay }, i) => (
-              <line
-                key={`${from.work.id}-${to.work.id}`}
-                ref={(el) => (lineRefs.current[i] = el)}
-                x1={from.x}
-                y1={from.y}
-                x2={to.x}
-                y2={to.y}
-                // The reveal traces each line with pathLength="1" dashes,
-                // which non-scaling-stroke would measure in screen px
-                // instead. So while revealing, the stroke goes back to
-                // viewBox units, with a width converted to match.
-                pathLength={reveal === 'revealing' ? 1 : undefined}
-                vectorEffect={reveal === 'revealing' ? undefined : 'non-scaling-stroke'}
-                style={{
-                  '--cat-color': colorForCategory(category),
-                  '--reveal-delay': `${revealDelay}s`,
-                  strokeWidth: reveal === 'revealing' ? revealStrokeRef.current : undefined,
-                }}
-                className={`${styles.line} ${isDimmed(category) ? styles.dimmed : ''} ${
-                  isHighlighted(category) ? styles.lineHighlighted : ''
-                } ${hoveredCategory === category ? styles.lineActive : ''}`}
+    <div
+      className={`${styles.sky} ${diveOrigin ? styles.skyDiving : ''}`}
+      ref={containerRef}
+      tabIndex={0}
+      role="region"
+      aria-label="Sky chart. Drag or use the arrow keys to pan."
+    >
+      <svg
+        ref={svgRef}
+        viewBox={initialViewBox}
+        preserveAspectRatio="none"
+        className={`${styles.svg} ${revealClass} ${diveOrigin ? styles.diving : ''}`}
+        style={{
+          '--cam0-x': HOME_CAMERA.x,
+          '--cam0-y': HOME_CAMERA.y,
+          ...(diveOrigin ? { transformOrigin: `${diveOrigin.x}px ${diveOrigin.y}px` } : null),
+        }}
+      >
+        {/* Deep field: decorative dust at two distances behind the chart. */}
+        {field.map((layer) => (
+          <g key={layer.follow} className={styles.field} style={{ '--follow': layer.follow }}>
+            {layer.paths.map((p) => (
+              <path
+                key={p.width}
+                d={p.d}
+                className={styles.fieldDots}
+                style={{ strokeWidth: p.width, strokeOpacity: p.opacity }}
               />
             ))}
           </g>
+        ))}
 
-          {Object.entries(anchors).map(([cat, anchor]) => (
-            <g key={cat} className={styles.depth} style={{ '--depth': clusterDepths[cat] ?? 0 }}>
+        <g>
+          {lines.map(({ key, from, to, category, revealDelay }, i) => (
+            <line
+              key={key}
+              ref={(el) => (lineRefs.current[i] = el)}
+              x1={from.x}
+              y1={from.y}
+              x2={to.x}
+              y2={to.y}
+              // The reveal traces each line with pathLength="1" dashes,
+              // which non-scaling-stroke would measure in screen px
+              // instead. So while revealing, the stroke goes back to
+              // viewBox units, with a width converted to match.
+              pathLength={reveal === 'revealing' ? 1 : undefined}
+              vectorEffect={reveal === 'revealing' ? undefined : 'non-scaling-stroke'}
+              style={{
+                '--cat-color': colorForCategory(category),
+                '--reveal-delay': `${revealDelay}s`,
+                strokeWidth: reveal === 'revealing' ? revealStrokeRef.current : undefined,
+              }}
+              className={`${styles.line} ${isDimmed(category) ? styles.dimmed : ''} ${
+                isHighlighted(category) ? styles.lineHighlighted : ''
+              } ${hoveredCategory === category ? styles.lineActive : ''}`}
+            />
+          ))}
+        </g>
+
+        {labels.map((label) => (
+          <g
+            key={label.category}
+            className={styles.depth}
+            style={{ '--sx': label.x, '--sy': label.y, '--depth': label.depth }}
+          >
+            <text
+              x={label.x}
+              y={label.y}
+              style={{
+                '--cat-color': colorForCategory(label.category),
+                '--reveal-delay': `${label.revealDelay}s`,
+              }}
+              className={`${styles.clusterLabel} ${
+                isDimmed(label.category) ? styles.dimmed : ''
+              } ${isHighlighted(label.category) ? styles.clusterLabelActive : ''} ${
+                hoveredCategory === label.category ? styles.clusterLabelHover : ''
+              }`}
+            >
+              {label.text}
+            </text>
+            {label.name && (
               <text
-                x={anchor.x}
-                y={anchor.y + LABEL_OFFSET_Y}
-                style={{
-                  '--cat-color': colorForCategory(cat),
-                  '--reveal-delay': `${clusterDelays[cat] ?? 0}s`,
-                }}
-                className={`${styles.clusterLabel} ${
-                  isDimmed(cat) ? styles.dimmed : ''
-                } ${isHighlighted(cat) ? styles.clusterLabelActive : ''} ${
-                  hoveredCategory === cat ? styles.clusterLabelHover : ''
+                x={label.x}
+                y={label.y + 3.4}
+                style={{ '--reveal-delay': `${label.revealDelay + 0.3}s` }}
+                className={`${styles.clusterName} ${
+                  isDimmed(label.category) ? styles.dimmed : ''
+                } ${
+                  isHighlighted(label.category) || hoveredCategory === label.category
+                    ? styles.clusterNameActive
+                    : ''
                 }`}
               >
-                {cat}
+                {label.name}
               </text>
-            </g>
-          ))}
+            )}
+          </g>
+        ))}
 
-          {stars.map(({ work, x, y, size, accent, twinkleDur, twinkleDelay, revealDelay, depth }) => (
-            <g key={work.id} className={styles.depth} style={{ '--depth': depth }}>
+        {ghosts.map((ghost) => (
+          <circle
+            key={ghost.key}
+            cx={ghost.x}
+            cy={ghost.y}
+            r={0.45}
+            style={{ '--reveal-delay': `${ghost.revealDelay}s` }}
+            className={`${styles.ghost} ${isDimmed(ghost.category) ? styles.dimmed : ''}`}
+          />
+        ))}
+
+        {stars.map((star) => {
+          const { work, x, y, size, accent, twinkleDur, twinkleDelay, revealDelay, depth, kind } = star
+          return (
+            <g
+              key={work.id}
+              className={styles.depth}
+              style={{ '--sx': x, '--sy': y, '--depth': depth }}
+            >
               <g
-                className={`${styles.starGroup} ${isDimmed(work.category) ? styles.dimmed : ''} ${
-                  burstingId === work.id ? styles.bursting : ''
-                }`}
+                className={`${styles.starGroup} ${kind === 'outlier' ? styles.outlier : ''} ${
+                  isDimmed(work.category) ? styles.dimmed : ''
+                } ${burstingId === work.id ? styles.bursting : ''}`}
                 transform={`translate(${x} ${y})`}
                 style={{
                   '--cat-color': colorForCategory(work.category),
                   '--reveal-delay': `${revealDelay}s`,
                 }}
-                onClick={() => handleSelect(work, x, y)}
-                onMouseEnter={() => setHovered({ work, x, y })}
+                onClick={() => handleStarClick(star)}
+                onMouseEnter={() => setHovered(star)}
                 onMouseLeave={() => setHovered(null)}
-                onFocus={() => setHovered({ work, x, y })}
+                onFocus={() => handleStarFocus(star)}
                 onBlur={() => setHovered(null)}
                 tabIndex={0}
                 role="button"
-                aria-label={`View ${work.title}`}
-                onKeyDown={(e) => e.key === 'Enter' && handleSelect(work, x, y, true)}
+                aria-label={
+                  work.category === 'writing' && work.link
+                    ? `Read ${work.title} (opens in a new tab)`
+                    : `View ${work.title}`
+                }
+                onKeyDown={(e) => e.key === 'Enter' && handleSelect(star, true)}
               >
                 <circle r={7} className={styles.hitArea} />
                 <circle r={3.2} className={styles.glow} />
@@ -501,27 +468,57 @@ export default function ConstellationView({ works, activeFilter }) {
                 />
               </g>
             </g>
-          ))}
-        </svg>
+          )
+        })}
+      </svg>
 
-        <div className={`${styles.strip} ${hovered ? styles.stripVisible : ''}`}>
-          <span className={styles.stripCategory}>
-            ✦ {hovered?.work.category ?? ''}
-          </span>
-          <span className={styles.stripTitle}>{hovered?.work.title ?? ''}</span>
-          {hovered?.work.desc && (
-            <span className={styles.stripDesc}>{hovered.work.desc}</span>
-          )}
-          {hovered && (
-            <button
-              type="button"
-              className={styles.stripView}
-              onClick={() => handleSelect(hovered.work, hovered.x, hovered.y, true)}
-            >
-              View →
-            </button>
-          )}
-        </div>
+      {/* Fades the frame's edges once the sky fills the viewport, so the
+          screen reads as a window rather than a bordered chart. */}
+      <div className={styles.vignette} ref={vignetteRef} aria-hidden="true" />
+
+      {/* Edge markers: one per constellation, shown only while it's
+          off-screen, sitting on the frame edge in its direction. */}
+      {labels.map((label, i) => (
+        <button
+          key={label.category}
+          type="button"
+          ref={(el) => (markerRefs.current[i] = el)}
+          className={`${styles.marker} ${styles.markerHidden} ${
+            isDimmed(label.category) ? styles.markerDimmed : ''
+          }`}
+          style={{ '--cat-color': colorForCategory(label.category) }}
+          onClick={() => camera.flyTo(anchors[label.category])}
+          aria-label={`Fly to ${label.text}`}
+        >
+          <svg
+            viewBox="0 0 10 10"
+            className={styles.chevron}
+            ref={(el) => (chevronRefs.current[i] = el)}
+            aria-hidden="true"
+          >
+            <path d="M3 1.5 L7.5 5 L3 8.5" />
+          </svg>
+          <span>{label.text}</span>
+        </button>
+      ))}
+
+      <p className={`${styles.hint} ${hintHidden ? styles.hintHidden : ''}`} aria-hidden="true">
+        Drag to wander the sky
+      </p>
+
+      <div className={`${styles.strip} ${hovered ? styles.stripVisible : ''}`}>
+        <span className={styles.stripCategory}>✦ {hovered?.work.category ?? ''}</span>
+        <span className={styles.stripTitle}>{hovered?.work.title ?? ''}</span>
+        {hovered?.work.desc && <span className={styles.stripDesc}>{hovered.work.desc}</span>}
+        {hovered && (
+          <button
+            type="button"
+            className={styles.stripView}
+            onClick={() => handleSelect(hovered, true)}
+          >
+            {actionLabel(hovered.work)}
+          </button>
+        )}
       </div>
     </div>
   )

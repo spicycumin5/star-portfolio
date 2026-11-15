@@ -60,6 +60,9 @@ All content lives in **`src/data/works.js`**. Each entry looks like:
 
 To add a new category, also add it to the `CATEGORIES` array at the bottom of `works.js`.
 
+### 2b. The sky (constellation view)
+The home page's constellation view is a free-roam camera over a world several screens wide. Its shape lives in **`src/data/constellations.js`**: one entry per discipline with a `name`, a world `anchor`, and a `figure` (points + edges drawn relative to the anchor). Works fill the figure's points in year order; any extra works become fainter outlying stars around it, so adding work needs no layout changes. A category with no entry is placed procedurally. `HOME_CAMERA` is where visitors start, and `WORLD` is the sky's size. Each discipline's color is a `--cat-<key>` variable in `src/index.css`.
+
 ### 3. Adding real images
 In `WorkCard.jsx`, replace the emoji `<span>` with an `<img>`:
 ```jsx

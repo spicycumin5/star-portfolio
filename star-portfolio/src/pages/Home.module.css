@@ -155,19 +155,77 @@
   background: var(--gold-dim);
 }
 
-/* Fixed-width regardless of view — kept separate from .content so the
-   constellation's wider column (below) never shifts the toggle/filter
-   row's position. */
+/* Toolbar: in the log view it sits in the page column; in the
+   constellation view the same markup floats over the sky as a HUD. */
 .toolbar {
   padding: 0 3rem;
   max-width: 1200px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .content {
   padding: 0 3rem 6rem;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+/* ── Sky section ──
+   Full bleed: no column, no padding. ConstellationView fills it with a
+   100svh window onto the sky; the HUD below is absolutely positioned
+   over it. */
+.skySection {
+  position: relative;
+  width: 100%;
+}
+
+.hud {
+  position: absolute;
+  z-index: 5;
+  top: 4.75rem;
+  left: 0;
+  right: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0 3rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  /* Only the controls themselves should catch the pointer — the sky
+     underneath has to stay draggable between them. */
+  pointer-events: none;
+  transition: opacity 0.4s ease-in;
+}
+
+.hud button {
+  pointer-events: auto;
+}
+
+.hud .filterLabel {
+  margin-bottom: 0.75rem;
+}
+
+.hud .filterBar {
+  margin-bottom: 0;
+}
+
+.hud .filterBtn {
+  min-height: 2.25rem;
+  padding: 0.4rem 1.05rem;
+  font-size: 0.66rem;
+  background: rgba(17, 14, 28, 0.35);
+  backdrop-filter: blur(3px);
+}
+
+.hud .filterActive {
+  background: var(--gold-glow);
+}
+
+.hud .viewToggle {
+  margin-bottom: 0;
 }
 
 .filterLabel {
@@ -269,16 +327,6 @@
   color: var(--gold);
 }
 
-/* The constellation needs real room to spread out — on wide desktop
-   viewports let it claim more of the screen than the 1200px content
-   column the toolbar/filter bar use. Scoped to the constellation view
-   only (see Home.jsx) and to .content, so the toolbar stays put. */
-@media (min-width: 1100px) {
-  .contentWide {
-    max-width: min(92vw, 1800px);
-  }
-}
-
 @media (max-width: 900px) {
   .hero {
     padding: 5rem 2rem 3.5rem;
@@ -286,13 +334,43 @@
   .toolbar {
     padding: 0 2rem;
   }
+  .hud {
+    padding: 0 2rem;
+  }
   .content {
     padding: 0 2rem 5rem;
   }
 }
 
+@media (max-width: 700px) {
+  /* On phones the HUD stacks: toggle row first, then the filter chips. */
+  .hud {
+    top: 4rem;
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .hud .viewToggle {
+    justify-content: flex-end;
+  }
+  .hud .filterLabel {
+    display: none;
+  }
+  .hud .filterBar {
+    gap: 0.35rem;
+  }
+  .hud .filterBtn {
+    min-height: 2rem;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.6rem;
+  }
+}
+
 @media (max-width: 600px) {
   .toolbar {
+    padding: 0 1.5rem;
+  }
+  .hud {
     padding: 0 1.5rem;
   }
   .content {
