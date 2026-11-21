@@ -720,6 +720,20 @@ export const WORKS = [
     link: 'https://mixistance.vercel.app/',
     linkLabel: 'Try It!',
   },
+  {
+    id: 47,
+    category: 'code',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'Manual Mode',
+    year: '2026',
+    desc: 'A tool to help learn how to take photos on manual mode... cant rely on auto forever!',
+    tags: ['project', 'web app'],
+    body: '',
+    image: '',
+    link: 'https://manual-mode.vercel.app/#/',
+    linkLabel: 'Try It!',
+  },
 ]
 
 
