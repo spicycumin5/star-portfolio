@@ -221,4 +221,31 @@
   .page {
     padding: 7rem 1.5rem 4rem;
   }
+
+  /* Single column: lead with the portrait instead of burying it below
+     the bio. The right column dissolves into the grid so the portrait
+     can move to the top while disciplines + credits stay after the text. */
+  .right {
+    display: contents;
+  }
+
+  .portrait {
+    order: -1;
+    width: 150px;
+    height: 150px;
+    margin-bottom: -1rem;
+  }
+
+  .disciplines,
+  .credits {
+    order: 1;
+  }
+
+  .disciplines {
+    margin-bottom: 0;
+  }
+
+  .heading {
+    padding-top: 0;
+  }
 }
