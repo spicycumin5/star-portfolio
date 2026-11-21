@@ -18,9 +18,11 @@ function ScrollToTop() {
 export default function App() {
   return (
     <>
+      <a href="#main" className="skip-link">Skip to content</a>
       <StarCanvas />
       <Nav />
       <ScrollToTop />
+      <main id="main" tabIndex={-1} style={{ outline: 'none' }}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/work/:id" element={<WorkDetail />} />
@@ -29,6 +31,7 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </main>
     </>
   )
 }

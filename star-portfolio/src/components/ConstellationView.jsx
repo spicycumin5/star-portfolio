@@ -450,7 +450,12 @@ export default function ConstellationView({ works, activeFilter }) {
                     ? `Read ${work.title} (opens in a new tab)`
                     : `View ${work.title}`
                 }
-                onKeyDown={(e) => e.key === 'Enter' && handleSelect(star, true)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    handleSelect(star, true)
+                  }
+                }}
               >
                 <circle r={7} className={styles.hitArea} />
                 <circle r={3.2} className={styles.glow} />

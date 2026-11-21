@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import WorkLogList from '../components/WorkLogList'
 import ConstellationView from '../components/ConstellationView'
 import { WORKS } from '../data/works'
@@ -79,7 +80,13 @@ function Toolbar({ view, setView, activeFilter, setActiveFilter, hud }) {
 
 export default function Home() {
   usePageMeta()
-  const [activeFilter, setActiveFilter] = useState('all')
+  // The filter lives in the URL (?filter=code) so a filtered view can be
+  // shared or bookmarked — e.g. sending just the code work to a recruiter.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const requested = searchParams.get('filter')
+  const activeFilter = DISCIPLINES.some((d) => d.category === requested) ? requested : 'all'
+  const setActiveFilter = (category) =>
+    setSearchParams(category === 'all' ? {} : { filter: category }, { replace: true })
   // Home unmounts when navigating into a work and remounts on return, so
   // the chosen view is stashed in sessionStorage — otherwise "back" would
   // always land back on the width-based default instead of wherever the
@@ -117,7 +124,7 @@ export default function Home() {
         {/* A larger mark anchored to the right — balances the chart's
             left-anchored spread and fills what was otherwise dead air
             on wide viewports. */}
-        <img src="/images/KYUMINlogo%20(2).webp" alt="" className={styles.sideMark} />
+        <img src="/images/KYUMINlogo%20(2).webp" alt="" width="1000" height="1000" className={styles.sideMark} />
 
         {/* Not a chart — a logbook page. What's charted below is the
             real sky; this is just the entry written the night it was

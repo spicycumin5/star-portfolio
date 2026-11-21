@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { WORKS } from '../data/works'
 import CodeLinkCard from '../components/CodeLinkCard'
 import { getVideoEmbedUrl, getSourceHost } from '../utils/embeds'
@@ -17,7 +17,6 @@ const PROJECT_NOTE_FIELDS = [
 
 export default function WorkDetail() {
   const { id } = useParams()
-  const navigate = useNavigate()
   const workIndex = WORKS.findIndex((w) => w.id === Number(id))
   const work = workIndex !== -1 ? WORKS[workIndex] : undefined
   const [openTrack, setOpenTrack] = useState(null)
@@ -39,9 +38,9 @@ export default function WorkDetail() {
     return (
       <div className={styles.notFound}>
         <p>Piece not found.</p>
-        <button className={styles.back} onClick={() => navigate('/')}>
+        <Link className={styles.back} to="/">
           ← Back to work
-        </button>
+        </Link>
       </div>
     )
   }
@@ -78,6 +77,7 @@ export default function WorkDetail() {
             className={styles.videoIframe}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            loading="lazy"
           />
         </div>
       ) : work.category === 'code' ? (
@@ -200,9 +200,9 @@ export default function WorkDetail() {
       <span className={`${styles.deco} ${styles.deco1}`} aria-hidden="true">✦</span>
       <span className={`${styles.deco} ${styles.deco2}`} aria-hidden="true">✦</span>
 
-      <button className={styles.back} onClick={() => navigate('/')}>
+      <Link className={styles.back} to="/">
         ← Back to work
-      </button>
+      </Link>
 
       <p className={styles.category}>
         <span className={styles.categorySpark} aria-hidden="true">✦</span>
@@ -239,9 +239,9 @@ export default function WorkDetail() {
             {work.months.map((m) => (
               <div key={m.month} className={styles.monthCard} style={{ '--accent': work.bg }}>
                 {m.image ? (
-                  <button
+                  <Link
                     className={styles.monthFrame}
-                    onClick={() => navigate(`/work/${work.id}/${m.month.toLowerCase()}`)}
+                    to={`/work/${work.id}/${m.month.toLowerCase()}`}
                     aria-label={`View ${m.month} ${work.year}`}
                   >
                     <img
@@ -251,7 +251,7 @@ export default function WorkDetail() {
                       loading="lazy"
                       decoding="async"
                     />
-                  </button>
+                  </Link>
                 ) : (
                   <div className={`${styles.monthFrame} ${styles.monthFrameEmpty}`}>
                     <p className={styles.monthEmpty}>No piece this month</p>
@@ -284,28 +284,28 @@ export default function WorkDetail() {
       {/* Next / prev navigation */}
       <div className={styles.workNav}>
         {prevWork ? (
-          <button
+          <Link
             className={styles.navBtn}
-            onClick={() => navigate(`/work/${prevWork.id}`)}
+            to={`/work/${prevWork.id}`}
           >
             <span className={styles.navArrow} aria-hidden="true">←</span>
             <span className={styles.navText}>
               <span className={styles.navLabel}>Previous</span>
               <span className={styles.navTitle}>{prevWork.title}</span>
             </span>
-          </button>
+          </Link>
         ) : <span />}
         {nextWork ? (
-          <button
+          <Link
             className={`${styles.navBtn} ${styles.navNext}`}
-            onClick={() => navigate(`/work/${nextWork.id}`)}
+            to={`/work/${nextWork.id}`}
           >
             <span className={styles.navText}>
               <span className={styles.navLabel}>Next</span>
               <span className={styles.navTitle}>{nextWork.title}</span>
             </span>
             <span className={styles.navArrow} aria-hidden="true">→</span>
-          </button>
+          </Link>
         ) : <span />}
       </div>
     </div>

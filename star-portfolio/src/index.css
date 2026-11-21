@@ -29,6 +29,40 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+/* One focus ring for every link and button that doesn't define its own —
+   gold to match the rest of the sky instead of the browser's blue. */
+a:focus-visible,
+button:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 200;
+  padding: 0.6rem 1rem;
+  font-family: var(--ff-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: var(--deep);
+  border: 0.5px solid var(--gold-dim);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
 }
 
 body {

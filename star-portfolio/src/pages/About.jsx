@@ -9,10 +9,9 @@ export default function About() {
         {/* Left column */}
         <div className={styles.left}>
           <p className={styles.eyebrow}>✦ About</p>
-          <h2 className={styles.heading}>
-            <br />
+          <h1 className={styles.heading}>
             <em>About Me</em>
-          </h2>
+          </h1>
           <div className={styles.body}>
             <p>
               Hello! My name is Kyumin Han, and I'm a growing developer working 
@@ -38,7 +37,7 @@ export default function About() {
         {/* Right column */}
         <div className={styles.right}>
           <div className={styles.portrait}>
-            <img src="/images/seaside-headshot.webp" alt="Portrait of Kyumin Han" />
+            <img src="/images/seaside-headshot.webp" alt="Portrait of Kyumin Han" width="1600" height="1600" />
           </div>
 
           <ul className={styles.disciplines}>

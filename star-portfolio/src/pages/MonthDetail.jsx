@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { WORKS } from '../data/works'
 import { usePageMeta } from '../hooks/usePageMeta'
 import styles from './WorkDetail.module.css'
 
 export default function MonthDetail() {
   const { id, month } = useParams()
-  const navigate = useNavigate()
   const work = WORKS.find((w) => w.id === Number(id) && Array.isArray(w.months))
   const months = work?.months || []
   const index = months.findIndex(
@@ -36,9 +35,9 @@ export default function MonthDetail() {
             ? `No piece was logged for ${emptyMonth.month} ${work.year}.`
             : 'Piece not found.'}
         </p>
-        <button className={styles.back} onClick={() => navigate(work ? `/work/${work.id}` : '/')}>
+        <Link className={styles.back} to={work ? `/work/${work.id}` : '/'}>
           ← Back to {work ? work.title : 'work'}
-        </button>
+        </Link>
       </div>
     )
   }
@@ -53,9 +52,9 @@ export default function MonthDetail() {
       <span className={`${styles.deco} ${styles.deco1}`} aria-hidden="true">✦</span>
       <span className={`${styles.deco} ${styles.deco2}`} aria-hidden="true">✦</span>
 
-      <button className={styles.back} onClick={() => navigate(`/work/${work.id}`)}>
+      <Link className={styles.back} to={`/work/${work.id}`}>
         ← Back to {work.title}
-      </button>
+      </Link>
 
       <p className={styles.category}>
         <span className={styles.categorySpark} aria-hidden="true">✦</span>
@@ -124,28 +123,28 @@ export default function MonthDetail() {
 
       <div className={styles.workNav}>
         {prevEntry ? (
-          <button
+          <Link
             className={styles.navBtn}
-            onClick={() => navigate(`/work/${work.id}/${prevEntry.month.toLowerCase()}`)}
+            to={`/work/${work.id}/${prevEntry.month.toLowerCase()}`}
           >
             <span className={styles.navArrow} aria-hidden="true">←</span>
             <span className={styles.navText}>
               <span className={styles.navLabel}>Previous</span>
               <span className={styles.navTitle}>{prevEntry.month}</span>
             </span>
-          </button>
+          </Link>
         ) : <span />}
         {nextEntry ? (
-          <button
+          <Link
             className={`${styles.navBtn} ${styles.navNext}`}
-            onClick={() => navigate(`/work/${work.id}/${nextEntry.month.toLowerCase()}`)}
+            to={`/work/${work.id}/${nextEntry.month.toLowerCase()}`}
           >
             <span className={styles.navText}>
               <span className={styles.navLabel}>Next</span>
               <span className={styles.navTitle}>{nextEntry.month}</span>
             </span>
             <span className={styles.navArrow} aria-hidden="true">→</span>
-          </button>
+          </Link>
         ) : <span />}
       </div>
     </div>

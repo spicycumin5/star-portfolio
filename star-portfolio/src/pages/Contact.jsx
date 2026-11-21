@@ -2,12 +2,7 @@ import { useState } from 'react'
 import { usePageMeta } from '../hooks/usePageMeta'
 import styles from './Contact.module.css'
 
-// Messages are delivered by Formspree (https://formspree.io): sign up, create
-// a form, and paste its ID here (the short code after /f/ in the endpoint,
-// e.g. 'xabcdefg'). Until it's set, the form says so instead of pretending
-// a message went through. Form IDs are public by design, so it's fine to
-// commit this.
-const FORMSPREE_FORM_ID = ''
+const EMAIL = 'hankyumin5@gmail.com'
 
 const SOCIAL_LINKS = [
   { label: 'Instagram', href: 'https://www.instagram.com/spicy_cumin/' },
@@ -17,9 +12,7 @@ const SOCIAL_LINKS = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/kyumin5/' },
 ]
 
-// The same sparkle silhouette the constellation stars bloom into on hover —
-// reused here so sending a message reads as "launching a star" rather than
-// a generic form-submit checkmark.
+// The same sparkle silhouette the constellation stars bloom into on hover.
 function StarIcon({ className }) {
   return (
     <svg viewBox="-3 -3 6 6" className={className} aria-hidden="true">
@@ -29,47 +22,18 @@ function StarIcon({ className }) {
 }
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' })
-  const [sent, setSent] = useState(false)
-  const [sending, setSending] = useState(false)
-  const [error, setError] = useState(null)
+  const [copied, setCopied] = useState(false)
   usePageMeta({ title: 'Contact', description: 'Get in touch with Kyumin Han.' })
 
-  function handleChange(e) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-    if (error) setError(null)
-  }
-
-  async function handleSubmit(e) {
-    e.preventDefault()
-    if (!FORMSPREE_FORM_ID) {
-      setError("This form isn't connected yet — please reach out through one of the links below.")
-      return
-    }
-    setSending(true)
-    setError(null)
+  // mailto: does nothing for visitors without a mail app set up (common on
+  // desktop webmail users), so the address can also be copied in one click.
+  async function copyEmail() {
     try {
-      const res = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          message: form.message,
-          _subject: `Portfolio message from ${form.name}`,
-        }),
-      })
-      if (!res.ok) {
-        const data = await res.json().catch(() => null)
-        throw new Error(data?.errors?.map((err) => err.message).join(' ') || `Request failed (${res.status})`)
-      }
-      setSent(true)
-    } catch (err) {
-      setError(
-        `Couldn't send that (${err.message}). Please try again, or reach out through one of the links below.`
-      )
-    } finally {
-      setSending(false)
+      await navigator.clipboard.writeText(EMAIL)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      /* Clipboard blocked — the address is still visible to select. */
     }
   }
 
@@ -77,77 +41,23 @@ export default function Contact() {
     <div className={styles.page}>
       <div className={styles.inner}>
         <p className={styles.eyebrow}>✦ Contact</p>
-        <h2 className={styles.heading}>
-          Let's connect!
-        </h2>
+        <h1 className={styles.heading}>Let's connect!</h1>
+        <p className={styles.lede}>
+          For work, collaborations, or just to say hello, email is the best way to reach me.
+        </p>
 
-        {sent ? (
-          <div className={styles.thanks}>
-            <StarIcon className={styles.thanksStar} />
-            <p className={styles.thanksHeading}>Message received.</p>
-            <p className={styles.thanksSub}>Thank you for reaching out!</p>
-            <button className={styles.resetBtn} onClick={() => { setSent(false); setForm({ name: '', email: '', message: '' }) }}>
-              Send another
-            </button>
-          </div>
-        ) : (
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <div className={styles.row}>
-              <div className={styles.field}>
-                <label className={styles.label} htmlFor="name">Your name</label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="Your Name"
-                  value={form.name}
-                  onChange={handleChange}
-                  required
-                  className={styles.input}
-                />
-              </div>
-              <div className={styles.field}>
-                <label className={styles.label} htmlFor="email">Email</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="hello@example.com"
-                  value={form.email}
-                  onChange={handleChange}
-                  required
-                  className={styles.input}
-                />
-              </div>
-            </div>
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="message">Message</label>
-              <textarea
-                id="message"
-                name="message"
-                placeholder="Your message…"
-                value={form.message}
-                onChange={handleChange}
-                required
-                className={styles.textarea}
-                rows={5}
-              />
-            </div>
-            <button
-              type="submit"
-              className={`${styles.submit} ${sending ? styles.sending : ''}`}
-              disabled={sending}
-            >
-              {sending ? 'Sending' : 'Send message'}
-              <StarIcon className={styles.submitStar} />
-            </button>
-            {error && (
-              <p className={styles.error} role="alert">
-                {error}
-              </p>
-            )}
-          </form>
-        )}
+        <div className={styles.emailBlock}>
+          <a href={`mailto:${EMAIL}`} className={styles.emailLink}>
+            <span translate="no">{EMAIL}</span>
+            <StarIcon className={styles.emailStar} />
+          </a>
+          <button type="button" className={styles.copyBtn} onClick={copyEmail}>
+            {copied ? 'Copied' : 'Copy Email'}
+          </button>
+          <span className={styles.srOnly} aria-live="polite">
+            {copied ? 'Email address copied to clipboard' : ''}
+          </span>
+        </div>
 
         <div className={styles.socialRow}>
           {SOCIAL_LINKS.map((s) => (
