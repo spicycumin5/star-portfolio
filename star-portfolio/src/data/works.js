@@ -706,6 +706,20 @@ export const WORKS = [
     link: 'https://harvest-jet.vercel.app/',
     linkLabel: 'Try It!',
   },
+  {
+    id: 47,
+    category: 'code',
+    emoji: '⟨/⟩',
+    bg: '#0a1520',
+    title: 'Mixistance',
+    year: '2026',
+    desc: 'A tool to help learn music mixing... I still dont understand',
+    tags: ['project', 'web app'],
+    body: '',
+    image: '',
+    link: 'https://mixistance.vercel.app/',
+    linkLabel: 'Try It!',
+  },
 ]
 
 
